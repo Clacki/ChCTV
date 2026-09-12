@@ -1,0 +1,2054 @@
+[
+  {
+    "streamerName": "남봉",
+    "rpName": "꼬봉이",
+    "channelId": null,
+    "jobs": ["시장"],
+    "organization": {
+      "name": "시청",
+      "shortName": "시청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "고수달",
+    "rpName": "고상식",
+    "channelId": null,
+    "jobs": ["경찰", "경찰청장"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "계춘회",
+    "rpName": "고춘애",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "델로략국",
+    "rpName": "김창후",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "멋사",
+    "rpName": "오순찰",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "미녕이데려오깨",
+    "rpName": "녕호재",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "빗시",
+    "rpName": "김청순",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "승우아빠",
+    "rpName": "목진압",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아카네 리제",
+    "rpName": "야루",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "왈도쿤",
+    "rpName": "고민중",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "짜누",
+    "rpName": "최빵빵",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "카가야키 노바",
+    "rpName": "김억척",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "카네코 파냐",
+    "rpName": "안보영",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "콩천",
+    "rpName": "방하범",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "텐코 시부키",
+    "rpName": "정지해",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "텐플라스텐 텐텐",
+    "rpName": "이십세",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "희지",
+    "rpName": "희지뢰",
+    "channelId": null,
+    "jobs": ["경찰"],
+    "organization": {
+      "name": "봉누도경찰청",
+      "shortName": "경찰청"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "강지",
+    "rpName": "도현정",
+    "channelId": null,
+    "jobs": ["의료", "병원장"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "고차비",
+    "rpName": "공하나",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "김총무",
+    "rpName": "퀸자몽",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "레드",
+    "rpName": "레도연",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "미유",
+    "rpName": "인나유",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "배돈",
+    "rpName": "배나온",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "백곰파",
+    "rpName": "백초식",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "뿌요",
+    "rpName": "왁뿌용",
+    "channelId": "c8ce4df6e6cf691f05df554739ad05ed",
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": ["그냥 뿌요"]
+  },
+  {
+    "streamerName": "사키하네 후야",
+    "rpName": "구해영",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "스즈",
+    "rpName": "차수진",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이글콥",
+    "rpName": "안성실",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이초홍",
+    "rpName": "금희주",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "자몽뀨",
+    "rpName": "용몽원",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "코오리 세라",
+    "rpName": "빙세라",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "토종 아오리",
+    "rpName": "윤수아",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "헤라",
+    "rpName": "헤간호",
+    "channelId": null,
+    "jobs": ["의료", "간호사"],
+    "organization": {
+      "name": "병원",
+      "shortName": "병원"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이춘향",
+    "rpName": "이윤진",
+    "channelId": null,
+    "jobs": ["언론", "편집국장"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "로마러",
+    "rpName": "이줄만",
+    "channelId": null,
+    "jobs": ["언론"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "마레 플로스",
+    "rpName": "숭해춘",
+    "channelId": null,
+    "jobs": ["언론"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "시라유키 히나",
+    "rpName": "명총희",
+    "channelId": null,
+    "jobs": ["언론"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "위구리",
+    "rpName": "나익수",
+    "channelId": null,
+    "jobs": ["언론"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "유즈하 리코",
+    "rpName": "신이비",
+    "channelId": null,
+    "jobs": ["언론"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "장마군",
+    "rpName": "피터장파커",
+    "channelId": null,
+    "jobs": ["언론"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "코무키",
+    "rpName": "고묵희",
+    "channelId": "010379f20da3ec9249bfe0bbdcb05762",
+    "jobs": ["언론"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "킹설아",
+    "rpName": "킹기자",
+    "channelId": null,
+    "jobs": ["언론"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "티뭉",
+    "rpName": "밥돼길",
+    "channelId": null,
+    "jobs": ["언론"],
+    "organization": {
+      "name": "봉누도방송국",
+      "shortName": "방송국"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "너불",
+    "rpName": "황인정",
+    "channelId": null,
+    "jobs": ["공무직", "사장"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "김뿡",
+    "rpName": "김웅",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "달콤레나",
+    "rpName": "종조이",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "바테",
+    "rpName": "하진혁",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아로",
+    "rpName": "좋마담",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "앵보",
+    "rpName": "정다정",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "채현찌",
+    "rpName": "채재희",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "치치",
+    "rpName": "도미나",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "카토",
+    "rpName": "김분내",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "호시에 제로",
+    "rpName": "배이비",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "후추",
+    "rpName": "추학한",
+    "channelId": null,
+    "jobs": ["공무직"],
+    "organization": {
+      "name": "교통정비공사",
+      "shortName": "교정공"
+    },
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "감쏘야",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "거갈없",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "광말구짱",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "권민권",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "금휘",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "김돌돌",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "김똘복",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "김츄",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "김편집",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "김피엔",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "깅나리",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "꽃빈",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "네네코 마시로",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "뇨롱이",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "눈꽃",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "니니아",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "댕균",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "댱이",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "덕개",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "독대",
+    "rpName": null,
+    "channelId": "958c9f1dd3f61c2131401253e563a0d4",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "디디디용",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "라코코",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "러너",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "레비얀",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "레옹 신부",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "루루엘 아스트리온",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "루시",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "릴카",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "마뫄",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "마지나이 쿠로카",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "마지텐시0",
+    "rpName": null,
+    "channelId": "705b6a18ecb39d2bd7ed6cca5e320d87",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "마호노 레비",
+    "rpName": null,
+    "channelId": "dd34d48439b7feee08b53cb4063cb0fd",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": ["마호노 레비 Orbi"]
+  },
+  {
+    "streamerName": "만득",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "맹숙",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "먀루",
+    "rpName": null,
+    "channelId": "e7dd05e9358afe9aa4749b68f1221776",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "먀뮤뮤",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "먼닉",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "명예훈장",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "모라라",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "모로이 모나",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "모치즈키 카에데",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "모코 파르페",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "모푸",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "뭉냥이",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "미러시",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "바뀐",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "박로드",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "박시윤",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "박시초",
+    "rpName": null,
+    "channelId": "d75e06d8625a0c83b3b5f8d32f48732d",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "박홍시",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "방찌",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "백희",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "뱅",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "버찌 BUZZI",
+    "rpName": null,
+    "channelId": "85fa9f08b940d363395f6b3f29b91c4c",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "불법스님",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "브이챠",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "비올레타 모네",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "비행돼지",
+    "rpName": null,
+    "channelId": "8c0a733110437062e1a1381706312c80",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "비화",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "빅헤드",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "빙하유",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "서새봄",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "선데이",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "셀리55",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "소우릎",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "쇼카",
+    "rpName": null,
+    "channelId": "1963bb156cd9a572916827d4fef7516e",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "숀쟝",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "시바스",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "실프",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "심해덤",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "싱압둘",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "쌍베",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "씨랙",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아구이뽀",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아라하시 타비",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아무탈",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아미하 유네",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아야",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아야츠노 유니",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아오쿠모 린",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아오토라 유키",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "아카캉",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "얍쭈",
+    "rpName": null,
+    "channelId": "07f30d3d52452f3da6ae22fc3bf2c544",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "연하늘",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "영듀",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "영래기",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "옌룡",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "오르",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "옥우",
+    "rpName": null,
+    "channelId": "73d006ad5ed12000547433ed33a68247",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "온치",
+    "rpName": null,
+    "channelId": "afe7bad3f54d9542cd3d0a30e38aa8ed",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "온하루",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "유다히",
+    "rpName": null,
+    "channelId": "e630c27b3c51307c1a064213a4a000bd",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "유달린",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "유람",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "유레카",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "유미호",
+    "rpName": null,
+    "channelId": "44dae7a2b81746e217082f6ef7f81779",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": ["유미호 MiHo"]
+  },
+  {
+    "streamerName": "유세라",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "윤산삼",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "은뿌",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이도원",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이렌",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이리니",
+    "rpName": null,
+    "channelId": "4314d5bc878a410965548f360a6a6630",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이선",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이소에",
+    "rpName": null,
+    "channelId": "343c202c69ba6d11b7ec51741f9591ac",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이신",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이오몽",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이운비",
+    "rpName": null,
+    "channelId": "5fb53f10e2fe2dfe77cb2cc007d63c42",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "이희태",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "일루전",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "임나은",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "정령왕",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "조매력",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "조별하",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "주키니",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "주혀미",
+    "rpName": null,
+    "channelId": "8f433fe01faac742a5cf0819e42397de",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "쨈하니",
+    "rpName": null,
+    "channelId": "ba171336221a7fc1ac069b2fc7e7edaf",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "쩡혁",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "쫑민",
+    "rpName": null,
+    "channelId": "1703c76cfc62ebee9254a6fd2ef83b2a",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "찡스",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "채로키",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "채수냥",
+    "rpName": null,
+    "channelId": "e7d77fdc4a4d4076833fe07e9f18be85",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "천용이",
+    "rpName": null,
+    "channelId": "2e64626093fbf9777311b5602a94af82",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "체리아씨",
+    "rpName": null,
+    "channelId": "95e771a3e1538cbf48fa34fb4beb203d",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "초슈야",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "초승달",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "쵸쵸우",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "취한무드등",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "치리스",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "치카치카 쵸케",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "코리수",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "콩콩",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "쾅준",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "쿠레나이 나츠키",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "쿠마루",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "큐베",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "키텔",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "파크상",
+    "rpName": null,
+    "channelId": "2e58a44483883a540f2a04f51b245f93",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "판구리",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "푸린",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "핑맨",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "핑크자크",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "하쁘",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "하나코 나나",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "하렌 루베오스",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "하루토",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "하시요",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "하지유",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "하쿠텐 후와",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "한량1234",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "해마티엘",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "햄쿠비",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "행돌",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "헛소리",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "호엥 메로롱",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "후참",
+    "rpName": null,
+    "channelId": "a9ee9a98bf5170d4b4dfb23ef8e4676b",
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  },
+  {
+    "streamerName": "흐쟁이",
+    "rpName": null,
+    "channelId": null,
+    "jobs": ["시민"],
+    "organization": null,
+    "groups": [],
+    "aliases": []
+  }
+]
