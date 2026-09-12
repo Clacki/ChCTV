@@ -43,8 +43,8 @@ describe("participant catalog", () => {
       participants.filter((participant) => (participant.organization?.name ?? null) === organizationName).length;
 
     expect(participants).toHaveLength(210);
-    expect(participants.filter((participant) => participant.rpName !== null)).toHaveLength(53);
-    expect(participants.filter((participant) => participant.rpName === null)).toHaveLength(157);
+    expect(participants.filter((participant) => participant.rpName !== null)).toHaveLength(54);
+    expect(participants.filter((participant) => participant.rpName === null)).toHaveLength(156);
     expect(participants.filter((participant) => participant.channelId !== null)).toHaveLength(26);
     expect(countByJob("시장")).toBe(1);
     expect(countByJob("경찰")).toBe(16);
