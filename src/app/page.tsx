@@ -1,17 +1,32 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl items-center px-6 py-16">
-      <section className="w-full rounded-xl border bg-card p-8 sm:p-12">
-        <Badge variant="secondary">MVP 준비 중</Badge>
-        <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">ChCTV</h1>
-        <p className="mt-4 max-w-xl text-lg leading-8 text-muted-foreground">
-          치지직 합방을 더 편하게 보는 방법.
-        </p>
-        <Button className="mt-8" disabled>곧 공개됩니다</Button>
-      </section>
-    </main>
+    <div className="flex min-h-dvh flex-col">
+      <header className="flex h-14 shrink-0 items-center border-b bg-card px-6">
+        <p className="text-sm font-medium text-muted-foreground">GLOBAL AREA</p>
+      </header>
+
+      <main className="grid flex-1 grid-cols-1 gap-4 p-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <section
+          aria-labelledby="discovery-heading"
+          className="min-h-80 min-w-0 rounded-xl border bg-card p-6"
+        >
+          <h1 id="discovery-heading" className="text-base font-medium">
+            DISCOVERY AREA
+          </h1>
+        </section>
+
+        <aside
+          aria-labelledby="selection-heading"
+          className="flex min-h-80 min-w-0 flex-col rounded-xl border bg-card"
+        >
+          <h2 id="selection-heading" className="p-6 text-sm font-medium text-muted-foreground">
+            SELECTION / CONTEXT AREA
+          </h2>
+          <div className="mt-auto flex min-h-24 items-center rounded-b-xl border-t bg-muted px-6">
+            <p className="text-sm font-medium text-muted-foreground">ACTION AREA</p>
+          </div>
+        </aside>
+      </main>
+    </div>
   );
 }
