@@ -10,6 +10,18 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # ChCTV 프로젝트 규칙
 
+## 작업 문서 안내
+
+작업 전에는 현재 작업에 필요한 문서만 확인한다.
+전체 문서 지도는 [docs/agent/README.md](docs/agent/README.md)에서 확인한다.
+
+- 제품 목적·MVP 범위: [product/overview.md](docs/agent/product/overview.md)
+- 사용자 흐름·화면 전환: [product/user-flow.md](docs/agent/product/user-flow.md)
+- UI/UX·디자인 시스템: [design/design-system.md](docs/agent/design/design-system.md)
+- 앱 구조·기술 결정·Analytics: [frontend/architecture.md](docs/agent/frontend/architecture.md)
+- 방송 탐색·검색·필터: [features/discovery.md](docs/agent/features/discovery.md)
+- 선택 목록·멀티뷰: [features/multiview.md](docs/agent/features/multiview.md)
+
 ## 프로젝트 개요와 목표
 
 ChCTV는 CHZZK 시청자를 위한 비공식 서드파티 웹 서비스다. 첫 번째 대상 콘텐츠는 봉누도이며, 방송 중인 참가자 탐색, 직업·조직·그룹 필터, 다중 방송 선택, 멀티뷰 시청과 조합 공유를 빠르게 제공한다.
