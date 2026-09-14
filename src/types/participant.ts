@@ -1,22 +1,21 @@
-export type ParticipantOrganization = {
-  /** Source-of-truth organization name from the participant material. */
+export type ParticipantAffiliation = {
+  type: string;
   name: string;
-  /** Short label intended for UI display. */
-  shortName: string;
+  role?: string;
 };
 
 export type Participant = {
   streamerName: string;
   rpName: string | null;
   channelId: string | null;
-  jobs: string[];
-  organization: ParticipantOrganization | null;
+  affiliations: ParticipantAffiliation[];
   groups: string[];
+  tags: string[];
   aliases: string[];
 };
 
 export type ParticipantFilters = {
-  jobs?: readonly string[];
-  organizationNames?: readonly string[];
+  affiliations?: readonly string[];
   groups?: readonly string[];
+  tags?: readonly string[];
 };

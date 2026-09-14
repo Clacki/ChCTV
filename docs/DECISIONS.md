@@ -36,7 +36,7 @@ Context 하단에는 높이 96px의 Action 공간만 예약한다. Discovery 내
 
 기존 페이지 뼈대 안에 최소 폭 288px의 auto-fill Grid와 16px 간격을 적용한다. 1440px에서는 3열, 1920px에서는 4열로 배치되어 카드가 약 324px / 360px 폭을 갖는다. 선택 상태는 selected prop으로 노란 테두리, Yellow CCTV marker, `추가됨` 표식을 표시하며, 클릭이나 선택 상태 관리는 후속 작업에서 연결한다.
 
-StreamCardData는 기존 Participant 타입을 재사용하는 독립적인 UI 모델이다. 예시 8개의 방송 정보는 가상 데이터이며 RP 원본 JSON이나 실제 방송 API와 결합하지 않는다. 향후 필터용 jobs, organization, groups, aliases, channelId는 유지하되 카드에는 모두 노출하지 않는다.
+StreamCardData는 참가자 메타데이터와 분리한 독립적인 UI 모델이다. 예시 8개의 방송 정보는 가상 데이터이며 RP 원본 JSON이나 실제 방송 API와 결합하지 않는다. 참가자 필터 메타데이터는 affiliations, groups, tags, aliases, channelId로 보존하고 카드에는 필요한 정보만 노출한다.
 
 이미지 상태만 카드 내부의 로컬 상태로 관리한다. 로딩 중에는 썸네일만 스켈레톤으로 표시하고, 실패하거나 URL이 없으면 같은 비율의 정적 안내로 바꾼다. next/image의 onLoad / onError를 사용하며, 예시 이미지 서비스가 640×360 크기로 제공하므로 unoptimized로 원본을 직접 표시한다. 데이터 요청용 StreamCardSkeleton은 별도로 제공하며 API 오류나 빈 목록을 대신하지 않는다.
 
@@ -51,3 +51,9 @@ Streamer와 RP 이름은 32px 채널 아바타 옆의 한 줄 Channel Block으�
 반복 사용 근거가 있는 Button, Chip, Tag, Badge, Avatar, Skeleton만 `components/ui`에 둔다. Chip은 필터 선택을 위한 button, Tag는 방송 메타데이터, Badge는 상태·역할 표시로 역할을 구분한다. Button은 primary, secondary, outline, ghost와 32/40/48px 크기를 제공한다. Badge는 live, accent, neutral을 제공하며 LIVE는 red, 선택 상태는 Cheese Yellow를 사용한다.
 
 Avatar는 정상 이미지와 이미지 없음·실패 상태에서 이름 첫 글자를 표시한다. Skeleton은 일반 Layout Primitive이며 StreamCardSkeleton이 이를 조합한다. `/playground`는 공통 UI의 Variant와 상태를 확인하는 개발용 페이지이고 Product Navigation에는 넣지 않는다.
+
+## Discovery 검색과 Flat Faceted Filter
+
+Discovery의 검색은 스트리머명, RP명, 별칭을 공백·대소문자 정규화한 부분 일치로 처리한다. 필터는 `소속`, `그룹`, `태그`의 독립된 Dropdown Facet으로 단순화하고 옵션은 참가자 데이터의 `affiliations[].name`, `groups`, `tags`에서 파생한다. 현재 확인된 값이 없는 그룹과 태그 Trigger는 숨기며, affiliation type·role·시민 상태는 데이터에만 보존하고 UI에는 노출하지 않는다.
+
+같은 Facet의 선택 값은 OR, 서로 다른 Facet은 AND로 적용한다. 현재 StreamCard 예시는 정확한 스트리머명으로 일치하는 참가자 메타데이터에만 연결하며, 소스에 없는 소속·그룹·태그를 추정하지 않는다.

@@ -14,9 +14,6 @@ export const mockStreams: StreamCardData[] = [
     channelId: null,
     category: "GTA5",
     tags: ["봉누도", "경찰", "순찰", "야간근무", "RP"],
-    jobs: ["경찰"],
-    organization: { name: "봉누도경찰청", shortName: "경찰청" },
-    groups: [],
     aliases: [],
   },
   {
@@ -31,9 +28,6 @@ export const mockStreams: StreamCardData[] = [
     channelId: null,
     category: "GTA5",
     tags: ["봉누도", "경찰"],
-    jobs: ["경찰"],
-    organization: { name: "봉누도경찰청", shortName: "경찰청" },
-    groups: [],
     aliases: [],
   },
   {
@@ -48,9 +42,6 @@ export const mockStreams: StreamCardData[] = [
     channelId: null,
     category: "GTA5",
     tags: ["봉누도", "의료", "응급실"],
-    jobs: ["의사"],
-    organization: { name: "봉누도병원", shortName: "병원" },
-    groups: [],
     aliases: ["소담쌤"],
   },
   {
@@ -65,9 +56,6 @@ export const mockStreams: StreamCardData[] = [
     channelId: null,
     category: "GTA5",
     tags: ["봉누도", "정비소", "드라이브", "자동차"],
-    jobs: ["정비사"],
-    organization: { name: "봉누도정비소", shortName: "정비소" },
-    groups: ["드라이브 모임"],
     aliases: [],
   },
   {
@@ -82,9 +70,6 @@ export const mockStreams: StreamCardData[] = [
     channelId: null,
     category: "Just Chatting",
     tags: ["소통"],
-    jobs: [],
-    organization: null,
-    groups: [],
     aliases: ["오후"],
   },
   {
@@ -99,9 +84,6 @@ export const mockStreams: StreamCardData[] = [
     channelId: null,
     category: "GTA5",
     tags: ["봉누도", "신규시민을위한섬투어", "택시", "여행", "소통", "맛집"],
-    jobs: ["택시기사"],
-    organization: { name: "봉누도운수", shortName: "운수" },
-    groups: ["섬 여행 모임"],
     aliases: ["길동택시"],
   },
   {
@@ -116,9 +98,6 @@ export const mockStreams: StreamCardData[] = [
     channelId: null,
     category: "League of Legends",
     tags: ["랭크", "듀오"],
-    jobs: ["시민"],
-    organization: null,
-    groups: [],
     aliases: [],
   },
   {
@@ -133,9 +112,6 @@ export const mockStreams: StreamCardData[] = [
     channelId: null,
     category: "GTA5",
     tags: [],
-    jobs: ["상인"],
-    organization: { name: "봄날상점", shortName: "봄날" },
-    groups: ["상인 모임"],
     aliases: [],
   },
 ];
