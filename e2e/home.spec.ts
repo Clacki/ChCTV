@@ -16,10 +16,17 @@ test("starts multiview with ordered channel query parameters", async ({ page }) 
   await expect(page.getByText("Main", { exact: true })).toBeVisible();
   await expect(page.getByText("Sub 1", { exact: true })).toBeVisible();
 
+  const popupPromise = page.waitForEvent("popup");
   await page.getByRole("button", { name: "멀티뷰 시작" }).click();
-  await expect(page).toHaveURL("/multiview?channel=mock-channel-game&channel=mock-channel-radio");
-  await expect(page.getByText("mock-channel-game", { exact: true })).toBeVisible();
-  await expect(page.getByText("mock-channel-radio", { exact: true })).toBeVisible();
+  const multiviewWindow = await popupPromise;
+
+  await expect(page).toHaveURL("/");
+  await expect(multiviewWindow).toHaveURL("/multiview?channels=mock-channel-game%2Cmock-channel-radio");
+  const viewers = multiviewWindow.locator("iframe");
+  await expect(viewers).toHaveCount(3);
+  await expect(viewers.nth(0)).toHaveAttribute("src", "https://chzzk.naver.com/live/mock-channel-game");
+  await expect(viewers.nth(1)).toHaveAttribute("src", "https://chzzk.naver.com/live/mock-channel-radio");
+  await expect(viewers.nth(2)).toHaveAttribute("src", "https://chzzk.naver.com/live/mock-channel-game/chat");
 });
 
 test("handles direct multiview access without channel parameters", async ({ page }) => {

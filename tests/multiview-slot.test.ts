@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { getMultiviewSlotLabel } from "../src/features/multiview/multiview-slot";
+import {
+  createMultiviewSlots,
+  getMultiviewSlotLabel,
+  swapMainWithSub,
+} from "../src/features/multiview/multiview-slot";
+import { getChzzkChatUrl } from "../src/features/multiview/chzzk-viewer";
 
 describe("getMultiviewSlotLabel", () => {
   it("uses selection order to derive Main and Sub slot labels", () => {
@@ -12,5 +17,19 @@ describe("getMultiviewSlotLabel", () => {
       "Sub 4",
       "Sub 5",
     ]);
+  });
+
+  it("swaps only Main and the requested Sub slot", () => {
+    const slots = createMultiviewSlots(["A", "B", "C", "D"]);
+
+    const swappedSlots = swapMainWithSub(slots, "sub2");
+
+    expect(swappedSlots).toMatchObject({
+      main: "C",
+      sub1: "B",
+      sub2: "A",
+      sub3: "D",
+    });
+    expect(getChzzkChatUrl(swappedSlots.main ?? "")).toBe("https://chzzk.naver.com/live/C/chat");
   });
 });
