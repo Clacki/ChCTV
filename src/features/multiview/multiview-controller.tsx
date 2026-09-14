@@ -8,7 +8,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Bookmark, GripVertical, Play, RotateCcw, Trash2, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Avatar } from "@/components/ui/avatar";
@@ -28,6 +27,7 @@ type MultiviewControllerProps = {
   onMoveStreamByOffset: (streamId: string, offset: number) => void;
   onClearSelection: () => void;
   onReplaceSelection: (streamIds: readonly string[]) => void;
+  onStartMultiview: (channelIds: readonly string[]) => void;
   isDragOver: boolean;
 };
 
@@ -40,9 +40,9 @@ export function MultiviewController({
   onMoveStreamByOffset,
   onClearSelection,
   onReplaceSelection,
+  onStartMultiview,
   isDragOver,
 }: MultiviewControllerProps) {
-  const router = useRouter();
   const streamsById = new Map(streams.map((stream) => [stream.id, stream]));
   const { isOver, setNodeRef } = useDroppable({ id: dropZoneId, data: { type: "selection-drop-zone" } });
   const { savedMultiviews, saveMultiview, removeMultiview } = useSavedMultiviews();
@@ -65,14 +65,12 @@ export function MultiviewController({
       return;
     }
 
-    const params = new URLSearchParams();
-    selectedChannelIds.forEach((channelId) => params.append("channel", channelId));
     analytics.multiviewStarted({
       eventSlug: "bongnudo2",
       source: "multiview",
       channelCount: selectedChannelIds.length,
     });
-    router.push(`/multiview?${params.toString()}`);
+    onStartMultiview(selectedChannelIds);
   };
 
   const handleSave = () => {

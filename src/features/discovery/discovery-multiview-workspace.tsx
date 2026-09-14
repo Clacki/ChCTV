@@ -17,6 +17,7 @@ import { useState } from "react";
 
 import { DiscoveryBrowser } from "@/features/discovery/discovery-browser";
 import { MultiviewController } from "@/features/multiview/multiview-controller";
+import { openMultiviewWindow } from "@/features/multiview/window-launcher";
 import {
   multiviewSelectionLimit,
   useMultiviewSelection,
@@ -82,6 +83,14 @@ export function DiscoveryMultiviewWorkspace({
 
   const activeStream = activeStreamId ? streams.find((stream) => stream.id === activeStreamId) : undefined;
 
+  const openMultiview = (channelIds: readonly string[]) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    openMultiviewWindow(window, channelIds);
+  };
+
   return (
     <DndContext id="discovery-multiview-dnd" sensors={sensors} modifiers={[restrictSelectedStreamToVerticalAxis]} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
       <main className="grid flex-1 grid-cols-1 gap-4 p-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
@@ -109,6 +118,7 @@ export function DiscoveryMultiviewWorkspace({
             onMoveStreamByOffset={selectionState.moveStreamByOffset}
             onClearSelection={selectionState.clearSelection}
             onReplaceSelection={selectionState.replaceSelection}
+            onStartMultiview={openMultiview}
             isDragOver={isSelectionDropZoneActive}
             dropZoneId={selectionDropZoneId}
           />

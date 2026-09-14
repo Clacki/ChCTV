@@ -3,12 +3,14 @@ import Link from "next/link";
 import { MultiviewWorkspace } from "@/features/multiview/multiview-workspace";
 
 type MultiviewPageProps = {
-  searchParams: Promise<{ channel?: string | string[] }>;
+  searchParams: Promise<{ channel?: string | string[]; channels?: string }>;
 };
 
 export default async function MultiviewPage({ searchParams }: MultiviewPageProps) {
-  const { channel } = await searchParams;
-  const channelIds = (Array.isArray(channel) ? channel : channel ? [channel] : []).filter(Boolean);
+  const { channel, channels } = await searchParams;
+  const channelIds = channels
+    ? channels.split(",").filter(Boolean)
+    : (Array.isArray(channel) ? channel : channel ? [channel] : []).filter(Boolean);
 
   if (channelIds.length > 0) {
     return <MultiviewWorkspace channelIds={channelIds.slice(0, 6)} />;
