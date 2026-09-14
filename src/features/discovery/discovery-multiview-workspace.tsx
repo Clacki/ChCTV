@@ -33,9 +33,14 @@ const restrictSelectedStreamToVerticalAxis: Modifier = ({ active, transform }) =
 type DiscoveryMultiviewWorkspaceProps = {
   streams: readonly StreamCardData[];
   participants: readonly Participant[];
+  isDiscoveryLoading?: boolean;
 };
 
-export function DiscoveryMultiviewWorkspace({ streams, participants }: DiscoveryMultiviewWorkspaceProps) {
+export function DiscoveryMultiviewWorkspace({
+  streams,
+  participants,
+  isDiscoveryLoading = false,
+}: DiscoveryMultiviewWorkspaceProps) {
   const selectionState = useMultiviewSelection();
   const [activeStreamId, setActiveStreamId] = useState<string | null>(null);
   const [isSelectionDropZoneActive, setIsSelectionDropZoneActive] = useState(false);
@@ -88,6 +93,7 @@ export function DiscoveryMultiviewWorkspace({ streams, participants }: Discovery
             selection={selectionState.selection}
             selectionLimit={multiviewSelectionLimit}
             onAddStream={selectionState.addStream}
+            isLoading={isDiscoveryLoading}
           />
         </section>
 
