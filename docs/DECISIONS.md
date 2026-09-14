@@ -26,7 +26,7 @@
 
 홈은 56px Global 영역 아래에 Discovery와 Selection / Context를 나란히 둔다. 탐색하면서 선택 맥락을 함께 확인할 수 있도록 Context는 우측 320px로 제한하고, 나머지 폭은 Discovery에 배분한다. 최대 너비 제한 없이 페이지 여백 24px, 영역 간격 16px을 적용한다. 1440px 화면에서 영역 폭은 1056px / 320px이며, 더 넓은 화면에서는 고정 비율 대신 Discovery만 확장한다.
 
-Context 하단에는 높이 96px의 Action 공간만 예약한다. Discovery 내부와 Global / Context의 세부 기능 위치는 확정하지 않는다. 정적 서버 페이지의 시맨틱 마크업과 기존 Tailwind 스타일로 표현하며, Foundation 색상은 기존 CSS 토큰에 반영한다. 폰트는 Pretendard 우선 스택을 사용하고, 폰트 파일 로딩은 이번 단계에 추가하지 않는다.
+Context는 320px 폭을 유지한 Multiview Controller로 구성한다. Global Header와 페이지 여백 아래에서 sticky로 유지하고, Header·현재 선택·실행 Action·저장·저장 묶음 순으로 배치한다. Discovery와 Controller는 페이지 작업 영역의 단일 선택 배열을 공유하므로 `+ 추가`, 카드 드롭, 개별 해제, 초기화가 같은 최대 6개·중복 방지 규칙을 적용한다. Discovery 카드는 Controller 선택 영역으로 드래그할 수 있고, 선택 항목은 `@dnd-kit/sortable`으로 세로 축에서만 정렬한다. 현재 선택 목록만 남은 높이를 채워 내부 스크롤되도록 해, 목록이 길어져도 실행 Action을 항상 사용할 수 있게 한다. 저장 묶음의 LIVE 수는 mock stream ID와 현재 mock stream의 `isLive` 값으로 계산한다. 실제 저장에는 장기 식별자인 channelId 기반 모델을 별도로 연결한다.
 
 1024px 미만에서는 뼈대가 겹치지 않도록 두 영역을 DOM 순서대로 쌓는 최소 CSS만 적용한다. 실제 모바일 UI, 접기, Sheet, 개별 기능 컴포넌트와 상호작용은 후속 작업으로 남긴다.
 

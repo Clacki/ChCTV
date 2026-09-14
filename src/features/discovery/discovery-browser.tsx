@@ -1,5 +1,6 @@
 "use client";
 
+import { useDraggable } from "@dnd-kit/core";
 import { Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { FacetFilter } from "@/components/ui/facet-filter";
 import { matchesParticipantFilters } from "@/lib/participants";
+import { cn } from "@/lib/utils";
 import type { Participant, ParticipantFilters } from "@/types/participant";
 import type { StreamCardData } from "@/types/stream-card";
 
@@ -29,9 +31,18 @@ function uniqueSorted(values: readonly string[]): string[] {
 type DiscoveryBrowserProps = {
   streams: readonly StreamCardData[];
   participants: readonly Participant[];
+  selection: readonly string[];
+  selectionLimit: number;
+  onAddStream: (streamId: string) => void;
 };
 
-export function DiscoveryBrowser({ streams, participants }: DiscoveryBrowserProps) {
+export function DiscoveryBrowser({
+  streams,
+  participants,
+  selection,
+  selectionLimit,
+  onAddStream,
+}: DiscoveryBrowserProps) {
   const [query, setQuery] = useState("");
   const [affiliations, setAffiliations] = useState<string[]>([]);
   const [groups, setGroups] = useState<string[]>([]);
@@ -49,11 +60,11 @@ export function DiscoveryBrowser({ streams, participants }: DiscoveryBrowserProp
   const tagOptions = useMemo(() => uniqueSorted(participants.flatMap((participant) => participant.tags)), [participants]);
   const hasFilters = affiliations.length > 0 || groups.length > 0 || tags.length > 0;
 
-  const filteredStreams = useMemo(() => {
+  const visibleStreams = useMemo(() => {
     const normalizedQuery = normalize(query);
     const filters: ParticipantFilters = { affiliations, groups, tags };
 
-    return streams
+    const filteredStreams = streams
       .filter((stream) => {
         const participant = participantsByStreamer.get(stream.streamerName);
         const searchValues = [stream.streamerName, stream.rpName, ...stream.aliases, ...(participant?.aliases ?? [])];
@@ -61,8 +72,9 @@ export function DiscoveryBrowser({ streams, participants }: DiscoveryBrowserProp
         const matchesFilters = !hasFilters || (participant !== undefined && matchesParticipantFilters(participant, filters));
 
         return matchesQuery && matchesFilters;
-      })
-      .sort((left, right) => right.viewerCount - left.viewerCount);
+      });
+
+    return [...filteredStreams].sort((left, right) => right.viewerCount - left.viewerCount);
   }, [affiliations, groups, hasFilters, participantsByStreamer, query, streams, tags]);
 
   const reset = () => {
@@ -88,7 +100,7 @@ export function DiscoveryBrowser({ streams, participants }: DiscoveryBrowserProp
             <button
               type="button"
               onClick={() => setQuery("")}
-              className="inline-flex size-6 items-center justify-center rounded-sm text-tertiary hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex size-6 cursor-pointer items-center justify-center rounded-sm text-tertiary hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               aria-label="검색어 지우기"
             >
               <X aria-hidden="true" className="size-4" />
@@ -116,15 +128,20 @@ export function DiscoveryBrowser({ streams, participants }: DiscoveryBrowserProp
             {value}
           </Chip>
         ))}
-        <p className="ml-auto text-sm font-medium">방송 {filteredStreams.length}개</p>
+        <p className="ml-auto text-sm font-medium">방송 {visibleStreams.length}개</p>
         {(query || hasFilters) && <Button type="button" variant="ghost" size="sm" onClick={reset}>초기화</Button>}
       </div>
 
-      {filteredStreams.length > 0 ? (
+      {visibleStreams.length > 0 ? (
         <ul className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-4">
-          {filteredStreams.map((stream) => (
+          {visibleStreams.map((stream) => (
             <li key={stream.id} className="min-w-0">
-              <StreamCard stream={stream} selected={stream.id === "mock-patrol"} />
+              <DraggableDiscoveryStream
+                stream={stream}
+                selected={selection.includes(stream.id)}
+                canAdd={selection.length < selectionLimit}
+                onAdd={() => onAddStream(stream.id)}
+              />
             </li>
           ))}
         </ul>
@@ -135,5 +152,52 @@ export function DiscoveryBrowser({ streams, participants }: DiscoveryBrowserProp
         </div>
       )}
     </>
+  );
+}
+
+function DraggableDiscoveryStream({
+  stream,
+  selected,
+  canAdd,
+  onAdd,
+}: Readonly<{
+  stream: StreamCardData;
+  selected: boolean;
+  canAdd: boolean;
+  onAdd: () => void;
+}>) {
+  const canInteract = !selected && canAdd;
+  const { attributes, isDragging, listeners, setNodeRef } = useDraggable({
+    id: `discovery:${stream.id}`,
+    data: { type: "discovery-stream", streamId: stream.id },
+    disabled: !canInteract,
+  });
+  const draggableAttributes = {
+    ...attributes,
+    role: undefined,
+    tabIndex: undefined,
+    "aria-disabled": undefined,
+    "aria-roledescription": undefined,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...draggableAttributes}
+      {...listeners}
+      className={cn(
+        "min-w-0",
+        canInteract && "cursor-grab active:cursor-grabbing",
+        isDragging && "cursor-grabbing opacity-60",
+      )}
+    >
+      <StreamCard
+        stream={stream}
+        selected={selected}
+        onAdd={onAdd}
+        addDisabled={!canInteract}
+        draggable={canInteract}
+      />
+    </div>
   );
 }

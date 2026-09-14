@@ -14,9 +14,18 @@ import type { StreamCardData } from "@/types/stream-card";
 type StreamCardProps = {
   stream: StreamCardData;
   selected?: boolean;
+  onAdd?: () => void;
+  addDisabled?: boolean;
+  draggable?: boolean;
 };
 
-export function StreamCard({ stream, selected = false }: StreamCardProps) {
+export function StreamCard({
+  stream,
+  selected = false,
+  onAdd,
+  addDisabled = false,
+  draggable = false,
+}: StreamCardProps) {
   const [thumbnail, setThumbnail] = useState<{
     src: string | null;
     status: "loading" | "loaded" | "error";
@@ -39,7 +48,10 @@ export function StreamCard({ stream, selected = false }: StreamCardProps) {
       aria-label={`${stream.streamerName} 방송`}
       className={cn(
         "group min-w-0 overflow-hidden rounded-xl border bg-card",
-        selected ? "border-primary" : "hover:border-border-strong",
+        selected
+          ? "border-primary ring-1 ring-primary/35 hover:border-primary hover:ring-primary/60"
+          : "hover:border-border-strong",
+        draggable && "cursor-grab active:cursor-grabbing",
       )}
     >
       <div className="relative aspect-video overflow-hidden bg-muted">
@@ -97,10 +109,16 @@ export function StreamCard({ stream, selected = false }: StreamCardProps) {
             추가됨
           </Badge>
         ) : (
-          <span className="absolute top-3 right-3 inline-flex h-7 items-center gap-1 rounded-sm border border-border bg-background/85 px-2 text-xs font-medium text-foreground">
+          <button
+            type="button"
+            onClick={onAdd}
+            disabled={addDisabled || !onAdd}
+            aria-label={`${stream.streamerName} 선택에 추가`}
+            className="absolute top-3 right-3 inline-flex h-7 cursor-pointer items-center gap-1 rounded-sm border border-border bg-background/85 px-2 text-xs font-medium text-foreground hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
             <Plus aria-hidden="true" className="size-3" />
-            추가
-          </span>
+            {addDisabled ? "최대 선택" : "추가"}
+          </button>
         )}
       </div>
 
