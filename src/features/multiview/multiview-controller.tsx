@@ -8,17 +8,19 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Bookmark, GripVertical, Play, RotateCcw, Trash2, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { mockStreams } from "@/data/mock-streams";
 import { cn } from "@/lib/utils";
+import { analytics } from "@/lib/analytics/events";
+import { getMultiviewSlotLabel } from "@/features/multiview/multiview-slot";
 import { useSavedMultiviews } from "@/features/multiview/use-saved-multiviews";
-
-const streamsById = new Map(mockStreams.map((stream) => [stream.id, stream]));
+import type { StreamCardData } from "@/types/stream-card";
 
 type MultiviewControllerProps = {
+  streams: readonly StreamCardData[];
   selection: readonly string[];
   selectionLimit: number;
   dropZoneId: string;
@@ -30,6 +32,7 @@ type MultiviewControllerProps = {
 };
 
 export function MultiviewController({
+  streams,
   selection,
   selectionLimit,
   dropZoneId,
@@ -39,6 +42,8 @@ export function MultiviewController({
   onReplaceSelection,
   isDragOver,
 }: MultiviewControllerProps) {
+  const router = useRouter();
+  const streamsById = new Map(streams.map((stream) => [stream.id, stream]));
   const { isOver, setNodeRef } = useDroppable({ id: dropZoneId, data: { type: "selection-drop-zone" } });
   const { savedMultiviews, saveMultiview, removeMultiview } = useSavedMultiviews();
   const [savedMultiviewName, setSavedMultiviewName] = useState("");
@@ -50,6 +55,25 @@ export function MultiviewController({
   };
 
   const canSave = selection.length > 0 && savedMultiviewName.trim().length > 0;
+  const selectedChannelIds = selection
+    .map((streamId) => streamsById.get(streamId)?.channelId)
+    .filter((channelId): channelId is string => channelId !== null && channelId !== undefined);
+  const canStart = selection.length > 0 && selectedChannelIds.length === selection.length;
+
+  const startMultiview = () => {
+    if (!canStart) {
+      return;
+    }
+
+    const params = new URLSearchParams();
+    selectedChannelIds.forEach((channelId) => params.append("channel", channelId));
+    analytics.multiviewStarted({
+      eventSlug: "bongnudo2",
+      source: "multiview",
+      channelCount: selectedChannelIds.length,
+    });
+    router.push(`/multiview?${params.toString()}`);
+  };
 
   const handleSave = () => {
     const result = saveMultiview(savedMultiviewName, selection);
@@ -95,7 +119,7 @@ export function MultiviewController({
                   <SortableSelectedStreamItem
                     key={stream.id}
                     streamId={stream.id}
-                    index={index}
+                    slotLabel={getMultiviewSlotLabel(index)}
                     streamerName={stream.streamerName}
                     rpName={stream.rpName}
                     channelImageUrl={stream.channelImageUrl}
@@ -119,7 +143,7 @@ export function MultiviewController({
 
       <div className="px-4 pb-4 pt-3">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-          <Button type="button" size="md" disabled={selection.length === 0}>
+          <Button type="button" size="md" onClick={startMultiview} disabled={!canStart}>
             <Play aria-hidden="true" className="size-4" />멀티뷰 시작
           </Button>
           <Button type="button" variant="outline" size="md" onClick={onClearSelection} disabled={selection.length === 0}>
@@ -161,7 +185,7 @@ export function MultiviewController({
         <h3 id="saved-multiviews-heading" className="text-sm font-medium">저장된 묶음 <span className="text-primary">{savedMultiviews.length}개</span></h3>
         <ul className="mt-2 max-h-36 divide-y overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable] [scrollbar-width:thin]">
           {savedMultiviews.map((multiview) => {
-            const status = getSavedMultiviewStatus(multiview.streamIds);
+            const status = getSavedMultiviewStatus(multiview.streamIds, streamsById);
 
             return (
               <li key={multiview.id} className="flex min-w-0 items-center gap-1 py-1">
@@ -198,7 +222,7 @@ export function MultiviewController({
 
 function SortableSelectedStreamItem({
   streamId,
-  index,
+  slotLabel,
   streamerName,
   rpName,
   channelImageUrl,
@@ -206,7 +230,7 @@ function SortableSelectedStreamItem({
   onRemove,
 }: Readonly<{
   streamId: string;
-  index: number;
+  slotLabel: string;
   streamerName: string;
   rpName: string | null;
   channelImageUrl: string | null;
@@ -245,7 +269,16 @@ function SortableSelectedStreamItem({
         >
           <GripVertical aria-hidden="true" className="size-4" />
         </button>
-        <span className="w-4 shrink-0 text-center font-mono text-xs text-tertiary">{index + 1}</span>
+        <span
+          className={cn(
+            "inline-flex h-6 w-12 shrink-0 items-center justify-center rounded-sm border px-1.5 text-[11px] font-semibold leading-none",
+            slotLabel === "Main"
+              ? "border-primary bg-primary text-primary-foreground"
+              : "border-primary text-primary",
+          )}
+        >
+          {slotLabel}
+        </span>
         <Avatar src={channelImageUrl} alt={`${streamerName} 채널 이미지`} fallback={streamerName} size="sm" className="size-7 text-[10px]" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium">{streamerName}</p>
@@ -264,10 +297,13 @@ function SortableSelectedStreamItem({
   );
 }
 
-function getSavedMultiviewStatus(streamIds: readonly string[]) {
+function getSavedMultiviewStatus(
+  streamIds: readonly string[],
+  streamsById: ReadonlyMap<string, StreamCardData>,
+) {
   const streams = streamIds
     .map((streamId) => streamsById.get(streamId))
-    .filter((stream): stream is (typeof mockStreams)[number] => stream !== undefined);
+    .filter((stream): stream is StreamCardData => stream !== undefined);
 
   return {
     channelCount: streamIds.length,
