@@ -1,6 +1,4 @@
-import { mockStreams } from "@/data/mock-streams";
 import { DiscoveryMultiviewWorkspace } from "@/features/discovery/discovery-multiview-workspace";
-import { getParticipants } from "@/lib/participants";
 
 export default function Home() {
   return (
@@ -9,7 +7,7 @@ export default function Home() {
         <p className="text-sm font-medium text-muted-foreground">GLOBAL AREA</p>
       </header>
 
-      <DiscoveryMultiviewWorkspace streams={mockStreams} participants={getParticipants()} />
+      <DiscoveryMultiviewWorkspace />
     </div>
   );
 }

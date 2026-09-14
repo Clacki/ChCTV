@@ -139,10 +139,12 @@ export function StreamCard({
           {stream.title}
         </h2>
         <div className="mt-1 flex h-5 min-w-0 items-center gap-2 text-xs text-muted-foreground">
-          <p className="max-w-24 shrink-0 truncate" title={stream.category}>
-            <span className="sr-only">카테고리 </span>
-            {stream.category}
-          </p>
+          {stream.category && (
+            <p className="max-w-24 shrink-0 truncate" title={stream.category}>
+              <span className="sr-only">카테고리 </span>
+              {stream.category}
+            </p>
+          )}
           <ul aria-label="방송 태그" className="flex min-w-0 items-center gap-2">
             {visibleTags.map((tag) => (
               <li key={tag} className="min-w-0">

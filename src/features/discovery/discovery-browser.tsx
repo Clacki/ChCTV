@@ -35,6 +35,8 @@ type DiscoveryBrowserProps = {
   selectionLimit: number;
   onAddStream: (streamId: string) => void;
   isLoading?: boolean;
+  hasError?: boolean;
+  onRetry?: () => void;
 };
 
 const streamGridClassName = "mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-4";
@@ -47,6 +49,8 @@ export function DiscoveryBrowser({
   selectionLimit,
   onAddStream,
   isLoading = false,
+  hasError = false,
+  onRetry,
 }: DiscoveryBrowserProps) {
   const [query, setQuery] = useState("");
   const [affiliations, setAffiliations] = useState<string[]>([]);
@@ -151,6 +155,12 @@ export function DiscoveryBrowser({
             ))}
           </ul>
         </>
+      ) : hasError ? (
+        <div className="mt-4 rounded-xl border border-dashed p-8 text-center">
+          <p className="text-sm font-medium">방송 정보를 불러오지 못했습니다.</p>
+          <p className="mt-1 text-sm text-muted-foreground">잠시 후 다시 시도해 주세요.</p>
+          {onRetry && <Button type="button" variant="secondary" size="sm" className="mt-4" onClick={onRetry}>다시 시도</Button>}
+        </div>
       ) : visibleStreams.length > 0 ? (
         <ul className={streamGridClassName}>
           {visibleStreams.map((stream) => (

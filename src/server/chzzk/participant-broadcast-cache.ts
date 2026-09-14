@@ -3,6 +3,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 
 import { createParticipantBroadcastCache } from "../../lib/participant-broadcast-cache";
+import { normalizeChzzkLiveThumbnailUrl } from "../../lib/chzzk-thumbnail-url";
 import { getParticipants } from "../../lib/participants";
 import type {
   CachedParticipantBroadcastsResult,
@@ -11,6 +12,22 @@ import type {
 import { getParticipantBroadcasts } from "./participant-broadcasts";
 
 export const CHZZK_LIVE_CACHE_SECONDS = 15 * 60;
+
+function normalizeBroadcastThumbnails(broadcasts: ParticipantBroadcastSnapshot["broadcasts"]) {
+  return broadcasts.map((broadcast) => {
+    if (!broadcast.live) {
+      return broadcast;
+    }
+
+    return {
+      ...broadcast,
+      live: {
+        ...broadcast.live,
+        thumbnailUrl: normalizeChzzkLiveThumbnailUrl(broadcast.live.thumbnailUrl),
+      },
+    };
+  });
+}
 
 class BroadcastLoadError extends Error {
   constructor(
@@ -53,7 +70,7 @@ export async function getCachedParticipantBroadcasts(): Promise<CachedParticipan
 
   return {
     status: result.status,
-    broadcasts: result.snapshot.broadcasts,
+    broadcasts: normalizeBroadcastThumbnails(result.snapshot.broadcasts),
     ambiguousMatches: result.snapshot.ambiguousMatches,
     fetchedAt: result.snapshot.fetchedAt,
     cacheAgeSeconds: result.cacheAgeSeconds,

@@ -7,7 +7,7 @@ export default defineConfig({
   testDir: "./e2e",
   use: { baseURL, ...devices["Desktop Chrome"] },
   webServer: {
-    command: `corepack pnpm dev -- --port ${port}`,
+    command: `corepack pnpm dev --port ${port}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
   },

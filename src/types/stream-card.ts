@@ -3,13 +3,13 @@ export type StreamCardData = {
   id: string;
   title: string;
   thumbnailUrl: string | null;
-  channelImageUrl: string;
+  channelImageUrl: string | null;
   isLive: boolean;
   viewerCount: number;
   streamerName: string;
   rpName: string | null;
   channelId: string | null;
-  category: string;
+  category: string | null;
   tags: string[];
   aliases: string[];
 };

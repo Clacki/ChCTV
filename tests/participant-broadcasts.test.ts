@@ -26,6 +26,11 @@ const live = (overrides: Partial<ChzzkLiveChannel> = {}): ChzzkLiveChannel => ({
   liveTitle: "라이브",
   viewerCount: 100,
   thumbnailUrl: null,
+  channelImageUrl: null,
+  tags: [],
+  categoryType: null,
+  liveCategory: null,
+  liveCategoryValue: null,
   ...overrides,
 });
 
