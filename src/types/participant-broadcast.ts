@@ -6,6 +6,11 @@ export type ChzzkLiveChannel = {
   liveTitle: string;
   viewerCount: number;
   thumbnailUrl: string | null;
+  channelImageUrl: string | null;
+  tags: string[];
+  categoryType: string | null;
+  liveCategory: string | null;
+  liveCategoryValue: string | null;
 };
 
 export type ParticipantBroadcast = {

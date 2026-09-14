@@ -1,5 +1,8 @@
 import "server-only";
 
+import { normalizeChzzkLiveThumbnailUrl } from "@/lib/chzzk-thumbnail-url";
+import type { ChzzkLiveChannel } from "../../types/participant-broadcast";
+
 const CHZZK_API_URL = "https://openapi.chzzk.naver.com/open/v1/lives";
 
 type ChzzkLiveResponse = {
@@ -19,16 +22,10 @@ type ChzzkLive = {
   channelName: string;
   channelImageUrl: string | null;
   liveThumbnailImageUrl: string | null;
-};
-
-export type ChzzkLiveChannel = {
-  liveId: number;
-  channelId: string;
-  channelName: string;
-  liveTitle: string;
-  viewerCount: number;
-  thumbnailUrl: string | null;
-  channelImageUrl: string | null;
+  tags?: string[];
+  categoryType?: string | null;
+  liveCategory?: string | null;
+  liveCategoryValue?: string | null;
 };
 
 export type ChzzkApiErrorKind = "configuration" | "authentication" | "rate_limit" | "upstream" | "network";
@@ -87,13 +84,16 @@ async function fetchLivePage(next?: string): Promise<{ lives: ChzzkLiveChannel[]
 
   return {
     lives: (body.content?.data ?? []).map((live) => ({
-    liveId: live.liveId,
-    liveTitle: live.liveTitle,
-    viewerCount: live.concurrentUserCount,
-    channelId: live.channelId,
-    channelName: live.channelName,
-    thumbnailUrl: live.liveThumbnailImageUrl,
-    channelImageUrl: live.channelImageUrl,
+      liveTitle: live.liveTitle,
+      viewerCount: live.concurrentUserCount,
+      channelId: live.channelId,
+      channelName: live.channelName,
+      thumbnailUrl: normalizeChzzkLiveThumbnailUrl(live.liveThumbnailImageUrl),
+      channelImageUrl: live.channelImageUrl,
+      tags: live.tags ?? [],
+      categoryType: live.categoryType ?? null,
+      liveCategory: live.liveCategory ?? null,
+      liveCategoryValue: live.liveCategoryValue ?? null,
     })),
     next: body.content?.page?.next ?? null,
   };

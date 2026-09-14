@@ -16,13 +16,13 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { DiscoveryBrowser } from "@/features/discovery/discovery-browser";
+import { useParticipantBroadcasts } from "@/features/discovery/use-participant-broadcasts";
 import { MultiviewController } from "@/features/multiview/multiview-controller";
 import { openMultiviewWindow } from "@/features/multiview/window-launcher";
 import {
   multiviewSelectionLimit,
   useMultiviewSelection,
 } from "@/features/multiview/use-multiview-selection";
-import type { Participant } from "@/types/participant";
 import type { StreamCardData } from "@/types/stream-card";
 
 const selectionDropZoneId = "selection-drop-zone";
@@ -31,17 +31,8 @@ const restrictSelectedStreamToVerticalAxis: Modifier = ({ active, transform }) =
   active?.data.current?.type === "selected-stream" ? { ...transform, x: 0 } : transform
 );
 
-type DiscoveryMultiviewWorkspaceProps = {
-  streams: readonly StreamCardData[];
-  participants: readonly Participant[];
-  isDiscoveryLoading?: boolean;
-};
-
-export function DiscoveryMultiviewWorkspace({
-  streams,
-  participants,
-  isDiscoveryLoading = false,
-}: DiscoveryMultiviewWorkspaceProps) {
+export function DiscoveryMultiviewWorkspace() {
+  const { streams, participants, status, retry } = useParticipantBroadcasts();
   const selectionState = useMultiviewSelection();
   const [activeStreamId, setActiveStreamId] = useState<string | null>(null);
   const [isSelectionDropZoneActive, setIsSelectionDropZoneActive] = useState(false);
@@ -102,7 +93,9 @@ export function DiscoveryMultiviewWorkspace({
             selection={selectionState.selection}
             selectionLimit={multiviewSelectionLimit}
             onAddStream={selectionState.addStream}
-            isLoading={isDiscoveryLoading}
+            isLoading={status === "loading"}
+            hasError={status === "error"}
+            onRetry={retry}
           />
         </section>
 
