@@ -10,6 +10,9 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-tertiary: var(--text-tertiary);
+  --color-live: var(--live);
 }
 
 :root {
@@ -22,6 +25,9 @@
   --muted: #303030;
   --muted-foreground: #c7c7c7;
   --border: #424242;
+  --border-strong: #686868;
+  --text-tertiary: #929292;
+  --live: #ff4d67;
   --radius: 0.75rem;
 }
 
