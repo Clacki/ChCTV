@@ -1,3 +1,6 @@
+import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card";
+import { mockStreams } from "@/data/mock-streams";
+
 export default function Home() {
   return (
     <div className="flex min-h-dvh flex-col">
@@ -13,6 +16,19 @@ export default function Home() {
           <h1 id="discovery-heading" className="text-base font-medium">
             DISCOVERY AREA
           </h1>
+          <p className="mt-1 text-xs text-muted-foreground">
+            예시 방송 · 선택된 모습과 로딩 상태를 포함합니다.
+          </p>
+          <ul className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-4">
+            {mockStreams.map((stream, index) => (
+              <li key={stream.id} className="min-w-0">
+                <StreamCard stream={stream} selected={index === 0} />
+              </li>
+            ))}
+            <li className="min-w-0">
+              <StreamCardSkeleton />
+            </li>
+          </ul>
         </section>
 
         <aside
