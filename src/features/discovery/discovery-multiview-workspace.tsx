@@ -102,6 +102,7 @@ export function DiscoveryMultiviewWorkspace({
           className="self-start overflow-hidden rounded-xl border bg-card lg:sticky lg:top-20 lg:h-[calc(100dvh-5rem)]"
         >
           <MultiviewController
+            streams={streams}
             selection={selectionState.selection}
             selectionLimit={multiviewSelectionLimit}
             onRemoveStream={selectionState.removeStream}

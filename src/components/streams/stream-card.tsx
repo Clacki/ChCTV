@@ -111,7 +111,11 @@ export function StreamCard({
         ) : (
           <button
             type="button"
-            onClick={onAdd}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              onAdd?.();
+            }}
             disabled={addDisabled || !onAdd}
             aria-label={`${stream.streamerName} 선택에 추가`}
             className="absolute top-3 right-3 inline-flex h-7 cursor-pointer items-center gap-1 rounded-sm border border-border bg-background/85 px-2 text-xs font-medium text-foreground hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
