@@ -13,9 +13,9 @@ const participant = (overrides: Partial<Participant> = {}): Participant => ({
   streamerName: "달콤레나",
   rpName: null,
   channelId: null,
-  jobs: [],
-  organization: null,
+  affiliations: [],
   groups: [],
+  tags: [],
   aliases: [],
   ...overrides,
 });

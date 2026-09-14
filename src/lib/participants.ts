@@ -8,7 +8,7 @@ function normalize(value: string): string {
 }
 
 function includesAny(values: readonly string[], selectedValues: readonly string[]): boolean {
-  const selected = new Set(selectedValues.map(normalize));
+  const selected = new Set(selectedValues.filter(Boolean).map(normalize));
 
   return values.some((value) => selected.has(normalize(value)));
 }
@@ -18,7 +18,7 @@ export function getParticipants(): readonly Participant[] {
   return participants;
 }
 
-/** Searches all fields intended for participant discovery. */
+/** Searches the names that users use to find a participant. */
 export function searchParticipants(query: string): Participant[] {
   const normalizedQuery = normalize(query);
 
@@ -27,15 +27,7 @@ export function searchParticipants(query: string): Participant[] {
   }
 
   return participants.filter((participant) => {
-    const searchableValues = [
-      participant.streamerName,
-      participant.rpName,
-      ...participant.aliases,
-      ...participant.jobs,
-      participant.organization?.name,
-      participant.organization?.shortName,
-      ...participant.groups,
-    ];
+    const searchableValues = [participant.streamerName, participant.rpName, ...participant.aliases];
 
     return searchableValues.some(
       (value) => value !== null && value !== undefined && normalize(value).includes(normalizedQuery),
@@ -44,37 +36,20 @@ export function searchParticipants(query: string): Participant[] {
 }
 
 /**
- * Applies OR matching within each filter and AND matching between filter types.
- * For organization filters, both the formal and short organization names match.
+ * Matches OR within each facet and AND across affiliation, group, and tag facets.
  */
-export function filterParticipants(filters: ParticipantFilters): Participant[] {
-  const jobs = filters.jobs?.filter(Boolean) ?? [];
-  const organizationNames = filters.organizationNames?.filter(Boolean) ?? [];
+export function matchesParticipantFilters(participant: Participant, filters: ParticipantFilters): boolean {
+  const affiliations = filters.affiliations?.filter(Boolean) ?? [];
   const groups = filters.groups?.filter(Boolean) ?? [];
+  const tags = filters.tags?.filter(Boolean) ?? [];
 
-  return participants.filter((participant) => {
-    if (jobs.length > 0 && !includesAny(participant.jobs, jobs)) {
-      return false;
-    }
+  return (
+    (affiliations.length === 0 || includesAny(participant.affiliations.map((affiliation) => affiliation.name), affiliations)) &&
+    (groups.length === 0 || includesAny(participant.groups, groups)) &&
+    (tags.length === 0 || includesAny(participant.tags, tags))
+  );
+}
 
-    if (
-      organizationNames.length > 0 &&
-      !participant.organization?.name &&
-      !participant.organization?.shortName
-    ) {
-      return false;
-    }
-
-    if (
-      organizationNames.length > 0 &&
-      !includesAny(
-        [participant.organization!.name, participant.organization!.shortName],
-        organizationNames,
-      )
-    ) {
-      return false;
-    }
-
-    return groups.length === 0 || includesAny(participant.groups, groups);
-  });
+export function filterParticipants(filters: ParticipantFilters): Participant[] {
+  return participants.filter((participant) => matchesParticipantFilters(participant, filters));
 }

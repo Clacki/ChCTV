@@ -16,7 +16,7 @@ export function Chip({ className, children, selected = false, removable = false,
       className={cn(
         "inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:border-transparent disabled:bg-muted disabled:text-disabled",
         selected
-          ? "border-primary bg-card text-foreground hover:bg-muted"
+          ? "border-primary bg-primary/10 text-primary hover:bg-primary/15"
           : "bg-card text-foreground hover:border-border-strong hover:bg-muted",
         className,
       )}
