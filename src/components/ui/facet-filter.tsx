@@ -67,7 +67,7 @@ export function FacetFilter({
         aria-haspopup="listbox"
         onClick={() => setIsOpen((open) => !open)}
         className={cn(
-          "inline-flex h-10 items-center gap-2 rounded-md border bg-card px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+          "inline-flex h-10 cursor-pointer items-center gap-2 rounded-md border bg-card px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
           hasSelection
             ? "border-primary bg-primary/10 text-primary hover:bg-primary/15"
             : "text-foreground hover:border-border-strong hover:bg-muted",
@@ -97,7 +97,7 @@ export function FacetFilter({
                 aria-selected={selected}
                 onClick={() => toggleOption(option)}
                 className={cn(
-                  "flex w-full items-center gap-2 rounded-sm px-2 py-2 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary",
+                  "flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-2 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary",
                   selected ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted",
                 )}
               >
