@@ -1,10 +1,10 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
-import { Search, X } from "lucide-react";
+import { LoaderCircle, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { StreamCard } from "@/components/streams/stream-card";
+import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { FacetFilter } from "@/components/ui/facet-filter";
@@ -34,7 +34,11 @@ type DiscoveryBrowserProps = {
   selection: readonly string[];
   selectionLimit: number;
   onAddStream: (streamId: string) => void;
+  isLoading?: boolean;
 };
+
+const streamGridClassName = "mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-4";
+const loadingSkeletonCount = 8;
 
 export function DiscoveryBrowser({
   streams,
@@ -42,6 +46,7 @@ export function DiscoveryBrowser({
   selection,
   selectionLimit,
   onAddStream,
+  isLoading = false,
 }: DiscoveryBrowserProps) {
   const [query, setQuery] = useState("");
   const [affiliations, setAffiliations] = useState<string[]>([]);
@@ -128,12 +133,26 @@ export function DiscoveryBrowser({
             {value}
           </Chip>
         ))}
-        <p className="ml-auto text-sm font-medium">방송 {visibleStreams.length}개</p>
+        <p className="ml-auto text-sm font-medium">{isLoading ? "방송 정보를 불러오는 중" : `방송 ${visibleStreams.length}개`}</p>
         {(query || hasFilters) && <Button type="button" variant="ghost" size="sm" onClick={reset}>초기화</Button>}
       </div>
 
-      {visibleStreams.length > 0 ? (
-        <ul className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-4">
+      {isLoading ? (
+        <>
+          <div role="status" aria-label="방송 정보를 불러오는 중" className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+            <LoaderCircle aria-hidden="true" className="size-4 animate-spin text-primary motion-reduce:animate-none" />
+            <span>방송 정보를 불러오는 중</span>
+          </div>
+          <ul aria-label="방송 정보 로딩" className={streamGridClassName}>
+            {Array.from({ length: loadingSkeletonCount }, (_, index) => (
+              <li key={index} className="min-w-0">
+                <StreamCardSkeleton />
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : visibleStreams.length > 0 ? (
+        <ul className={streamGridClassName}>
           {visibleStreams.map((stream) => (
             <li key={stream.id} className="min-w-0">
               <DraggableDiscoveryStream

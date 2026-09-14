@@ -167,8 +167,7 @@ export function StreamCard({
 
 export function StreamCardSkeleton() {
   return (
-    <div role="status" aria-busy="true" className="min-w-0 overflow-hidden rounded-xl border bg-card">
-      <span className="sr-only">방송 정보를 불러오는 중</span>
+    <div aria-hidden="true" className="min-w-0 overflow-hidden rounded-xl border bg-card">
       <div aria-hidden="true">
         <Skeleton className="aspect-video rounded-none" />
         <div className="flex flex-col px-3 py-2">
