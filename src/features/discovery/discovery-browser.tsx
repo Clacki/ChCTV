@@ -2,7 +2,7 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { LoaderCircle, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,7 @@ type DiscoveryBrowserProps = {
 
 const streamGridClassName = "mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-4";
 const loadingSkeletonCount = 8;
+export const discoveryShowRpNameStorageKey = "chctv.discovery.show-rp-name";
 
 export function DiscoveryBrowser({
   streams,
@@ -56,6 +57,23 @@ export function DiscoveryBrowser({
   const [affiliations, setAffiliations] = useState<string[]>([]);
   const [groups, setGroups] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
+  const [showRpName, setShowRpName] = useState(false);
+  const [hasRestoredRpNamePreference, setHasRestoredRpNamePreference] = useState(false);
+
+  useEffect(() => {
+    const restoreFrame = window.requestAnimationFrame(() => {
+      setShowRpName(window.localStorage.getItem(discoveryShowRpNameStorageKey) === "true");
+      setHasRestoredRpNamePreference(true);
+    });
+
+    return () => window.cancelAnimationFrame(restoreFrame);
+  }, []);
+
+  useEffect(() => {
+    if (hasRestoredRpNamePreference) {
+      window.localStorage.setItem(discoveryShowRpNameStorageKey, String(showRpName));
+    }
+  }, [hasRestoredRpNamePreference, showRpName]);
 
   const participantsByStreamer = useMemo(
     () => new Map(participants.map((participant) => [participant.streamerName, participant])),
@@ -119,6 +137,18 @@ export function DiscoveryBrowser({
         <FacetFilter label="소속" options={affiliationOptions} selectedValues={affiliations} onChange={setAffiliations} labelForOption={(value) => affiliationLabelMap[value] ?? value} />
         {groupOptions.length > 0 && <FacetFilter label="그룹" options={groupOptions} selectedValues={groups} onChange={setGroups} />}
         {tagOptions.length > 0 && <FacetFilter label="태그" options={tagOptions} selectedValues={tags} onChange={setTags} />}
+        <button
+          type="button"
+          role="switch"
+          aria-checked={showRpName}
+          onClick={() => setShowRpName((value) => !value)}
+          className={cn(
+            "inline-flex h-10 shrink-0 cursor-pointer items-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+            showRpName ? "border-primary bg-primary/10 text-primary" : "bg-background text-muted-foreground hover:border-border-strong hover:text-foreground",
+          )}
+        >
+          RP 이름 {showRpName ? "ON" : "OFF"}
+        </button>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -170,6 +200,7 @@ export function DiscoveryBrowser({
                 selected={selection.includes(stream.id)}
                 canAdd={selection.length < selectionLimit}
                 onAdd={() => onAddStream(stream.id)}
+                showRpName={showRpName}
               />
             </li>
           ))}
@@ -189,11 +220,13 @@ function DraggableDiscoveryStream({
   selected,
   canAdd,
   onAdd,
+  showRpName,
 }: Readonly<{
   stream: StreamCardData;
   selected: boolean;
   canAdd: boolean;
   onAdd: () => void;
+  showRpName: boolean;
 }>) {
   const canInteract = !selected && canAdd;
   const { attributes, isDragging, listeners, setNodeRef } = useDraggable({
@@ -226,6 +259,7 @@ function DraggableDiscoveryStream({
         onAdd={onAdd}
         addDisabled={!canInteract}
         draggable={canInteract}
+        showRpName={showRpName}
       />
     </div>
   );
