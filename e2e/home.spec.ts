@@ -59,7 +59,18 @@ async function mockParticipantBroadcasts(page: Page) {
 test("shows the ChCTV discovery workspace", async ({ page }) => {
   await mockParticipantBroadcasts(page);
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "봉누도 상황실" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "ChCTV" })).toBeVisible();
+  await expect(page.locator('[aria-live="polite"] [aria-label^="봉누도"]')).toBeVisible();
+  await expect(page.getByText("8개 채널 방송 중", { exact: true })).toHaveCount(0);
+  const wikiLink = page.getByRole("link", { name: "공식 위키" });
+  await expect(wikiLink).toHaveAttribute("href", "https://bongnudo.super.site/");
+  await expect(wikiLink).toHaveAttribute("target", "_blank");
+  await expect(wikiLink).toHaveAttribute("rel", "noopener noreferrer");
+  await expect(page.getByRole("heading", { name: "봉누도 상황실" })).toHaveCount(0);
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  await expect(page.getByRole("img", { name: "ChCTV" })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
 test("shows participant groups and restores the RP name preference", async ({ page }) => {
@@ -168,7 +179,14 @@ test("starts multiview with ordered channel query parameters", async ({ page }) 
   await expect(page.getByText("Sub 1", { exact: true })).toBeVisible();
 
   const popupPromise = page.waitForEvent("popup");
-  await page.getByRole("button", { name: "멀티뷰 시작" }).click();
+  const multiviewLink = page.getByRole("link", { name: "멀티뷰 시작" });
+  await expect(multiviewLink).toHaveAttribute(
+    "href",
+    `/multiview?channel=${channelIds[0]}&channel=${channelIds[1]}`,
+  );
+  await expect(multiviewLink).toHaveAttribute("target", "_blank");
+  await expect(multiviewLink).toHaveAttribute("rel", "noopener noreferrer");
+  await multiviewLink.click();
   const multiviewWindow = await popupPromise;
 
   await expect(page).toHaveURL("/");
@@ -227,6 +245,23 @@ test("uses two layouts for two channels without reloading viewer iframes", async
       loadCount: state.loadCount,
     };
   })).toEqual({ identitiesMatch: true, loadCount: 0 });
+});
+
+test("uses Crown controls to identify and change the Main viewer", async ({ page }) => {
+  await page.goto(getMultiviewPath(channelIds.slice(0, 2)));
+
+  await expect(page.locator('[data-viewer-slot="main"] [aria-label="현재 메인"]')).toBeVisible();
+  await expect(page.getByText("Main", { exact: true })).toHaveCount(0);
+
+  const makeMainButton = page.getByRole("button", { name: "메인으로 지정" });
+  await expect(makeMainButton).toBeVisible();
+  await makeMainButton.click();
+
+  await expect(page.locator('[data-viewer-slot="main"] [aria-label="현재 메인"]')).toBeVisible();
+  await expect(page.locator('[data-viewer-slot="main"] iframe')).toHaveAttribute(
+    "src",
+    `https://chzzk.naver.com/live/${channelIds[1]}`,
+  );
 });
 
 test("keeps every multiview slot at 16:9 across layouts and desktop widths", async ({ page }) => {

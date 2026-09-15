@@ -70,7 +70,7 @@
         "role": "경찰"
       }
     ],
-    "aliases": [],
+    "aliases": ["늪지대"],
     "groups": ["인챈트"],
     "tags": []
   },
@@ -191,7 +191,7 @@
       }
     ],
     "aliases": [],
-    "groups": ["플라네타"],
+    "groups": ["플라네타", "인챈트"],
     "tags": []
   },
   {
@@ -655,7 +655,7 @@
         "role": "사장"
       }
     ],
-    "aliases": [],
+    "aliases": ["늪지대"],
     "groups": ["픽셀"],
     "tags": []
   },
@@ -805,7 +805,7 @@
         "role": "기사"
       }
     ],
-    "aliases": [],
+    "aliases": ["양띵크루"],
     "groups": ["인챈트"],
     "tags": []
   },
@@ -940,7 +940,7 @@
     "rpName": "김영준",
     "channelId": "343fc0e877aa8ca0cad5106b33d6fa95",
     "affiliations": [],
-    "aliases": [],
+    "aliases": ["양띵크루"],
     "groups": ["픽셀"],
     "tags": []
   },
@@ -1984,7 +1984,7 @@
     "rpName": "장철석",
     "channelId": "f4c0ddf59bb8e788e393cd5a8a1296b2",
     "affiliations": [],
-    "aliases": [],
+    "aliases": ["양띵크루"],
     "groups": ["인챈트"],
     "tags": []
   },
@@ -2065,7 +2065,7 @@
     "rpName": "까치",
     "channelId": "0dcec72cd1033032a77dfced6c0c91f8",
     "affiliations": [],
-    "aliases": [],
+    "aliases": ["늪지대"],
     "groups": ["픽셀"],
     "tags": []
   },
@@ -2227,8 +2227,8 @@
     "rpName": null,
     "channelId": null,
     "affiliations": [],
-    "aliases": [],
-    "groups": [],
+    "aliases": ["양띵크루"],
+    "groups": ["인챈트"],
     "tags": []
   },
   {

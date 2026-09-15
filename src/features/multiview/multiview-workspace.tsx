@@ -1,6 +1,6 @@
 "use client";
 
-import { Columns2, LayoutGrid, MessageSquare, Rows2, X } from "lucide-react";
+import { Columns2, Crown, LayoutGrid, MessageSquare, Rows2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -129,25 +129,25 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
               <article
                 key={channelId}
                 className={cn(
-                  "relative aspect-video min-h-0 min-w-0 overflow-hidden rounded-sm border bg-muted/60 [container-type:size]",
+                  "group relative aspect-video min-h-0 min-w-0 overflow-hidden rounded-sm border bg-muted/60 [container-type:size]",
                   isMain && "border-primary/70 bg-card",
                 )}
                 style={{ gridArea: getMultiviewSlotGridArea(slotKey) }}
                 data-viewer-slot={slotKey}
               >
-                <span className={cn("pointer-events-none absolute left-3 top-3 z-10 w-fit rounded-sm border px-2 py-1 text-xs font-semibold", isMain ? "border-primary bg-primary text-primary-foreground" : "border-primary bg-background/90 text-primary")}>
-                  {slotLabel}
-                </span>
+                {isMain && <Crown aria-label="현재 메인" role="img" className="pointer-events-none absolute right-3 top-3 z-10 size-7 text-primary" />}
                 <ChzzkViewer channelId={channelId} slotLabel={slotLabel} profile={isMain ? "main" : "sub"} />
                 {!isMain && (
                   <Button
                     type="button"
                     size="sm"
-                    variant="secondary"
-                    className="absolute bottom-3 right-3 z-10"
+                    variant="ghost"
+                    aria-label="메인으로 지정"
+                    title="메인으로 지정"
+                    className="absolute right-3 top-3 z-10 size-8 border border-primary/70 bg-background/75 p-0 text-primary opacity-0 transition-opacity hover:bg-background/95 group-hover:opacity-100 group-focus-within:opacity-100"
                     onClick={() => setSlots((currentSlots) => swapMainWithSub(currentSlots, slotKey))}
                   >
-                    메인으로
+                    <Crown aria-hidden="true" className="size-4" />
                   </Button>
                 )}
               </article>

@@ -11,10 +11,11 @@ import { Bookmark, GripVertical, Play, RotateCcw, Trash2, X } from "lucide-react
 import { useState } from "react";
 
 import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { analytics } from "@/lib/analytics/events";
 import { getMultiviewSlotLabel } from "@/features/multiview/multiview-slot";
+import { getMultiviewUrl } from "@/features/multiview/multiview-url";
 import { getSavedMultiviewStatus } from "@/features/multiview/saved-multiview";
 import { useSavedMultiviews } from "@/features/multiview/use-saved-multiviews";
 import type { StreamCardData } from "@/types/stream-card";
@@ -28,7 +29,6 @@ type MultiviewControllerProps = {
   onMoveStreamByOffset: (streamId: string, offset: number) => void;
   onClearSelection: () => void;
   onReplaceSelection: (streamIds: readonly string[]) => void;
-  onStartMultiview: (channelIds: readonly string[]) => void;
   isDragOver: boolean;
 };
 
@@ -41,7 +41,6 @@ export function MultiviewController({
   onMoveStreamByOffset,
   onClearSelection,
   onReplaceSelection,
-  onStartMultiview,
   isDragOver,
 }: MultiviewControllerProps) {
   const streamsById = new Map(streams.map((stream) => [stream.id, stream]));
@@ -69,18 +68,14 @@ export function MultiviewController({
     .filter((channelId): channelId is string => channelId !== null && channelId !== undefined);
   const canStart = selection.length > 0 && selectedChannelIds.length === selection.length;
   const canSave = canStart;
+  const multiviewUrl = canStart ? getMultiviewUrl(selectedChannelIds) : null;
 
-  const startMultiview = () => {
-    if (!canStart) {
-      return;
-    }
-
+  const captureMultiviewStart = () => {
     analytics.multiviewStarted({
       eventSlug: "bongnudo2",
       source: "multiview",
       channelCount: selectedChannelIds.length,
     });
-    onStartMultiview(selectedChannelIds);
   };
 
   const handleSave = () => {
@@ -138,11 +133,10 @@ export function MultiviewController({
             </ol>
           </SortableContext>
         ) : (
-          <div className={cn("mt-2 flex flex-1 items-center justify-center rounded-md border border-dashed px-5 py-6 text-center text-sm text-muted-foreground", isDropZoneActive && "border-primary bg-primary/5 text-foreground")}>
-            <p>
+          <div className="mt-2 flex min-h-0 flex-1 items-center justify-center pb-8">
+            <p className={cn("max-w-60 text-center text-sm leading-6 text-muted-foreground", isDropZoneActive && "text-foreground")}>
               선택한 방송이 없습니다.
-              <br />
-              왼쪽 방송의 <span className="font-medium text-foreground">+ 추가</span>를 누르거나 카드를 이곳으로 드래그하세요.
+              <span className="mt-1 block text-xs text-tertiary">왼쪽 방송의 <span className="font-medium text-muted-foreground">+ 추가</span>를 누르거나 카드를 이곳으로 드래그하세요.</span>
             </p>
           </div>
         )}
@@ -150,10 +144,22 @@ export function MultiviewController({
 
       <div className="px-4 pb-4 pt-3">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-          <Button type="button" size="md" onClick={startMultiview} disabled={!canStart}>
-            <Play aria-hidden="true" className="size-4" />멀티뷰 시작
-          </Button>
-          <Button type="button" variant="outline" size="md" onClick={onClearSelection} disabled={selection.length === 0}>
+          {multiviewUrl ? (
+            <a
+              href={multiviewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={captureMultiviewStart}
+              className={buttonVariants({ size: "md" })}
+            >
+              <Play aria-hidden="true" className="size-4" />멀티뷰 시작
+            </a>
+          ) : (
+            <Button type="button" size="md" disabled>
+              <Play aria-hidden="true" className="size-4" />멀티뷰 시작
+            </Button>
+          )}
+          <Button type="button" variant="ghost" size="md" onClick={onClearSelection} disabled={selection.length === 0}>
             <RotateCcw aria-hidden="true" className="size-4" />초기화
           </Button>
         </div>
