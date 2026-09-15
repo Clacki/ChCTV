@@ -86,6 +86,92 @@ test("shows the ChCTV discovery workspace", async ({ page }) => {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
+test("opens the StreamCard CHZZK shortcut without selecting the stream", async ({ page, context }, testInfo) => {
+  await mockParticipantBroadcasts(page);
+  await context.route("https://chzzk.naver.com/live/**", (route) => route.fulfill({ body: "CHZZK LIVE" }));
+  await page.goto("/");
+
+  const card = page.getByRole("article", { name: "Streamer 1 방송", exact: true });
+  const link = card.getByRole("link", { name: "Streamer 1 방송 치지직에서 보기 (새 탭)" });
+  const add = card.getByRole("button", { name: "Streamer 1 선택에 추가" });
+  const tooltip = card.getByRole("tooltip");
+  await expect(link).toHaveAttribute("href", `https://chzzk.naver.com/live/${channelIds[0]}`);
+  await expect(link).toHaveAttribute("target", "_blank");
+  await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  await expect(link).toHaveAttribute("draggable", "false");
+  await expect(link.locator("img")).toHaveJSProperty("naturalWidth", 1024);
+  await expect(link).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(tooltip).toBeHidden();
+
+  const initialBounds = await card.boundingBox();
+  const linkBounds = (await link.boundingBox())!;
+  const addBounds = (await add.boundingBox())!;
+  expect(linkBounds.x + linkBounds.width).toBeLessThan(addBounds.x);
+  expect(linkBounds.height).toBe(addBounds.height);
+  expect(linkBounds.y).toBe(addBounds.y);
+
+  await link.hover();
+  await expect(tooltip).toHaveText("치지직에서 보기");
+  await expect(tooltip).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("stream-card-tooltip.png") });
+  await add.focus();
+  await page.mouse.move(0, 0);
+  await expect(tooltip).toBeHidden();
+  await page.keyboard.press("Shift+Tab");
+  await expect(link).toBeFocused();
+  await expect(tooltip).toBeVisible();
+  await link.press("Escape");
+  await expect(tooltip).toBeHidden();
+
+  for (const activate of [() => link.click(), () => link.press("Enter")]) {
+    const popupPromise = page.waitForEvent("popup");
+    await activate();
+    const popup = await popupPromise;
+    await expect(popup).toHaveURL(`https://chzzk.naver.com/live/${channelIds[0]}`);
+    expect(await popup.evaluate(() => window.opener)).toBeNull();
+    await popup.close();
+    await expect(add).toBeEnabled();
+    await expect(page.locator("aside").getByText("Streamer 1", { exact: true })).toHaveCount(0);
+    expect(await card.boundingBox()).toEqual(initialBounds);
+  }
+
+  await add.click();
+  await expect(card.getByLabel("추가됨", { exact: true })).toBeVisible();
+  await expect(page.locator("aside").getByText("Streamer 1", { exact: true })).toBeVisible();
+  await expect(link).toBeVisible();
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  await expect(link).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
+test("isolates StreamCard CHZZK shortcut dragging and preserves card drag and drop", async ({ page }) => {
+  await mockParticipantBroadcasts(page);
+  await page.goto("/");
+  const card = page.getByRole("article", { name: "Streamer 1 방송", exact: true });
+  const link = card.getByRole("link", { name: "Streamer 1 방송 치지직에서 보기 (새 탭)" });
+  const remote = page.locator("aside");
+  const dropZone = remote.getByRole("region", { name: "현재 선택" });
+  const target = (await dropZone.boundingBox())!;
+  const dragToSelection = async (source: { x: number; y: number }) => {
+    await page.mouse.move(source.x, source.y);
+    await page.mouse.down();
+    await page.mouse.move(source.x + 20, source.y, { steps: 5 });
+    await page.mouse.move(target.x + target.width / 2, target.y + target.height / 2, { steps: 15 });
+    await page.mouse.up();
+  };
+
+  const linkBounds = (await link.boundingBox())!;
+  await dragToSelection({ x: linkBounds.x + linkBounds.width / 2, y: linkBounds.y + linkBounds.height / 2 });
+  await expect(remote.getByText("Streamer 1", { exact: true })).toHaveCount(0);
+  await expect(card.getByRole("button", { name: "Streamer 1 선택에 추가" })).toBeEnabled();
+
+  const cardBounds = (await card.boundingBox())!;
+  await dragToSelection({ x: cardBounds.x + 30, y: cardBounds.y + 60 });
+  await expect(remote.getByText("Streamer 1", { exact: true })).toBeVisible();
+  await expect(card.getByLabel("추가됨", { exact: true })).toBeVisible();
+});
+
 test("shows participant groups and restores the RP name preference", async ({ page }) => {
   await mockParticipantBroadcasts(page);
   await page.goto("/");

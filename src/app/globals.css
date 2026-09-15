@@ -13,6 +13,7 @@
   --color-border-strong: var(--border-strong);
   --color-tertiary: var(--text-tertiary);
   --color-live: var(--live);
+  --color-chzzk: var(--chzzk);
 }
 
 :root {
@@ -28,6 +29,7 @@
   --border-strong: #686868;
   --text-tertiary: #929292;
   --live: #ff4d67;
+  --chzzk: #00ffa3;
   --radius: 0.75rem;
 }
 
