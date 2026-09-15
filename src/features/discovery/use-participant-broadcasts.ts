@@ -2,17 +2,16 @@
 
 import { useEffect, useState } from "react";
 
-import { toDiscoveryStreamCards } from "@/features/discovery/participant-broadcast-adapter";
-import type { Participant } from "@/types/participant";
+import { toDiscoveryMembers, type DiscoveryMember } from "@/features/discovery/participant-broadcast-adapter";
 import type { CachedParticipantBroadcastsResult } from "@/types/participant-broadcast";
 import type { StreamCardData } from "@/types/stream-card";
 
 type ParticipantBroadcastState =
-  | { status: "loading"; streams: readonly StreamCardData[]; participants: readonly Participant[] }
-  | { status: "success"; streams: readonly StreamCardData[]; participants: readonly Participant[] }
-  | { status: "error"; streams: readonly StreamCardData[]; participants: readonly Participant[] };
+  | { status: "loading"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[] }
+  | { status: "success"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[] }
+  | { status: "error"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[] };
 
-const initialState: ParticipantBroadcastState = { status: "loading", streams: [], participants: [] };
+const initialState: ParticipantBroadcastState = { status: "loading", streams: [], members: [] };
 
 export function useParticipantBroadcasts() {
   const [state, setState] = useState<ParticipantBroadcastState>(initialState);
@@ -30,15 +29,15 @@ export function useParticipantBroadcasts() {
           throw new Error("Failed to load participant broadcasts");
         }
 
-        const liveBroadcasts = result.broadcasts.filter((broadcast) => broadcast.isLive && broadcast.live !== null);
+        const members = toDiscoveryMembers(result.broadcasts);
         setState({
           status: "success",
-          streams: toDiscoveryStreamCards(liveBroadcasts),
-          participants: liveBroadcasts.map((broadcast) => broadcast.participant),
+          streams: members.flatMap((member) => member.status === "LIVE" ? [member.stream] : []),
+          members,
         });
       } catch (error) {
         if ((error as DOMException).name !== "AbortError") {
-          setState({ status: "error", streams: [], participants: [] });
+          setState({ status: "error", streams: [], members: [] });
         }
       }
     }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { toDiscoveryStreamCards } from "../src/features/discovery/participant-broadcast-adapter";
+import { toDiscoveryMembers, toDiscoveryStreamCards } from "../src/features/discovery/participant-broadcast-adapter";
 import type { ParticipantBroadcast } from "../src/types/participant-broadcast";
 
 const broadcasts: ParticipantBroadcast[] = [
@@ -45,6 +45,7 @@ const broadcasts: ParticipantBroadcast[] = [
     },
     isLive: false,
     live: null,
+    channelImageUrl: "https://cdn.example.com/offline-channel.jpg",
   },
 ];
 
@@ -84,5 +85,12 @@ describe("toDiscoveryStreamCards", () => {
       category: "게임",
       displayGroups: ["플라네타", "인챈트", "교통정비공사"],
     }));
+  });
+
+  it("keeps offline participants separate from channelId-matched live streams", () => {
+    expect(toDiscoveryMembers(broadcasts)).toEqual([
+      expect.objectContaining({ status: "LIVE", participant: broadcasts[0].participant }),
+      expect.objectContaining({ status: "OFFLINE", participant: broadcasts[1].participant, channelImageUrl: "https://cdn.example.com/offline-channel.jpg" }),
+    ]);
   });
 });

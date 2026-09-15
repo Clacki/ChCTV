@@ -28,7 +28,7 @@ async function mockParticipantBroadcasts(page: Page) {
       cacheAgeSeconds: 0,
       fetchedAt: "2026-09-14T00:00:00.000Z",
       ambiguousMatches: [],
-      broadcasts: channelIds.map((channelId, index) => ({
+      broadcasts: [...channelIds.map((channelId, index) => ({
         participant: {
           streamerName: `Streamer ${index + 1}`,
           rpName: `Role ${index + 1}`,
@@ -51,7 +51,20 @@ async function mockParticipantBroadcasts(page: Page) {
           liveCategory: null,
           liveCategoryValue: null,
         },
-      })),
+      })), {
+        participant: {
+          streamerName: "Offline Streamer",
+          rpName: "Offline Role",
+          channelId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          affiliations: [{ type: "public", name: "병원", role: "간호사" }],
+          groups: ["픽셀"],
+          tags: [],
+          aliases: ["Offline Alias"],
+        },
+        isLive: false,
+        live: null,
+        channelImageUrl: "https://cdn.example.com/offline-channel.jpg",
+      }],
     },
   }));
 }
@@ -93,6 +106,33 @@ test("shows participant groups and restores the RP name preference", async ({ pa
   await page.reload();
   await expect(page.getByRole("switch", { name: /RP 이름/ })).toHaveAttribute("aria-checked", "true");
   await expect(page.locator("article").filter({ hasText: "Streamer 1" }).getByText("Role 1", { exact: true })).toBeVisible();
+});
+
+test("shows offline participants automatically for active discovery filters", async ({ page }) => {
+  await mockParticipantBroadcasts(page);
+  await page.goto("/");
+
+  const offlineCard = page.locator('article[aria-label="Offline Streamer 오프라인"]');
+  await expect(offlineCard).toHaveCount(0);
+
+  await page.getByPlaceholder("스트리머명, RP명 또는 별칭 검색...").fill("Offline Alias");
+  await expect(offlineCard).toBeVisible();
+  await expect(page.getByRole("heading", { name: "오프라인 참가자 1명" })).toBeVisible();
+  await expect(offlineCard.getByText("OFFLINE", { exact: true })).toBeVisible();
+  await expect(offlineCard.getByRole("img", { name: "Offline Streamer 채널 이미지" })).toHaveAttribute("src", "https://cdn.example.com/offline-channel.jpg");
+  await expect(offlineCard.getByRole("button")).toHaveCount(0);
+  await expect(page.locator("article").filter({ hasText: "Streamer 1" })).toHaveCount(0);
+
+  await page.getByRole("region", { name: "봉누도 방송 탐색" }).getByRole("button", { name: "초기화" }).click();
+  await expect(offlineCard).toHaveCount(0);
+
+  await page.getByRole("button", { name: "그룹" }).click();
+  await page.getByRole("option", { name: "픽셀" }).click();
+  await expect(offlineCard).toBeVisible();
+
+  await page.getByRole("button", { name: "봉누도 소속" }).click();
+  await page.getByRole("option", { name: "병원" }).click();
+  await expect(offlineCard).toBeVisible();
 });
 
 test("keeps stable facet controls and applies group OR with affiliation AND", async ({ page }) => {

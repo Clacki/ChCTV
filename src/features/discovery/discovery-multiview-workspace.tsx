@@ -30,7 +30,7 @@ const restrictSelectedStreamToVerticalAxis: Modifier = ({ active, transform }) =
   active?.data.current?.type === "selected-stream" ? { ...transform, x: 0 } : transform;
 
 export function DiscoveryMultiviewWorkspace() {
-  const { streams, participants, status, retry } = useParticipantBroadcasts();
+  const { streams, members, status, retry } = useParticipantBroadcasts();
   const selectionState = useMultiviewSelection();
   const [activeStreamId, setActiveStreamId] = useState<string | null>(null);
   const [isSelectionDropZoneActive, setIsSelectionDropZoneActive] = useState(false);
@@ -154,8 +154,7 @@ export function DiscoveryMultiviewWorkspace() {
       <main className="grid flex-1 grid-cols-1 gap-4 p-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <section aria-label="봉누도 방송 탐색" className="min-h-80 min-w-0 rounded-xl border bg-card p-6">
           <DiscoveryBrowser
-            streams={streams}
-            participants={participants}
+            members={members}
             selection={selectionState.selection}
             selectionLimit={multiviewSelectionLimit}
             onAddStream={selectionState.addStream}
