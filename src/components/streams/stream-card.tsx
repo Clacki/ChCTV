@@ -49,10 +49,10 @@ export function StreamCard({
     <article
       aria-label={`${stream.streamerName} 방송`}
       className={cn(
-        "group min-w-0 overflow-hidden rounded-xl border bg-card",
+        "group min-w-0 overflow-hidden rounded-xl border border-border/80 bg-muted/70 transition-colors",
         selected
-          ? "border-primary ring-1 ring-primary/35 hover:border-primary hover:ring-primary/60"
-          : "hover:border-border-strong",
+          ? "border-primary ring-2 ring-primary/45 hover:border-primary hover:ring-primary/60"
+          : "hover:border-border-strong hover:bg-muted",
         draggable && "cursor-grab active:cursor-grabbing",
       )}
     >
@@ -111,8 +111,8 @@ export function StreamCard({
         <div className="flex h-8 min-w-0 items-center gap-2">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <Avatar src={stream.channelImageUrl} alt={`${stream.streamerName} 채널 이미지`} size="sm" />
-            <p className="min-w-0 truncate text-sm leading-4" title={showRpName && stream.rpName ? `${stream.streamerName} · RP ${stream.rpName}` : stream.streamerName}>
-              <span className="font-semibold">{stream.streamerName}</span>
+            <p className="min-w-0 truncate text-sm leading-4 text-muted-foreground" title={showRpName && stream.rpName ? `${stream.streamerName} · RP ${stream.rpName}` : stream.streamerName}>
+              <span className="font-medium text-foreground/85">{stream.streamerName}</span>
               {showRpName && stream.rpName && (
                 <>
                   <span className="text-tertiary"> · RP </span>
@@ -143,11 +143,11 @@ export function StreamCard({
             </button>
           )}
         </div>
-        <h2 className="mt-1 line-clamp-1 h-5 text-sm leading-5 font-semibold" title={stream.title}>
+        <h2 className="mt-1 line-clamp-1 h-5 text-sm leading-5 font-semibold tracking-[-0.01em] text-foreground" title={stream.title}>
           {stream.title}
         </h2>
         {(stream.category || visibleGroups.length > 0) && (
-          <div className="mt-1 flex h-5 min-w-0 items-center gap-2 text-xs text-muted-foreground">
+          <div className="mt-1 flex h-5 min-w-0 items-center gap-1.5 text-[11px] text-tertiary">
             {stream.category && (
               <p className="max-w-24 shrink-0 truncate" title={stream.category}>
                 <span className="sr-only">카테고리 </span>
@@ -155,7 +155,7 @@ export function StreamCard({
               </p>
             )}
             {visibleGroups.length > 0 && (
-              <ul aria-label="Participant groups" className="flex min-w-0 items-center gap-2 overflow-hidden">
+              <ul aria-label="Participant groups" className="flex min-w-0 items-center gap-1.5 overflow-hidden">
                 {visibleGroups.map((tag) => (
                   <li key={tag} className="min-w-0 shrink">
                     <Tag className="max-w-24 truncate" title={tag}>
@@ -185,7 +185,7 @@ export function StreamCard({
 
 export function StreamCardSkeleton() {
   return (
-    <div aria-hidden="true" className="min-w-0 overflow-hidden rounded-xl border bg-card">
+    <div aria-hidden="true" className="min-w-0 overflow-hidden rounded-xl border border-border/80 bg-muted/70">
       <div aria-hidden="true">
         <Skeleton className="aspect-video rounded-none" />
         <div className="flex flex-col px-3 py-2">

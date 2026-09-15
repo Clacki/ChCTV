@@ -33,7 +33,7 @@ type DiscoveryBrowserProps = {
   onRetry?: () => void;
 };
 
-const streamGridClassName = "mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-4";
+const streamGridClassName = "mt-3 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-3";
 const loadingSkeletonCount = 8;
 export const discoveryShowRpNameStorageKey = "chctv.discovery.show-rp-name";
 
@@ -108,8 +108,8 @@ export function DiscoveryBrowser({
 
   return (
     <>
-      <div className="mt-6 flex min-w-0 flex-wrap items-center gap-2">
-        <label className="flex h-10 min-w-64 flex-1 items-center gap-2 rounded-md border bg-background px-3 focus-within:border-border-strong focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <label className="flex h-9 min-w-56 flex-1 items-center gap-2 rounded-md border bg-background px-3 focus-within:border-border-strong focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
           <Search aria-hidden="true" className="size-4 shrink-0 text-tertiary" />
           <span className="sr-only">방송 검색</span>
           <input
@@ -137,7 +137,7 @@ export function DiscoveryBrowser({
           aria-checked={showRpName}
           onClick={() => setShowRpName((value) => !value)}
           className={cn(
-            "inline-flex h-10 shrink-0 cursor-pointer items-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+            "inline-flex h-9 shrink-0 cursor-pointer items-center rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
             showRpName ? "border-primary bg-primary/10 text-primary" : "bg-background text-muted-foreground hover:border-border-strong hover:text-foreground",
           )}
         >
@@ -145,7 +145,7 @@ export function DiscoveryBrowser({
         </button>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+      <div className="mt-2 flex flex-wrap items-center gap-2">
         {affiliations.map((value) => (
           <Chip key={value} selected removable onClick={() => setAffiliations((values) => values.filter((item) => item !== value))}>
             {value}
@@ -156,7 +156,7 @@ export function DiscoveryBrowser({
             {value}
           </Chip>
         ))}
-        <p className="ml-auto text-sm font-medium">{isLoading ? "방송 정보를 불러오는 중" : `방송 ${visibleStreams.length}개`}</p>
+        <p className="ml-auto text-xs font-medium text-muted-foreground">{isLoading ? "방송 정보를 불러오는 중" : `방송 ${visibleStreams.length}개`}</p>
         {(query || hasFilters) && <Button type="button" variant="ghost" size="sm" onClick={reset}>초기화</Button>}
       </div>
 

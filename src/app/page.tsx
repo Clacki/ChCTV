@@ -3,10 +3,6 @@ import { DiscoveryMultiviewWorkspace } from "@/features/discovery/discovery-mult
 export default function Home() {
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="flex h-14 shrink-0 items-center border-b bg-card px-6">
-        <p className="text-sm font-medium text-muted-foreground">GLOBAL AREA</p>
-      </header>
-
       <DiscoveryMultiviewWorkspace />
 
       <footer className="shrink-0 border-t bg-card/40 px-6 py-4 text-xs leading-5 text-muted-foreground">
