@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { analytics } from "@/lib/analytics/events";
 import { getMultiviewSlotLabel } from "@/features/multiview/multiview-slot";
+import { getSavedMultiviewStatus } from "@/features/multiview/saved-multiview";
 import { useSavedMultiviews } from "@/features/multiview/use-saved-multiviews";
 import type { StreamCardData } from "@/types/stream-card";
 
@@ -44,21 +45,30 @@ export function MultiviewController({
   isDragOver,
 }: MultiviewControllerProps) {
   const streamsById = new Map(streams.map((stream) => [stream.id, stream]));
+  const streamsByChannelId = new Map(
+    streams
+      .filter((stream): stream is StreamCardData & { channelId: string } => stream.channelId !== null)
+      .map((stream) => [stream.channelId, stream]),
+  );
   const { isOver, setNodeRef } = useDroppable({ id: dropZoneId, data: { type: "selection-drop-zone" } });
   const { savedMultiviews, saveMultiview, removeMultiview } = useSavedMultiviews();
   const [savedMultiviewName, setSavedMultiviewName] = useState("");
   const [saveFeedback, setSaveFeedback] = useState("");
   const isDropZoneActive = isOver || isDragOver;
 
-  const loadSavedMultiview = (streamIds: readonly string[]) => {
-    onReplaceSelection(streamIds.filter((streamId) => streamsById.has(streamId)));
+  const loadSavedMultiview = (channelIds: readonly string[]) => {
+    onReplaceSelection(
+      channelIds
+        .map((channelId) => streamsByChannelId.get(channelId)?.id)
+        .filter((streamId): streamId is string => streamId !== undefined),
+    );
   };
 
-  const canSave = selection.length > 0 && savedMultiviewName.trim().length > 0;
   const selectedChannelIds = selection
     .map((streamId) => streamsById.get(streamId)?.channelId)
     .filter((channelId): channelId is string => channelId !== null && channelId !== undefined);
   const canStart = selection.length > 0 && selectedChannelIds.length === selection.length;
+  const canSave = canStart;
 
   const startMultiview = () => {
     if (!canStart) {
@@ -74,7 +84,7 @@ export function MultiviewController({
   };
 
   const handleSave = () => {
-    const result = saveMultiview(savedMultiviewName, selection);
+    const result = saveMultiview(savedMultiviewName, selectedChannelIds);
 
     if (result === "saved") {
       setSavedMultiviewName("");
@@ -119,7 +129,6 @@ export function MultiviewController({
                     streamId={stream.id}
                     slotLabel={getMultiviewSlotLabel(index)}
                     streamerName={stream.streamerName}
-                    rpName={stream.rpName}
                     channelImageUrl={stream.channelImageUrl}
                     onMove={onMoveStreamByOffset}
                     onRemove={() => onRemoveStream(stream.id)}
@@ -183,19 +192,19 @@ export function MultiviewController({
         <h3 id="saved-multiviews-heading" className="text-sm font-medium">저장된 묶음 <span className="text-primary">{savedMultiviews.length}개</span></h3>
         <ul className="mt-2 max-h-36 divide-y overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable] [scrollbar-width:thin]">
           {savedMultiviews.map((multiview) => {
-            const status = getSavedMultiviewStatus(multiview.streamIds, streamsById);
+            const status = getSavedMultiviewStatus(multiview.channelIds, streamsByChannelId);
 
             return (
               <li key={multiview.id} className="flex min-w-0 items-center gap-1 py-1">
                 <button
                   type="button"
-                  onClick={() => loadSavedMultiview(multiview.streamIds)}
+                  onClick={() => loadSavedMultiview(multiview.channelIds)}
                   className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-sm px-2 py-1 text-left hover:bg-muted hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
                   aria-label={`${multiview.name} 불러오기`}
                 >
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium text-foreground">{multiview.name}</span>
-                    <span className="block text-xs text-muted-foreground">{status.channelCount}개 채널 · <span className="text-live">{status.liveCount} LIVE</span></span>
+                    <span className="block text-xs text-muted-foreground"><span className="text-live">{status.liveCount} / {status.channelCount} LIVE</span></span>
                   </span>
                 </button>
                 <button
@@ -222,7 +231,6 @@ function SortableSelectedStreamItem({
   streamId,
   slotLabel,
   streamerName,
-  rpName,
   channelImageUrl,
   onMove,
   onRemove,
@@ -230,7 +238,6 @@ function SortableSelectedStreamItem({
   streamId: string;
   slotLabel: string;
   streamerName: string;
-  rpName: string | null;
   channelImageUrl: string | null;
   onMove: (streamId: string, offset: number) => void;
   onRemove: () => void;
@@ -280,7 +287,6 @@ function SortableSelectedStreamItem({
         <Avatar src={channelImageUrl} alt={`${streamerName} 채널 이미지`} fallback={streamerName} size="sm" className="size-7 text-[10px]" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium">{streamerName}</p>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">RP: {rpName ?? "정보 없음"}</p>
         </div>
         <button
           type="button"
@@ -293,18 +299,4 @@ function SortableSelectedStreamItem({
       </div>
     </li>
   );
-}
-
-function getSavedMultiviewStatus(
-  streamIds: readonly string[],
-  streamsById: ReadonlyMap<string, StreamCardData>,
-) {
-  const streams = streamIds
-    .map((streamId) => streamsById.get(streamId))
-    .filter((stream): stream is StreamCardData => stream !== undefined);
-
-  return {
-    channelCount: streamIds.length,
-    liveCount: streams.filter((stream) => stream.isLive).length,
-  };
 }

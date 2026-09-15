@@ -21,11 +21,11 @@ async function mockParticipantBroadcasts(page: Page) {
       broadcasts: channelIds.map((channelId, index) => ({
         participant: {
           streamerName: `Streamer ${index + 1}`,
-          rpName: null,
+          rpName: `Role ${index + 1}`,
           channelId,
           affiliations: [],
           groups: [],
-          tags: [],
+          tags: index === 0 ? ["tag-one", "tag-two", "tag-three", "tag-four"] : [],
           aliases: [],
         },
         isLive: true,
@@ -52,6 +52,45 @@ test("shows the ChCTV discovery workspace", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "봉누도 상황실" })).toBeVisible();
 });
 
+test("shows Participant tags and restores the RP name preference", async ({ page }) => {
+  await mockParticipantBroadcasts(page);
+  await page.goto("/");
+
+  const firstCard = page.locator("article").filter({ hasText: "Streamer 1" });
+  await expect(firstCard.getByText("#tag-one", { exact: true })).toBeVisible();
+  await expect(firstCard.getByText("+1", { exact: true })).toBeVisible();
+  await expect(firstCard.getByText("Role 1", { exact: true })).toHaveCount(0);
+
+  const rpNameSwitch = page.getByRole("switch", { name: /RP 이름/ });
+  await expect(rpNameSwitch).toHaveAttribute("aria-checked", "false");
+  await rpNameSwitch.click();
+  await expect(firstCard.getByText("Role 1", { exact: true })).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByRole("switch", { name: /RP 이름/ })).toHaveAttribute("aria-checked", "true");
+  await expect(page.locator("article").filter({ hasText: "Streamer 1" }).getByText("Role 1", { exact: true })).toBeVisible();
+});
+
+test("keeps RP names out of the remote and saves unnamed multiviews", async ({ page }) => {
+  await mockParticipantBroadcasts(page);
+  await page.goto("/");
+
+  await page.getByRole("switch", { name: /RP 이름/ }).click();
+  await page.locator('button[aria-label$="선택에 추가"]').first().click();
+
+  const remote = page.locator("aside");
+  await expect(remote.getByText("Role 1", { exact: true })).toHaveCount(0);
+
+  await remote.getByRole("button", { name: "저장" }).click();
+  await expect(remote.getByText("멀티뷰 1", { exact: true })).toBeVisible();
+
+  await remote.getByLabel("묶음 이름").fill("직접 입력한 이름");
+  await remote.getByRole("button", { name: "저장" }).click();
+  await expect(remote.getByText("직접 입력한 이름", { exact: true })).toBeVisible();
+
+  await expect.poll(() => page.evaluate(() => window.localStorage.getItem("chctv.saved-multiviews"))).toContain("멀티뷰 1");
+});
+
 test("starts multiview with ordered channel query parameters", async ({ page }) => {
   await mockParticipantBroadcasts(page);
   await page.goto("/");
@@ -73,6 +112,8 @@ test("starts multiview with ordered channel query parameters", async ({ page }) 
   const viewers = multiviewWindow.locator("iframe");
   await expect(viewers).toHaveCount(3);
   await expect(viewers.nth(0)).toHaveAttribute("src", `https://chzzk.naver.com/live/${channelIds[0]}`);
+  await expect(viewers.nth(0)).toHaveAttribute("allow", "autoplay; fullscreen; encrypted-media; local-network-access; loopback-network");
+  await expect(viewers.nth(0)).toHaveAttribute("scrolling", "no");
   await expect(viewers.nth(1)).toHaveAttribute("src", `https://chzzk.naver.com/live/${channelIds[1]}`);
   await expect(viewers.nth(2)).toHaveAttribute("src", `https://chzzk.naver.com/live/${channelIds[0]}/chat`);
 });

@@ -12,11 +12,12 @@ type ViewerCrop = {
   cropTop: string;
   cropBottom: string;
   cropRight: string;
+  cropCenterOffset: string;
 };
 
 const viewerCrops: Record<ViewerProfile, ViewerCrop> = {
-  main: { cropTop: "3rem", cropBottom: "1rem", cropRight: "1rem" },
-  sub: { cropTop: "2.5rem", cropBottom: "1rem", cropRight: "1rem" },
+  main: { cropTop: "3rem", cropBottom: "1rem", cropRight: "1rem", cropCenterOffset: "-1rem" },
+  sub: { cropTop: "2.5rem", cropBottom: "1rem", cropRight: "1rem", cropCenterOffset: "-0.75rem" },
 };
 
 export function getChzzkViewerCrop(profile: ViewerProfile): ViewerCrop {
@@ -28,19 +29,22 @@ export function ChzzkViewer({
   slotLabel,
   profile,
 }: Readonly<{ channelId: string; slotLabel: string; profile: ViewerProfile }>) {
-  const { cropTop, cropBottom, cropRight } = getChzzkViewerCrop(profile);
+  const { cropTop, cropBottom, cropRight, cropCenterOffset } = getChzzkViewerCrop(profile);
 
   return (
     <iframe
-      className="absolute left-0 border-0"
+      className="absolute border-0"
       src={getChzzkLiveUrl(channelId)}
       title={`${slotLabel} CHZZK LIVE`}
-      allow="autoplay; fullscreen"
+      allow="autoplay; fullscreen; encrypted-media; local-network-access; loopback-network"
       allowFullScreen
+      scrolling="no"
       style={{
-        top: `-${cropTop}`,
-        width: `calc(100% + ${cropRight})`,
-        height: `calc(100% + ${cropTop} + ${cropBottom})`,
+        left: "50%",
+        top: `calc(50% + ${cropCenterOffset})`,
+        width: `calc(max(100cqw, 177.7778cqh) + ${cropRight})`,
+        height: `calc(max(100cqh, 56.25cqw) + ${cropTop} + ${cropBottom})`,
+        transform: "translate(-50%, -50%)",
       }}
     />
   );

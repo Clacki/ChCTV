@@ -72,7 +72,7 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
               <article
                 key={channelId}
                 className={cn(
-                  "relative min-h-0 min-w-0 overflow-hidden rounded-sm border bg-muted/60",
+                  "relative min-h-0 min-w-0 overflow-hidden rounded-sm border bg-muted/60 [container-type:size]",
                   isMain && "border-primary/70 bg-card",
                 )}
                 style={{ gridArea: getMultiviewSlotGridArea(slotKey) }}

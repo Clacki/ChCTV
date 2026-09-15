@@ -17,6 +17,7 @@ type StreamCardProps = {
   onAdd?: () => void;
   addDisabled?: boolean;
   draggable?: boolean;
+  showRpName?: boolean;
 };
 
 export function StreamCard({
@@ -25,6 +26,7 @@ export function StreamCard({
   onAdd,
   addDisabled = false,
   draggable = false,
+  showRpName = false,
 }: StreamCardProps) {
   const [thumbnail, setThumbnail] = useState<{
     src: string | null;
@@ -129,10 +131,14 @@ export function StreamCard({
       <div className="flex flex-col px-3 py-2">
         <div className="flex h-8 min-w-0 items-center gap-2">
           <Avatar src={stream.channelImageUrl} alt={`${stream.streamerName} 채널 이미지`} size="sm" />
-          <p className="min-w-0 truncate text-sm leading-4" title={`${stream.streamerName} · RP ${stream.rpName ?? "정보 없음"}`}>
+          <p className="min-w-0 truncate text-sm leading-4" title={showRpName && stream.rpName ? `${stream.streamerName} · RP ${stream.rpName}` : stream.streamerName}>
             <span className="font-semibold">{stream.streamerName}</span>
-            <span className="text-tertiary"> · RP </span>
-            <span className="text-muted-foreground">{stream.rpName ?? "정보 없음"}</span>
+            {showRpName && stream.rpName && (
+              <>
+                <span className="text-tertiary"> · RP </span>
+                <span className="text-muted-foreground">{stream.rpName}</span>
+              </>
+            )}
           </p>
         </div>
         <h2 className="mt-1 line-clamp-1 h-5 text-sm leading-5 font-semibold" title={stream.title}>

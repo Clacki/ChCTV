@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "chzzk:enrich": "node scripts/enrich-chzzk-channel-ids.mjs"
+    "chzzk:enrich": "node scripts/enrich-chzzk-channel-ids.mjs",
+    "chzzk:diagnose": "node --env-file=.env scripts/diagnose-chzzk-live-matching.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -12,11 +12,11 @@ describe("participant catalog", () => {
     expect(getParticipants()).toContainEqual({
       streamerName: "달콤레나",
       rpName: "종조이",
-      channelId: null,
+      channelId: "a67b328bcc8eea4451ccfa754bc19ae1",
       affiliations: [{ type: "public", name: "교통정비공사", role: "기사" }],
-      groups: [],
+      groups: ["인챈트"],
       tags: [],
-      aliases: ["죵쬐"],
+      aliases: ["죵쬐", "저그"],
     });
   });
 
@@ -72,10 +72,10 @@ describe("participant catalog", () => {
     const countByAffiliation = (name: string) =>
       participants.filter((participant) => participant.affiliations.some((affiliation) => affiliation.name === name)).length;
 
-    expect(participants).toHaveLength(210);
-    expect(participants.filter((participant) => participant.rpName !== null)).toHaveLength(152);
-    expect(participants.filter((participant) => participant.rpName === null)).toHaveLength(58);
-    expect(participants.filter((participant) => participant.channelId !== null)).toHaveLength(26);
+    expect(participants).toHaveLength(220);
+    expect(participants.filter((participant) => participant.rpName !== null)).toHaveLength(198);
+    expect(participants.filter((participant) => participant.rpName === null)).toHaveLength(22);
+    expect(participants.filter((participant) => participant.channelId !== null)).toHaveLength(210);
     expect(countByRole("시장")).toBe(1);
     expect(countByRole("경찰")).toBe(15);
     expect(countByRole("간호사")).toBe(15);
@@ -86,7 +86,7 @@ describe("participant catalog", () => {
     expect(countByAffiliation("병원")).toBe(16);
     expect(countByAffiliation("봉누도방송국")).toBe(10);
     expect(countByAffiliation("교통정비공사")).toBe(11);
-    expect(participants.filter((participant) => participant.affiliations.length === 0)).toHaveLength(156);
+    expect(participants.filter((participant) => participant.affiliations.length === 0)).toHaveLength(166);
   });
 
   it("contains no invalid or duplicate participant identifiers", () => {
