@@ -4,7 +4,9 @@ export type OpenMultiviewResult =
 
 export function getMultiviewUrl(channelIds: readonly string[]): string {
   const params = new URLSearchParams();
-  params.set("channels", channelIds.join(","));
+  channelIds.forEach((channelId) => {
+    params.append("channel", channelId);
+  });
   return `/multiview?${params.toString()}`;
 }
 

@@ -15,6 +15,7 @@ const stream = (channelId: string): StreamCardData => ({
   rpName: null,
   category: null,
   tags: [],
+  displayGroups: [],
   aliases: [],
 });
 

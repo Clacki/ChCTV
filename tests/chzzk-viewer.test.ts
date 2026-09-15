@@ -19,7 +19,7 @@ describe("getChzzkLiveUrl", () => {
     );
   });
 
-  it("extends each viewer below its slot to crop the embedded scrollbar", () => {
+  it("keeps the legacy crop settings available for viewer profiles", () => {
     expect(getChzzkViewerCrop("main")).toMatchObject({ cropTop: "3rem", cropBottom: "1rem" });
     expect(getChzzkViewerCrop("sub")).toMatchObject({ cropTop: "2.5rem", cropBottom: "1rem" });
   });

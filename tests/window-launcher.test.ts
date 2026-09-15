@@ -10,7 +10,7 @@ describe("openMultiviewWindow", () => {
     expect(openMultiviewWindow(browserWindow, ["A", "B", "C"])).toEqual({ ok: true });
     expect(open).toHaveBeenCalledTimes(1);
     expect(open).toHaveBeenCalledWith(
-      "/multiview?channels=A%2CB%2CC",
+      "/multiview?channel=A&channel=B&channel=C",
       "_blank",
     );
   });
@@ -19,6 +19,6 @@ describe("openMultiviewWindow", () => {
     const browserWindow = { open: vi.fn(() => null) } as unknown as Window;
 
     expect(openMultiviewWindow(browserWindow, ["A"])).toEqual({ ok: false, reason: "popup-blocked" });
-    expect(getMultiviewUrl(["A", "B"])).toBe("/multiview?channels=A%2CB");
+    expect(getMultiviewUrl(["A", "B"])).toBe("/multiview?channel=A&channel=B");
   });
 });

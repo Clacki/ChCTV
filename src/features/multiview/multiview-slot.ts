@@ -22,6 +22,13 @@ export function swapMainWithSub(slots: MultiviewSlots, subSlot: MultiviewSubSlot
   return { ...slots, main: slots[subSlot], [subSlot]: slots.main };
 }
 
+export function getMultiviewSlotKeyByChannelId(
+  slots: MultiviewSlots,
+  channelId: string,
+): MultiviewSlotKey | null {
+  return multiviewSlotKeys.find((slotKey) => slots[slotKey] === channelId) ?? null;
+}
+
 export function getMultiviewSlotLabelByKey(slotKey: MultiviewSlotKey): string {
   return slotKey === "main" ? "Main" : `Sub ${slotKey.slice(3)}`;
 }

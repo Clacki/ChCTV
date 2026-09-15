@@ -8,17 +8,11 @@ import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { FacetFilter } from "@/components/ui/facet-filter";
-import { matchesParticipantFilters } from "@/lib/participants";
+import { GROUP_FILTER_SECTIONS, GROUP_FILTER_VALUES } from "@/features/discovery/discovery-filter-config";
+import { getParticipants, matchesParticipantFilters } from "@/lib/participants";
 import { cn } from "@/lib/utils";
 import type { Participant, ParticipantFilters } from "@/types/participant";
 import type { StreamCardData } from "@/types/stream-card";
-
-const affiliationLabelMap: Record<string, string> = {
-  "봉누도경찰청": "경찰",
-  병원: "EMS",
-  "봉누도방송국": "방송국",
-  "교통정비공사": "교통정비",
-};
 
 function normalize(value: string): string {
   return value.trim().toLocaleLowerCase("ko-KR");
@@ -56,7 +50,6 @@ export function DiscoveryBrowser({
   const [query, setQuery] = useState("");
   const [affiliations, setAffiliations] = useState<string[]>([]);
   const [groups, setGroups] = useState<string[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
   const [showRpName, setShowRpName] = useState(false);
   const [hasRestoredRpNamePreference, setHasRestoredRpNamePreference] = useState(false);
 
@@ -79,17 +72,20 @@ export function DiscoveryBrowser({
     () => new Map(participants.map((participant) => [participant.streamerName, participant])),
     [participants],
   );
+  const catalogParticipants = useMemo(() => getParticipants(), []);
   const affiliationOptions = useMemo(
-    () => uniqueSorted(participants.flatMap((participant) => participant.affiliations.map((affiliation) => affiliation.name))),
-    [participants],
+    () => uniqueSorted(catalogParticipants.flatMap((participant) => participant.affiliations.map((affiliation) => affiliation.name))),
+    [catalogParticipants],
   );
-  const groupOptions = useMemo(() => uniqueSorted(participants.flatMap((participant) => participant.groups)), [participants]);
-  const tagOptions = useMemo(() => uniqueSorted(participants.flatMap((participant) => participant.tags)), [participants]);
-  const hasFilters = affiliations.length > 0 || groups.length > 0 || tags.length > 0;
+  const groupOptions = useMemo(
+    () => uniqueSorted([...GROUP_FILTER_VALUES, ...catalogParticipants.flatMap((participant) => participant.groups)]),
+    [catalogParticipants],
+  );
+  const hasFilters = affiliations.length > 0 || groups.length > 0;
 
   const visibleStreams = useMemo(() => {
     const normalizedQuery = normalize(query);
-    const filters: ParticipantFilters = { affiliations, groups, tags };
+    const filters: ParticipantFilters = { affiliations, groups };
 
     const filteredStreams = streams
       .filter((stream) => {
@@ -102,25 +98,24 @@ export function DiscoveryBrowser({
       });
 
     return [...filteredStreams].sort((left, right) => right.viewerCount - left.viewerCount);
-  }, [affiliations, groups, hasFilters, participantsByStreamer, query, streams, tags]);
+  }, [affiliations, groups, hasFilters, participantsByStreamer, query, streams]);
 
   const reset = () => {
     setQuery("");
     setAffiliations([]);
     setGroups([]);
-    setTags([]);
   };
 
   return (
     <>
-      <div className="mt-6 flex min-w-0 items-center gap-2">
-        <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-md border bg-background px-3 focus-within:border-border-strong focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
+      <div className="mt-6 flex min-w-0 flex-wrap items-center gap-2">
+        <label className="flex h-10 min-w-64 flex-1 items-center gap-2 rounded-md border bg-background px-3 focus-within:border-border-strong focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
           <Search aria-hidden="true" className="size-4 shrink-0 text-tertiary" />
           <span className="sr-only">방송 검색</span>
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="스트리머명 또는 RP명 검색..."
+            placeholder="스트리머명, RP명 또는 별칭 검색..."
             className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-tertiary"
           />
           {query && (
@@ -134,9 +129,8 @@ export function DiscoveryBrowser({
             </button>
           )}
         </label>
-        <FacetFilter label="소속" options={affiliationOptions} selectedValues={affiliations} onChange={setAffiliations} labelForOption={(value) => affiliationLabelMap[value] ?? value} />
-        {groupOptions.length > 0 && <FacetFilter label="그룹" options={groupOptions} selectedValues={groups} onChange={setGroups} />}
-        {tagOptions.length > 0 && <FacetFilter label="태그" options={tagOptions} selectedValues={tags} onChange={setTags} />}
+        <FacetFilter label="그룹" options={groupOptions} sections={GROUP_FILTER_SECTIONS} selectedValues={groups} onChange={setGroups} />
+        <FacetFilter label="봉누도 소속" options={affiliationOptions} selectedValues={affiliations} onChange={setAffiliations} />
         <button
           type="button"
           role="switch"
@@ -154,16 +148,11 @@ export function DiscoveryBrowser({
       <div className="mt-4 flex flex-wrap items-center gap-2">
         {affiliations.map((value) => (
           <Chip key={value} selected removable onClick={() => setAffiliations((values) => values.filter((item) => item !== value))}>
-            {affiliationLabelMap[value] ?? value}
+            {value}
           </Chip>
         ))}
         {groups.map((value) => (
           <Chip key={value} selected removable onClick={() => setGroups((values) => values.filter((item) => item !== value))}>
-            {value}
-          </Chip>
-        ))}
-        {tags.map((value) => (
-          <Chip key={value} selected removable onClick={() => setTags((values) => values.filter((item) => item !== value))}>
             {value}
           </Chip>
         ))}
@@ -208,7 +197,8 @@ export function DiscoveryBrowser({
       ) : (
         <div className="mt-4 rounded-xl border border-dashed p-8 text-center">
           <p className="text-sm font-medium">조건에 맞는 방송이 없습니다.</p>
-          <p className="mt-1 text-sm text-muted-foreground">검색어나 필터를 변경해 보세요.</p>
+          <p className="mt-1 text-sm text-muted-foreground">필터 조건을 변경하거나 초기화해 보세요.</p>
+          {(query || hasFilters) && <Button type="button" variant="secondary" size="sm" className="mt-4" onClick={reset}>필터 초기화</Button>}
         </div>
       )}
     </>
