@@ -4,14 +4,16 @@ import { useDraggable } from "@dnd-kit/core";
 import { LoaderCircle, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
+import { OfflineMemberCard } from "@/components/streams/offline-member-card";
 import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { FacetFilter } from "@/components/ui/facet-filter";
+import type { DiscoveryMember } from "@/features/discovery/participant-broadcast-adapter";
 import { GROUP_FILTER_SECTIONS, GROUP_FILTER_VALUES } from "@/features/discovery/discovery-filter-config";
 import { getParticipants, matchesParticipantFilters } from "@/lib/participants";
 import { cn } from "@/lib/utils";
-import type { Participant, ParticipantFilters } from "@/types/participant";
+import type { ParticipantFilters } from "@/types/participant";
 import type { StreamCardData } from "@/types/stream-card";
 
 function normalize(value: string): string {
@@ -23,8 +25,7 @@ function uniqueSorted(values: readonly string[]): string[] {
 }
 
 type DiscoveryBrowserProps = {
-  streams: readonly StreamCardData[];
-  participants: readonly Participant[];
+  members: readonly DiscoveryMember[];
   selection: readonly string[];
   selectionLimit: number;
   onAddStream: (streamId: string) => void;
@@ -38,8 +39,7 @@ const loadingSkeletonCount = 8;
 export const discoveryShowRpNameStorageKey = "chctv.discovery.show-rp-name";
 
 export function DiscoveryBrowser({
-  streams,
-  participants,
+  members,
   selection,
   selectionLimit,
   onAddStream,
@@ -68,10 +68,6 @@ export function DiscoveryBrowser({
     }
   }, [hasRestoredRpNamePreference, showRpName]);
 
-  const participantsByStreamer = useMemo(
-    () => new Map(participants.map((participant) => [participant.streamerName, participant])),
-    [participants],
-  );
   const catalogParticipants = useMemo(() => getParticipants(), []);
   const affiliationOptions = useMemo(
     () => uniqueSorted(catalogParticipants.flatMap((participant) => participant.affiliations.map((affiliation) => affiliation.name))),
@@ -81,24 +77,30 @@ export function DiscoveryBrowser({
     () => uniqueSorted([...GROUP_FILTER_VALUES, ...catalogParticipants.flatMap((participant) => participant.groups)]),
     [catalogParticipants],
   );
-  const hasFilters = affiliations.length > 0 || groups.length > 0;
+  const hasActiveFilter = Boolean(normalize(query)) || affiliations.length > 0 || groups.length > 0;
 
-  const visibleStreams = useMemo(() => {
+  const filteredMembers = useMemo(() => {
     const normalizedQuery = normalize(query);
     const filters: ParticipantFilters = { affiliations, groups };
 
-    const filteredStreams = streams
-      .filter((stream) => {
-        const participant = participantsByStreamer.get(stream.streamerName);
-        const searchValues = [stream.streamerName, stream.rpName, ...stream.aliases, ...(participant?.aliases ?? [])];
-        const matchesQuery = !normalizedQuery || searchValues.some((value) => value !== null && normalize(value).includes(normalizedQuery));
-        const matchesFilters = !hasFilters || (participant !== undefined && matchesParticipantFilters(participant, filters));
+    return members.filter((member) => {
+      const { participant } = member;
+      const searchValues = [participant.streamerName, participant.rpName, ...participant.aliases];
+      const matchesQuery = !normalizedQuery || searchValues.some((value) => value !== null && normalize(value).includes(normalizedQuery));
+      const matchesFilters = matchesParticipantFilters(participant, filters);
 
-        return matchesQuery && matchesFilters;
-      });
+      return matchesQuery && matchesFilters;
+    });
+  }, [affiliations, groups, members, query]);
 
-    return [...filteredStreams].sort((left, right) => right.viewerCount - left.viewerCount);
-  }, [affiliations, groups, hasFilters, participantsByStreamer, query, streams]);
+  const visibleStreams = useMemo(
+    () => filteredMembers.flatMap((member) => member.status === "LIVE" ? [member.stream] : []).sort((left, right) => right.viewerCount - left.viewerCount),
+    [filteredMembers],
+  );
+  const offlineMembers = useMemo(
+    () => hasActiveFilter ? filteredMembers.flatMap((member) => member.status === "OFFLINE" ? [member] : []) : [],
+    [filteredMembers, hasActiveFilter],
+  );
 
   const reset = () => {
     setQuery("");
@@ -157,7 +159,7 @@ export function DiscoveryBrowser({
           </Chip>
         ))}
         <p className="ml-auto text-xs font-medium text-muted-foreground">{isLoading ? "방송 정보를 불러오는 중" : `방송 ${visibleStreams.length}개`}</p>
-        {(query || hasFilters) && <Button type="button" variant="ghost" size="sm" onClick={reset}>초기화</Button>}
+        {hasActiveFilter && <Button type="button" variant="ghost" size="sm" onClick={reset}>초기화</Button>}
       </div>
 
       {isLoading ? (
@@ -180,26 +182,43 @@ export function DiscoveryBrowser({
           <p className="mt-1 text-sm text-muted-foreground">잠시 후 다시 시도해 주세요.</p>
           {onRetry && <Button type="button" variant="secondary" size="sm" className="mt-4" onClick={onRetry}>다시 시도</Button>}
         </div>
-      ) : visibleStreams.length > 0 ? (
-        <ul className={streamGridClassName}>
-          {visibleStreams.map((stream) => (
-            <li key={stream.id} className="min-w-0">
-              <DraggableDiscoveryStream
-                stream={stream}
-                selected={selection.includes(stream.id)}
-                canAdd={selection.length < selectionLimit}
-                onAdd={() => onAddStream(stream.id)}
-                showRpName={showRpName}
-              />
-            </li>
-          ))}
-        </ul>
       ) : (
-        <div className="mt-4 rounded-xl border border-dashed p-8 text-center">
-          <p className="text-sm font-medium">조건에 맞는 방송이 없습니다.</p>
-          <p className="mt-1 text-sm text-muted-foreground">필터 조건을 변경하거나 초기화해 보세요.</p>
-          {(query || hasFilters) && <Button type="button" variant="secondary" size="sm" className="mt-4" onClick={reset}>필터 초기화</Button>}
-        </div>
+        <>
+          {visibleStreams.length > 0 && (
+            <ul className={streamGridClassName}>
+              {visibleStreams.map((stream) => (
+                <li key={stream.id} className="min-w-0">
+                  <DraggableDiscoveryStream
+                    stream={stream}
+                    selected={selection.includes(stream.id)}
+                    canAdd={selection.length < selectionLimit}
+                    onAdd={() => onAddStream(stream.id)}
+                    showRpName={showRpName}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+          {offlineMembers.length > 0 && (
+            <section aria-labelledby="offline-participants-heading" className="mt-6">
+              <h2 id="offline-participants-heading" className="text-sm font-medium text-muted-foreground">오프라인 참가자 {offlineMembers.length}명</h2>
+              <ul className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(min(100%,11rem),1fr))] gap-2">
+                {offlineMembers.map((member) => (
+                  <li key={member.participant.streamerName} className="min-w-0">
+                    <OfflineMemberCard participant={member.participant} channelImageUrl={member.channelImageUrl} showRpName={showRpName} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {visibleStreams.length === 0 && offlineMembers.length === 0 && (
+            <div className="mt-4 rounded-xl border border-dashed p-8 text-center">
+              <p className="text-sm font-medium">조건에 맞는 방송이 없습니다.</p>
+              <p className="mt-1 text-sm text-muted-foreground">필터 조건을 변경하거나 초기화해 보세요.</p>
+              {hasActiveFilter && <Button type="button" variant="secondary" size="sm" className="mt-4" onClick={reset}>필터 초기화</Button>}
+            </div>
+          )}
+        </>
       )}
     </>
   );

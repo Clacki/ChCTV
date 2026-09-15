@@ -3,7 +3,9 @@ import "server-only";
 import { normalizeChzzkLiveThumbnailUrl } from "@/lib/chzzk-thumbnail-url";
 import type { ChzzkLiveChannel } from "../../types/participant-broadcast";
 
-const CHZZK_API_URL = "https://openapi.chzzk.naver.com/open/v1/lives";
+const CHZZK_LIVES_API_URL = "https://openapi.chzzk.naver.com/open/v1/lives";
+const CHZZK_CHANNELS_API_URL = "https://openapi.chzzk.naver.com/open/v1/channels";
+const channelBatchSize = 20;
 
 type ChzzkLiveResponse = {
   content?: {
@@ -28,6 +30,17 @@ type ChzzkLive = {
   liveCategoryValue?: string | null;
 };
 
+type ChzzkChannel = {
+  channelId: string;
+  channelImageUrl: string | null;
+};
+
+type ChzzkChannelResponse = {
+  content?: {
+    data?: ChzzkChannel[];
+  };
+};
+
 export type ChzzkApiErrorKind = "configuration" | "authentication" | "rate_limit" | "upstream" | "network";
 
 export class ChzzkApiError extends Error {
@@ -50,7 +63,7 @@ async function fetchLivePage(next?: string): Promise<{ lives: ChzzkLiveChannel[]
   let response: Response;
 
   try {
-    const url = new URL(CHZZK_API_URL);
+    const url = new URL(CHZZK_LIVES_API_URL);
     url.searchParams.set("size", "20");
 
     if (next) {
@@ -99,6 +112,46 @@ async function fetchLivePage(next?: string): Promise<{ lives: ChzzkLiveChannel[]
   };
 }
 
+async function fetchChannelImageBatch(channelIds: readonly string[]): Promise<ChzzkChannel[]> {
+  const clientId = process.env.CHZZK_CLIENT_ID;
+  const clientSecret = process.env.CHZZK_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    throw new ChzzkApiError("configuration");
+  }
+
+  let response: Response;
+
+  try {
+    const url = new URL(CHZZK_CHANNELS_API_URL);
+    url.searchParams.set("channelIds", channelIds.join(","));
+    response = await fetch(url, {
+      headers: {
+        "Client-Id": clientId,
+        "Client-Secret": clientSecret,
+      },
+      cache: "no-store",
+    });
+  } catch {
+    throw new ChzzkApiError("network");
+  }
+
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      throw new ChzzkApiError("authentication", response.status);
+    }
+
+    if (response.status === 429) {
+      throw new ChzzkApiError("rate_limit", response.status);
+    }
+
+    throw new ChzzkApiError("upstream", response.status);
+  }
+
+  const body = (await response.json()) as ChzzkChannelResponse;
+  return body.content?.data ?? [];
+}
+
 export async function getCurrentChzzkLives(): Promise<ChzzkLiveChannel[]> {
   const lives: ChzzkLiveChannel[] = [];
   const seenCursors = new Set<string>();
@@ -121,4 +174,22 @@ export async function getCurrentChzzkLives(): Promise<ChzzkLiveChannel[]> {
   } while (next);
 
   return lives;
+}
+
+/** Resolves profile images for the catalog without relying on a channel being live. */
+export async function getChzzkChannelImages(channelIds: readonly string[]): Promise<Map<string, string>> {
+  const uniqueChannelIds = [...new Set(channelIds.filter(Boolean))];
+  const channelImages = new Map<string, string>();
+
+  for (let index = 0; index < uniqueChannelIds.length; index += channelBatchSize) {
+    const channels = await fetchChannelImageBatch(uniqueChannelIds.slice(index, index + channelBatchSize));
+
+    for (const channel of channels) {
+      if (channel.channelImageUrl) {
+        channelImages.set(channel.channelId, channel.channelImageUrl);
+      }
+    }
+  }
+
+  return channelImages;
 }

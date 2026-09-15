@@ -75,7 +75,7 @@ describe("participant catalog", () => {
     expect(participants).toHaveLength(220);
     expect(participants.filter((participant) => participant.rpName !== null)).toHaveLength(198);
     expect(participants.filter((participant) => participant.rpName === null)).toHaveLength(22);
-    expect(participants.filter((participant) => participant.channelId !== null)).toHaveLength(210);
+    expect(participants.filter((participant) => participant.channelId !== null)).toHaveLength(220);
     expect(countByRole("시장")).toBe(1);
     expect(countByRole("경찰")).toBe(15);
     expect(countByRole("간호사")).toBe(15);

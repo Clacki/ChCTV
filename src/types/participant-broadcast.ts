@@ -17,6 +17,7 @@ export type ParticipantBroadcast = {
   participant: Participant;
   isLive: boolean;
   live: ChzzkLiveChannel | null;
+  channelImageUrl?: string | null;
 };
 
 export type AmbiguousLiveMatch = {
