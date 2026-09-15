@@ -9,8 +9,13 @@ const broadcasts: ParticipantBroadcast[] = [
       streamerName: "테스트 스트리머",
       rpName: "테스트 RP",
       channelId: null,
-      affiliations: [],
-      groups: [],
+      affiliations: [
+        { type: "public", name: "교통정비공사", role: "기사" },
+        { type: "public", name: "시민" },
+        { type: "business", name: "플라네타" },
+        { type: "business", name: "   " },
+      ],
+      groups: ["플라네타", "인챈트", ""],
       tags: ["버튜버"],
       aliases: ["테스트"],
     },
@@ -44,7 +49,7 @@ const broadcasts: ParticipantBroadcast[] = [
 ];
 
 describe("toDiscoveryStreamCards", () => {
-  it("uses Participant tags without changing CHZZK live field mappings", () => {
+  it("derives display groups from participant groups and affiliations", () => {
     const [stream] = toDiscoveryStreamCards(broadcasts);
 
     expect(stream).toEqual(expect.objectContaining({
@@ -56,9 +61,10 @@ describe("toDiscoveryStreamCards", () => {
       thumbnailUrl: "https://cdn.example.com/live.jpg",
       channelImageUrl: "https://cdn.example.com/channel.jpg",
       category: "GTA V",
-      tags: ["버튜버"],
+      displayGroups: ["플라네타", "인챈트", "교통정비공사"],
     }));
-    expect(stream.tags).not.toContain("공식 태그");
+    expect(stream.displayGroups).not.toContain("시민");
+    expect(stream.displayGroups).not.toContain(stream.tags[0]);
   });
 
   it("keeps the CHZZK fallback category when liveCategoryValue is absent", () => {
@@ -76,7 +82,7 @@ describe("toDiscoveryStreamCards", () => {
 
     expect(stream).toEqual(expect.objectContaining({
       category: "게임",
-      tags: ["버튜버"],
+      displayGroups: ["플라네타", "인챈트", "교통정비공사"],
     }));
   });
 });

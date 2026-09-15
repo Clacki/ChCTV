@@ -14,6 +14,7 @@ export const mockStreams: StreamCardData[] = [
     channelId: "mock-channel-patrol",
     category: "GTA5",
     tags: ["봉누도", "경찰", "순찰", "야간근무", "RP"],
+    displayGroups: [],
     aliases: [],
   },
   {
@@ -28,6 +29,7 @@ export const mockStreams: StreamCardData[] = [
     channelId: "mock-channel-office",
     category: "GTA5",
     tags: ["봉누도", "경찰"],
+    displayGroups: [],
     aliases: [],
   },
   {
@@ -42,6 +44,7 @@ export const mockStreams: StreamCardData[] = [
     channelId: "mock-channel-hospital",
     category: "GTA5",
     tags: ["봉누도", "의료", "응급실"],
+    displayGroups: [],
     aliases: ["소담쌤"],
   },
   {
@@ -56,6 +59,7 @@ export const mockStreams: StreamCardData[] = [
     channelId: "mock-channel-garage",
     category: "GTA5",
     tags: ["봉누도", "정비소", "드라이브", "자동차"],
+    displayGroups: [],
     aliases: [],
   },
   {
@@ -70,6 +74,7 @@ export const mockStreams: StreamCardData[] = [
     channelId: "mock-channel-radio",
     category: "Just Chatting",
     tags: ["소통"],
+    displayGroups: [],
     aliases: ["오후"],
   },
   {
@@ -84,6 +89,7 @@ export const mockStreams: StreamCardData[] = [
     channelId: "mock-channel-taxi",
     category: "GTA5",
     tags: ["봉누도", "신규시민을위한섬투어", "택시", "여행", "소통", "맛집"],
+    displayGroups: [],
     aliases: ["길동택시"],
   },
   {
@@ -98,6 +104,7 @@ export const mockStreams: StreamCardData[] = [
     channelId: "mock-channel-game",
     category: "League of Legends",
     tags: ["랭크", "듀오"],
+    displayGroups: [],
     aliases: [],
   },
   {
@@ -112,6 +119,7 @@ export const mockStreams: StreamCardData[] = [
     channelId: "mock-channel-bookshop",
     category: "GTA5",
     tags: [],
+    displayGroups: [],
     aliases: [],
   },
 ];

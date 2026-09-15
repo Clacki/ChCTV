@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   createMultiviewSlots,
   getMultiviewSlotLabel,
+  getMultiviewSlotKeyByChannelId,
   swapMainWithSub,
 } from "../src/features/multiview/multiview-slot";
 import { getChzzkChatUrl } from "../src/features/multiview/chzzk-viewer";
@@ -31,5 +32,11 @@ describe("getMultiviewSlotLabel", () => {
       sub3: "D",
     });
     expect(getChzzkChatUrl(swappedSlots.main ?? "")).toBe("https://chzzk.naver.com/live/C/chat");
+    expect(["A", "B", "C", "D"].map((channelId) => getMultiviewSlotKeyByChannelId(swappedSlots, channelId))).toEqual([
+      "sub2",
+      "sub1",
+      "main",
+      "sub3",
+    ]);
   });
 });

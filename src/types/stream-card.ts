@@ -11,5 +11,6 @@ export type StreamCardData = {
   channelId: string | null;
   category: string | null;
   tags: string[];
+  displayGroups: string[];
   aliases: string[];
 };

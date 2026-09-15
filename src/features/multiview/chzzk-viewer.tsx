@@ -1,3 +1,10 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+const VIRTUAL_VIEWPORT_WIDTH = 1280;
+const VIRTUAL_VIEWPORT_HEIGHT = 720;
+
 export function getChzzkLiveUrl(channelId: string): string {
   return `https://chzzk.naver.com/live/${encodeURIComponent(channelId)}`;
 }
@@ -29,35 +36,56 @@ export function ChzzkViewer({
   slotLabel,
   profile,
 }: Readonly<{ channelId: string; slotLabel: string; profile: ViewerProfile }>) {
-  const { cropTop, cropBottom, cropRight, cropCenterOffset } = getChzzkViewerCrop(profile);
+  const viewerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer) {
+      return;
+    }
+
+    const observer = new ResizeObserver(([entry]) => {
+      setScale(Math.min(
+        entry.contentRect.width / VIRTUAL_VIEWPORT_WIDTH,
+        entry.contentRect.height / VIRTUAL_VIEWPORT_HEIGHT,
+      ));
+    });
+
+    observer.observe(viewer);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <iframe
-      className="absolute border-0"
-      src={getChzzkLiveUrl(channelId)}
-      title={`${slotLabel} CHZZK LIVE`}
-      allow="autoplay; fullscreen; encrypted-media; local-network-access; loopback-network"
-      allowFullScreen
-      scrolling="no"
-      style={{
-        left: "50%",
-        top: `calc(50% + ${cropCenterOffset})`,
-        width: `calc(max(100cqw, 177.7778cqh) + ${cropRight})`,
-        height: `calc(max(100cqh, 56.25cqw) + ${cropTop} + ${cropBottom})`,
-        transform: "translate(-50%, -50%)",
-      }}
-    />
+    <div ref={viewerRef} className="absolute inset-0 overflow-hidden" data-viewer-profile={profile}>
+      <iframe
+        className="absolute left-0 top-0 border-0"
+        src={getChzzkLiveUrl(channelId)}
+        title={`${slotLabel} CHZZK LIVE`}
+        allow="autoplay; fullscreen; encrypted-media; local-network-access; loopback-network"
+        allowFullScreen
+        scrolling="no"
+        style={{
+          width: VIRTUAL_VIEWPORT_WIDTH,
+          height: VIRTUAL_VIEWPORT_HEIGHT,
+          transformOrigin: "top left",
+          transform: `scale(${scale})`,
+        }}
+      />
+    </div>
   );
 }
 
 export function ChzzkChat({ channelId }: Readonly<{ channelId: string }>) {
   return (
-    <iframe
-      className="size-full border-0"
-      src={getChzzkChatUrl(channelId)}
-      title="Main CHZZK Chat"
-      allow="autoplay; fullscreen"
-      allowFullScreen
-    />
+    <div className="size-full min-h-0 min-w-0 overflow-hidden">
+      <iframe
+        className="block size-full border-0"
+        src={getChzzkChatUrl(channelId)}
+        title="Main CHZZK Chat"
+        allow="autoplay; fullscreen"
+        allowFullScreen
+      />
+    </div>
   );
 }

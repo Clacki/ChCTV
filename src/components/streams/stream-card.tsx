@@ -38,8 +38,8 @@ export function StreamCard({
     : thumbnail.src === stream.thumbnailUrl
       ? thumbnail.status
       : "loading";
-  const visibleTags = stream.tags.slice(0, 3);
-  const hiddenTags = stream.tags.slice(3);
+  const visibleGroups = stream.displayGroups.slice(0, 3);
+  const hiddenGroups = stream.displayGroups.slice(3);
   const cornerMarkerClass = cn(
     "pointer-events-none absolute size-4 transition-colors group-hover:border-white/85",
     selected ? "border-primary/80 group-hover:border-primary" : "border-white/60",
@@ -105,73 +105,79 @@ export function StreamCard({
             </span>
           </>
         )}
-        {selected ? (
-          <Badge variant="neutral" aria-label="추가됨" className="absolute top-3 right-3 gap-1 border border-primary bg-background/90 text-primary">
-            <Check aria-hidden="true" className="size-3" />
-            추가됨
-          </Badge>
-        ) : (
-          <button
-            type="button"
-            onPointerDown={(event) => event.stopPropagation()}
-            onClick={(event) => {
-              event.stopPropagation();
-              onAdd?.();
-            }}
-            disabled={addDisabled || !onAdd}
-            aria-label={`${stream.streamerName} 선택에 추가`}
-            className="absolute top-3 right-3 inline-flex h-7 cursor-pointer items-center gap-1 rounded-sm border border-border bg-background/85 px-2 text-xs font-medium text-foreground hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            <Plus aria-hidden="true" className="size-3" />
-            {addDisabled ? "최대 선택" : "추가"}
-          </button>
-        )}
       </div>
 
       <div className="flex flex-col px-3 py-2">
         <div className="flex h-8 min-w-0 items-center gap-2">
-          <Avatar src={stream.channelImageUrl} alt={`${stream.streamerName} 채널 이미지`} size="sm" />
-          <p className="min-w-0 truncate text-sm leading-4" title={showRpName && stream.rpName ? `${stream.streamerName} · RP ${stream.rpName}` : stream.streamerName}>
-            <span className="font-semibold">{stream.streamerName}</span>
-            {showRpName && stream.rpName && (
-              <>
-                <span className="text-tertiary"> · RP </span>
-                <span className="text-muted-foreground">{stream.rpName}</span>
-              </>
-            )}
-          </p>
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            <Avatar src={stream.channelImageUrl} alt={`${stream.streamerName} 채널 이미지`} size="sm" />
+            <p className="min-w-0 truncate text-sm leading-4" title={showRpName && stream.rpName ? `${stream.streamerName} · RP ${stream.rpName}` : stream.streamerName}>
+              <span className="font-semibold">{stream.streamerName}</span>
+              {showRpName && stream.rpName && (
+                <>
+                  <span className="text-tertiary"> · RP </span>
+                  <span className="text-muted-foreground">{stream.rpName}</span>
+                </>
+              )}
+            </p>
+          </div>
+          {selected ? (
+            <Badge variant="neutral" aria-label="추가됨" className="shrink-0 gap-1 border border-primary text-primary">
+              <Check aria-hidden="true" className="size-3" />
+              추가됨
+            </Badge>
+          ) : (
+            <button
+              type="button"
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={(event) => {
+                event.stopPropagation();
+                onAdd?.();
+              }}
+              disabled={addDisabled || !onAdd}
+              aria-label={`${stream.streamerName} 선택에 추가`}
+              className="inline-flex h-7 shrink-0 cursor-pointer items-center gap-1 rounded-sm border border-border px-2 text-xs font-medium text-foreground hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <Plus aria-hidden="true" className="size-3" />
+              {addDisabled ? "최대 선택" : "추가"}
+            </button>
+          )}
         </div>
         <h2 className="mt-1 line-clamp-1 h-5 text-sm leading-5 font-semibold" title={stream.title}>
           {stream.title}
         </h2>
-        <div className="mt-1 flex h-5 min-w-0 items-center gap-2 text-xs text-muted-foreground">
-          {stream.category && (
-            <p className="max-w-24 shrink-0 truncate" title={stream.category}>
-              <span className="sr-only">카테고리 </span>
-              {stream.category}
-            </p>
-          )}
-          <ul aria-label="방송 태그" className="flex min-w-0 items-center gap-2">
-            {visibleTags.map((tag) => (
-              <li key={tag} className="min-w-0">
-                <Tag className="max-w-24 truncate" title={`#${tag}`}>
-                  #{tag}
-                </Tag>
-              </li>
-            ))}
-            {hiddenTags.length > 0 && (
-              <li className="shrink-0">
-                <Tag
-                  className="tabular-nums"
-                  aria-label={`추가 태그 ${hiddenTags.length}개: ${hiddenTags.join(", ")}`}
-                  title={hiddenTags.map((tag) => `#${tag}`).join(" ")}
-                >
-                  +{hiddenTags.length}
-                </Tag>
-              </li>
+        {(stream.category || visibleGroups.length > 0) && (
+          <div className="mt-1 flex h-5 min-w-0 items-center gap-2 text-xs text-muted-foreground">
+            {stream.category && (
+              <p className="max-w-24 shrink-0 truncate" title={stream.category}>
+                <span className="sr-only">카테고리 </span>
+                {stream.category}
+              </p>
             )}
-          </ul>
-        </div>
+            {visibleGroups.length > 0 && (
+              <ul aria-label="Participant groups" className="flex min-w-0 items-center gap-2 overflow-hidden">
+                {visibleGroups.map((tag) => (
+                  <li key={tag} className="min-w-0 shrink">
+                    <Tag className="max-w-24 truncate" title={tag}>
+                      {tag}
+                    </Tag>
+                  </li>
+                ))}
+                {hiddenGroups.length > 0 && (
+                  <li className="shrink-0">
+                    <Tag
+                      className="tabular-nums"
+                      aria-label={`추가 소속 ${hiddenGroups.length}개: ${hiddenGroups.join(", ")}`}
+                      title={hiddenGroups.join(" ")}
+                    >
+                      +{hiddenGroups.length}
+                    </Tag>
+                  </li>
+                )}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
     </article>
   );
