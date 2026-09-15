@@ -13,5 +13,13 @@ export function getMultiviewUrl(channelIds: readonly string[]): string {
 export function openMultiviewWindow(browserWindow: Window, channelIds: readonly string[]): OpenMultiviewResult {
   const multiviewWindow = browserWindow.open(getMultiviewUrl(channelIds), "_blank");
 
-  return multiviewWindow ? { ok: true } : { ok: false, reason: "popup-blocked" };
+  if (!multiviewWindow) {
+    return { ok: false, reason: "popup-blocked" };
+  }
+
+  // `noopener` can make window.open return null even when the popup succeeds,
+  // which would break the existing popup-blocked feedback.
+  multiviewWindow.opener = null;
+
+  return { ok: true };
 }

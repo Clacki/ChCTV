@@ -385,7 +385,7 @@
         "role": "간호사"
       }
     ],
-    "aliases": [],
+    "aliases": ["에휴"],
     "groups": ["스텔라이브"],
     "tags": []
   },
@@ -580,7 +580,7 @@
         "role": "기자"
       }
     ],
-    "aliases": [],
+    "aliases": ["용사"],
     "groups": ["스텔라이브"],
     "tags": []
   },
@@ -761,7 +761,7 @@
       }
     ],
     "aliases": [],
-    "groups": ["플라네타"],
+    "groups": ["플라네타", "인챈트"],
     "tags": []
   },
   {
@@ -1516,7 +1516,7 @@
     "rpName": "나온나",
     "channelId": "45e71a76e949e16a34764deb962f9d9f",
     "affiliations": [],
-    "aliases": [],
+    "aliases": ["유니콘"],
     "groups": ["스텔라이브"],
     "tags": []
   },

@@ -4,8 +4,10 @@ import { getMultiviewUrl, openMultiviewWindow } from "../src/features/multiview/
 
 describe("openMultiviewWindow", () => {
   it("opens one ChCTV multiview tab with every selected channel", () => {
-    const open = vi.fn(() => ({}));
-    const browserWindow = { open } as unknown as Window;
+    const browserWindow = {} as Window;
+    const popupWindow = { opener: browserWindow } as unknown as Window;
+    const open = vi.fn(() => popupWindow);
+    browserWindow.open = open;
 
     expect(openMultiviewWindow(browserWindow, ["A", "B", "C"])).toEqual({ ok: true });
     expect(open).toHaveBeenCalledTimes(1);
@@ -13,6 +15,7 @@ describe("openMultiviewWindow", () => {
       "/multiview?channel=A&channel=B&channel=C",
       "_blank",
     );
+    expect(popupWindow.opener).toBeNull();
   });
 
   it("returns a popup-blocked result without navigating the current page", () => {

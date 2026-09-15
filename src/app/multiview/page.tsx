@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { getValidMultiviewChannelIds } from "@/features/multiview/channel-id";
 import { MultiviewWorkspace } from "@/features/multiview/multiview-workspace";
 
 type MultiviewPageProps = {
@@ -8,10 +9,10 @@ type MultiviewPageProps = {
 
 export default async function MultiviewPage({ searchParams }: MultiviewPageProps) {
   const { channel } = await searchParams;
-  const channelIds = (Array.isArray(channel) ? channel : channel ? [channel] : []).filter(Boolean);
+  const channelIds = getValidMultiviewChannelIds(Array.isArray(channel) ? channel : channel ? [channel] : []);
 
   if (channelIds.length > 0) {
-    return <MultiviewWorkspace channelIds={channelIds.slice(0, 6)} />;
+    return <MultiviewWorkspace channelIds={channelIds} />;
   }
 
   return (
