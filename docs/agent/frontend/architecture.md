@@ -31,7 +31,7 @@ Vercel Analytics와 Speed Insights를 사용한다. PostHog는 `NEXT_PUBLIC_POST
 
 ### State management
 
-현재는 공유 클라이언트 상태가 없어 React와 URL 상태만으로 충분하다. 멀티뷰 같은 실제 요구가 생긴 뒤 필요한 범위를 평가한다.
+Discovery의 선택·필터와 멀티뷰의 UI 상태는 React state를 사용한다. 멀티뷰 채널 목록은 반복 `channel` query parameter로 URL에 보존하며, 저장된 멀티뷰 묶음은 browser localStorage에 저장한다.
 
 ## Related references
 

@@ -1,4 +1,5 @@
 import { Check, Plus, SlidersHorizontal } from "lucide-react";
+import { notFound } from "next/navigation";
 
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,10 @@ function PlaygroundSection({ title, children }: Readonly<{ title: string; childr
 }
 
 export default function PlaygroundPage() {
+  if (process.env.NODE_ENV === "production") {
+    notFound();
+  }
+
   return (
     <main className="mx-auto min-h-dvh max-w-6xl space-y-6 p-6">
       <header>
