@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Check, Eye, ImageOff, Plus } from "lucide-react";
 import { useState } from "react";
 
+import { ChzzkLiveLink } from "@/components/streams/chzzk-live-link";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -121,6 +122,9 @@ export function StreamCard({
               )}
             </p>
           </div>
+          {stream.channelId && (
+            <ChzzkLiveLink channelId={stream.channelId} streamerName={stream.streamerName} />
+          )}
           {selected ? (
             <Badge variant="neutral" aria-label="추가됨" className="shrink-0 gap-1 border border-primary text-primary">
               <Check aria-hidden="true" className="size-3" />
