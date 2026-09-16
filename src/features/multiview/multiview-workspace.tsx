@@ -1,6 +1,7 @@
 "use client";
 
 import { Columns2, Crown, LayoutGrid, MessageSquare, Rows2, X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,11 +13,14 @@ import {
 } from "@/features/multiview/multiview-layout";
 import {
   createMultiviewSlots,
+  getMultiviewChannelIds,
   getMultiviewSlotGridArea,
   getMultiviewSlotLabelByKey,
   getMultiviewSlotKeyByChannelId,
+  removeMultiviewSlotChannel,
   swapMainWithSub,
 } from "@/features/multiview/multiview-slot";
+import { getMultiviewUrl } from "@/features/multiview/multiview-url";
 import { getViewerGeometry } from "@/features/multiview/viewer-geometry";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +35,9 @@ const layoutControls: ReadonlyArray<{ preset: MultiviewLayoutPreset; label: stri
 export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readonly string[] }>) {
   const [layoutPreset, setLayoutPreset] = useState<MultiviewLayoutPreset>(() => getDefaultMultiviewLayoutPreset(channelIds.length));
   const [slots, setSlots] = useState(() => createMultiviewSlots(channelIds));
-  const layout = getMultiviewLayout(channelIds.length, layoutPreset);
-  const visibleLayoutControls = channelIds.length === 2
+  const activeChannelIds = getMultiviewChannelIds(slots);
+  const layout = getMultiviewLayout(activeChannelIds.length, layoutPreset);
+  const visibleLayoutControls = activeChannelIds.length === 2
     ? layoutControls.filter(({ preset }) => preset !== "balanced")
     : layoutControls;
   const mainChannelId = slots.main;
@@ -63,13 +68,33 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
 
   const viewerGeometry = getViewerGeometry({
     preset: layoutPreset,
-    channelCount: channelIds.length,
+    channelCount: activeChannelIds.length,
     width: viewerBounds.width,
     height: viewerBounds.height,
     gap: VIEWER_GAP,
     columnWeights: layout.columnWeights,
     rowWeights: layout.rowWeights,
   });
+
+  const removeChannel = (channelId: string) => {
+    const nextSlots = removeMultiviewSlotChannel(slots, channelId);
+    const nextChannelIds = getMultiviewChannelIds(nextSlots);
+
+    setSlots(nextSlots);
+    window.history.replaceState(null, "", getMultiviewUrl(nextChannelIds));
+  };
+
+  if (activeChannelIds.length === 0) {
+    return (
+      <main className="min-h-dvh p-6">
+        <section className="mx-auto max-w-3xl rounded-xl border bg-card p-6">
+          <h1 className="text-xl font-semibold">Multiview</h1>
+          <p className="mt-6 text-sm text-muted-foreground">선택한 방송이 없습니다.</p>
+          <Link href="/" className="mt-3 inline-flex text-primary underline underline-offset-4">선택 페이지로 이동</Link>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className={cn(
@@ -116,7 +141,7 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
             gridTemplateAreas: layout.areas,
           }}
         >
-          {channelIds.map((channelId) => {
+          {activeChannelIds.map((channelId) => {
             const slotKey = getMultiviewSlotKeyByChannelId(slots, channelId);
             if (!slotKey) {
               return null;
@@ -135,7 +160,7 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
                 style={{ gridArea: getMultiviewSlotGridArea(slotKey) }}
                 data-viewer-slot={slotKey}
               >
-                {isMain && <Crown aria-label="현재 메인" role="img" className="pointer-events-none absolute right-3 top-3 z-10 size-7 text-primary" />}
+                {isMain && <Crown aria-label="현재 메인" role="img" className="pointer-events-none absolute right-12 top-3 z-10 size-7 text-primary" />}
                 <ChzzkViewer channelId={channelId} slotLabel={slotLabel} profile={isMain ? "main" : "sub"} />
                 {!isMain && (
                   <Button
@@ -144,12 +169,23 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
                     variant="ghost"
                     aria-label="메인으로 지정"
                     title="메인으로 지정"
-                    className="absolute right-3 top-3 z-10 size-8 border border-primary/70 bg-background/75 p-0 text-primary opacity-0 transition-opacity hover:bg-background/95 group-hover:opacity-100 group-focus-within:opacity-100"
+                    className="absolute right-12 top-3 z-10 size-8 border border-primary/70 bg-background/75 p-0 text-primary opacity-0 transition-opacity hover:bg-background/95 group-hover:opacity-100 group-focus-within:opacity-100"
                     onClick={() => setSlots((currentSlots) => swapMainWithSub(currentSlots, slotKey))}
                   >
                     <Crown aria-hidden="true" className="size-4" />
                   </Button>
                 )}
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  aria-label={`${slotLabel} 제거`}
+                  title={`${slotLabel} 제거`}
+                  className="absolute right-3 top-3 z-10 size-8 border border-primary/70 bg-background/75 p-0 text-primary opacity-0 transition-opacity hover:bg-background/95 group-hover:opacity-100 group-focus-within:opacity-100"
+                  onClick={() => removeChannel(channelId)}
+                >
+                  <X aria-hidden="true" className="size-4" />
+                </Button>
               </article>
             );
           })}
