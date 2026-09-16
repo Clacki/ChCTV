@@ -132,7 +132,7 @@ export function DiscoveryMultiviewWorkspace() {
           className="ml-auto hidden shrink-0 items-center gap-5 text-sm font-medium text-muted-foreground lg:flex"
         >
           <a
-            href="https://bongnudo.super.site/"
+            href="https://www.bongnudo.site/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-foreground/85 hover:text-primary hover:underline hover:underline-offset-4"

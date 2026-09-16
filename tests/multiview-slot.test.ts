@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import {
   createMultiviewSlots,
+  getMultiviewChannelIds,
   getMultiviewSlotLabel,
   getMultiviewSlotKeyByChannelId,
+  removeMultiviewSlotChannel,
   swapMainWithSub,
 } from "../src/features/multiview/multiview-slot";
 import { getChzzkChatUrl } from "../src/features/multiview/chzzk-viewer";
@@ -38,5 +40,12 @@ describe("getMultiviewSlotLabel", () => {
       "main",
       "sub3",
     ]);
+  });
+
+  it("compacts remaining slots and promotes the first Sub when Main is removed", () => {
+    const slots = createMultiviewSlots(["A", "B", "C", "D"]);
+
+    expect(getMultiviewChannelIds(removeMultiviewSlotChannel(slots, "A"))).toEqual(["B", "C", "D"]);
+    expect(getMultiviewChannelIds(removeMultiviewSlotChannel(slots, "C"))).toEqual(["A", "B", "D"]);
   });
 });

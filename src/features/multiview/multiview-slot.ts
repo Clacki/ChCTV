@@ -22,6 +22,19 @@ export function swapMainWithSub(slots: MultiviewSlots, subSlot: MultiviewSubSlot
   return { ...slots, main: slots[subSlot], [subSlot]: slots.main };
 }
 
+export function removeMultiviewSlotChannel(slots: MultiviewSlots, channelId: string): MultiviewSlots {
+  return createMultiviewSlots(
+    multiviewSlotKeys.flatMap((slotKey) => {
+      const currentChannelId = slots[slotKey];
+      return currentChannelId && currentChannelId !== channelId ? [currentChannelId] : [];
+    }),
+  );
+}
+
+export function getMultiviewChannelIds(slots: MultiviewSlots): string[] {
+  return multiviewSlotKeys.flatMap((slotKey) => slots[slotKey] ? [slots[slotKey]] : []);
+}
+
 export function getMultiviewSlotKeyByChannelId(
   slots: MultiviewSlots,
   channelId: string,
