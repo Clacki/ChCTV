@@ -72,10 +72,10 @@ describe("participant catalog", () => {
     const countByAffiliation = (name: string) =>
       participants.filter((participant) => participant.affiliations.some((affiliation) => affiliation.name === name)).length;
 
-    expect(participants).toHaveLength(220);
-    expect(participants.filter((participant) => participant.rpName !== null)).toHaveLength(198);
-    expect(participants.filter((participant) => participant.rpName === null)).toHaveLength(22);
-    expect(participants.filter((participant) => participant.channelId !== null)).toHaveLength(220);
+    expect(participants).toHaveLength(230);
+    expect(participants.filter((participant) => participant.rpName !== null)).toHaveLength(212);
+    expect(participants.filter((participant) => participant.rpName === null)).toHaveLength(18);
+    expect(participants.filter((participant) => participant.channelId !== null)).toHaveLength(230);
     expect(countByRole("시장")).toBe(1);
     expect(countByRole("경찰")).toBe(15);
     expect(countByRole("간호사")).toBe(15);
@@ -86,7 +86,7 @@ describe("participant catalog", () => {
     expect(countByAffiliation("병원")).toBe(16);
     expect(countByAffiliation("봉누도방송국")).toBe(10);
     expect(countByAffiliation("교통정비공사")).toBe(11);
-    expect(participants.filter((participant) => participant.affiliations.length === 0)).toHaveLength(166);
+    expect(participants.filter((participant) => participant.affiliations.length === 0)).toHaveLength(176);
   });
 
   it("contains no invalid or duplicate participant identifiers", () => {
