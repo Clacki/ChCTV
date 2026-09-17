@@ -2,7 +2,7 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { LoaderCircle, Search, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { OfflineMemberCard } from "@/components/streams/offline-member-card";
 import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card";
@@ -192,7 +192,7 @@ export function DiscoveryBrowser({
                     stream={stream}
                     selected={selection.includes(stream.id)}
                     canAdd={selection.length < selectionLimit}
-                    onAdd={() => onAddStream(stream.id)}
+                    onAddStream={onAddStream}
                     showRpName={showRpName}
                   />
                 </li>
@@ -224,19 +224,20 @@ export function DiscoveryBrowser({
   );
 }
 
-function DraggableDiscoveryStream({
+const DraggableDiscoveryStream = memo(function DraggableDiscoveryStream({
   stream,
   selected,
   canAdd,
-  onAdd,
+  onAddStream,
   showRpName,
 }: Readonly<{
   stream: StreamCardData;
   selected: boolean;
   canAdd: boolean;
-  onAdd: () => void;
+  onAddStream: (streamId: string) => void;
   showRpName: boolean;
 }>) {
+  const handleAdd = useCallback(() => onAddStream(stream.id), [onAddStream, stream.id]);
   const canInteract = !selected && canAdd;
   const { attributes, isDragging, listeners, setNodeRef } = useDraggable({
     id: `discovery:${stream.id}`,
@@ -265,11 +266,11 @@ function DraggableDiscoveryStream({
       <StreamCard
         stream={stream}
         selected={selected}
-        onAdd={onAdd}
+        onAdd={handleAdd}
         addDisabled={!canInteract}
         draggable={canInteract}
         showRpName={showRpName}
       />
     </div>
   );
-}
+});

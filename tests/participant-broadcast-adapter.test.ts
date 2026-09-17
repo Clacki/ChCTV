@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { toDiscoveryMembers, toDiscoveryStreamCards } from "../src/features/discovery/participant-broadcast-adapter";
+import { matchesParticipantFilters, getParticipants } from "../src/lib/participants";
 import type { ParticipantBroadcast } from "../src/types/participant-broadcast";
 
 const broadcasts: ParticipantBroadcast[] = [
@@ -92,5 +93,34 @@ describe("toDiscoveryStreamCards", () => {
       expect.objectContaining({ status: "LIVE", participant: broadcasts[0].participant }),
       expect.objectContaining({ status: "OFFLINE", participant: broadcasts[1].participant, channelImageUrl: "https://cdn.example.com/offline-channel.jpg" }),
     ]);
+  });
+
+  it("keeps catalog groups available to both LIVE cards and group filters", () => {
+    const participantNames = ["루루엘 아스트리온", "시아 이르엘린"];
+    const catalogParticipants = getParticipants().filter((participant) => participantNames.includes(participant.streamerName));
+    const liveBroadcasts: ParticipantBroadcast[] = catalogParticipants.map((participant) => ({
+      participant,
+      isLive: true,
+      live: {
+        channelId: participant.channelId!,
+        channelName: participant.streamerName,
+        liveTitle: `${participant.streamerName} 방송`,
+        viewerCount: 1,
+        thumbnailUrl: null,
+        channelImageUrl: null,
+        tags: [],
+        categoryType: null,
+        liveCategory: null,
+        liveCategoryValue: null,
+      },
+    }));
+
+    const members = toDiscoveryMembers(liveBroadcasts);
+
+    expect(members).toHaveLength(2);
+    for (const group of ["베이라이트", "샌드박스"]) {
+      expect(members.every((member) => matchesParticipantFilters(member.participant, { groups: [group] }))).toBe(true);
+      expect(members.every((member) => member.status === "LIVE" && member.stream.displayGroups.includes(group))).toBe(true);
+    }
   });
 });

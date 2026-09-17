@@ -109,6 +109,28 @@ export function mergeParticipantsWithLives(
   };
 }
 
+/**
+ * Keeps cached LIVE state while replacing participant metadata with the current catalog.
+ * The cache intentionally outlives catalog edits, so metadata must not be served from
+ * an older broadcast snapshot.
+ */
+export function refreshParticipantBroadcastMetadata(
+  broadcasts: readonly ParticipantBroadcast[],
+  participants: readonly Participant[],
+): ParticipantBroadcast[] {
+  const participantsByChannelId = new Map(
+    participants.flatMap((participant) => participant.channelId ? [[participant.channelId, participant] as const] : []),
+  );
+
+  return broadcasts.map((broadcast) => {
+    const participant = broadcast.participant.channelId
+      ? participantsByChannelId.get(broadcast.participant.channelId)
+      : undefined;
+
+    return participant ? { ...broadcast, participant } : broadcast;
+  });
+}
+
 export function sortParticipantBroadcasts(
   broadcasts: readonly ParticipantBroadcast[],
 ): ParticipantBroadcast[] {

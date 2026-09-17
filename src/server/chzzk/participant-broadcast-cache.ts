@@ -4,6 +4,7 @@ import { unstable_cache } from "next/cache";
 
 import { createParticipantBroadcastCache } from "../../lib/participant-broadcast-cache";
 import { normalizeChzzkLiveThumbnailUrl } from "../../lib/chzzk-thumbnail-url";
+import { refreshParticipantBroadcastMetadata } from "../../lib/participant-broadcasts";
 import { getParticipants } from "../../lib/participants";
 import type {
   CachedParticipantBroadcastsResult,
@@ -70,7 +71,9 @@ export async function getCachedParticipantBroadcasts(): Promise<CachedParticipan
 
   return {
     status: result.status,
-    broadcasts: normalizeBroadcastThumbnails(result.snapshot.broadcasts),
+    broadcasts: normalizeBroadcastThumbnails(
+      refreshParticipantBroadcastMetadata(result.snapshot.broadcasts, getParticipants()),
+    ),
     ambiguousMatches: result.snapshot.ambiguousMatches,
     fetchedAt: result.snapshot.fetchedAt,
     cacheAgeSeconds: result.cacheAgeSeconds,
