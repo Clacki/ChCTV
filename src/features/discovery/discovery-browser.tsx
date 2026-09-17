@@ -2,7 +2,7 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { Flame, LoaderCircle, Search, X } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { OfflineMemberCard } from "@/components/streams/offline-member-card";
 import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card";
@@ -11,8 +11,6 @@ import { Chip } from "@/components/ui/chip";
 import { FacetFilter } from "@/components/ui/facet-filter";
 import type { DiscoveryMember } from "@/features/discovery/participant-broadcast-adapter";
 import { GROUP_FILTER_SECTIONS, GROUP_FILTER_VALUES } from "@/features/discovery/discovery-filter-config";
-import { getBongnudoScheduleStatus, type ScheduleStatus } from "@/lib/bongnudo-schedule";
-import { getDefaultGtaFilterEnabled, isChzzkGtaCategory } from "@/lib/chzzk-category";
 import { getParticipants, matchesParticipantFilters } from "@/lib/participants";
 import { cn } from "@/lib/utils";
 import type { ParticipantFilters } from "@/types/participant";
@@ -48,17 +46,6 @@ function isRisingCandidate(stream: StreamCardData) {
     && stream.risingIncrease > 30;
 }
 
-function useScheduleStatus(): ScheduleStatus {
-  const [scheduleStatus, setScheduleStatus] = useState(() => getBongnudoScheduleStatus().status);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setScheduleStatus(getBongnudoScheduleStatus().status), 60_000);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  return scheduleStatus;
-}
-
 export function DiscoveryBrowser({
   members,
   selection,
@@ -69,14 +56,10 @@ export function DiscoveryBrowser({
   risingHistoryReady = false,
   onRetry,
 }: DiscoveryBrowserProps) {
-  const scheduleStatus = useScheduleStatus();
-  const isOpen = getDefaultGtaFilterEnabled(scheduleStatus);
   const [query, setQuery] = useState("");
   const [affiliations, setAffiliations] = useState<string[]>([]);
   const [groups, setGroups] = useState<string[]>([]);
   const [risingOnly, setRisingOnly] = useState(false);
-  const [gtaOnly, setGtaOnly] = useState(() => isOpen);
-  const wasOpenRef = useRef(isOpen);
   const [showRpName, setShowRpName] = useState(false);
   const [hasRestoredRpNamePreference, setHasRestoredRpNamePreference] = useState(false);
 
@@ -95,15 +78,6 @@ export function DiscoveryBrowser({
     }
   }, [hasRestoredRpNamePreference, showRpName]);
 
-  useEffect(() => {
-    if (isOpen && !wasOpenRef.current) {
-      setGtaOnly(true);
-    } else if (!isOpen && wasOpenRef.current) {
-      setGtaOnly(false);
-    }
-    wasOpenRef.current = isOpen;
-  }, [isOpen]);
-
   const catalogParticipants = useMemo(() => getParticipants(), []);
   const affiliationOptions = useMemo(
     () => uniqueSorted(catalogParticipants.flatMap((participant) => participant.affiliations.map((affiliation) => affiliation.name))),
@@ -117,7 +91,7 @@ export function DiscoveryBrowser({
     () => members.flatMap((member) => member.status === "LIVE" && isRisingCandidate(member.stream) ? [member.stream] : []),
     [members],
   );
-  const hasActiveFilter = Boolean(normalize(query)) || affiliations.length > 0 || groups.length > 0 || risingOnly || gtaOnly;
+  const hasActiveFilter = Boolean(normalize(query)) || affiliations.length > 0 || groups.length > 0 || risingOnly;
 
   const filteredMembers = useMemo(() => {
     const normalizedQuery = normalize(query);
@@ -131,10 +105,9 @@ export function DiscoveryBrowser({
 
       return matchesQuery
         && matchesFilters
-        && (!gtaOnly || (member.status === "LIVE" && isChzzkGtaCategory(member.stream.categoryKey)))
         && (!risingOnly || (member.status === "LIVE" && isRisingCandidate(member.stream)));
     });
-  }, [affiliations, groups, gtaOnly, members, query, risingOnly]);
+  }, [affiliations, groups, members, query, risingOnly]);
 
   const visibleStreams = useMemo(
     () => filteredMembers.flatMap((member) => member.status === "LIVE" ? [member.stream] : []).sort((left, right) => risingOnly ? (right.risingSortValue ?? 0) - (left.risingSortValue ?? 0) : right.viewerCount - left.viewerCount),
@@ -150,7 +123,6 @@ export function DiscoveryBrowser({
     setAffiliations([]);
     setGroups([]);
     setRisingOnly(false);
-    setGtaOnly(false);
   };
 
   return (
@@ -178,7 +150,6 @@ export function DiscoveryBrowser({
         </label>
         <FacetFilter label="그룹" options={groupOptions} sections={GROUP_FILTER_SECTIONS} selectedValues={groups} onChange={setGroups} />
         <FacetFilter label="봉누도 소속" options={affiliationOptions} selectedValues={affiliations} onChange={setAffiliations} />
-        <Chip selected={gtaOnly} className="h-9 rounded-md" onClick={() => setGtaOnly((value) => !value)}>GTA</Chip>
         <Chip selected={risingOnly} className="h-9 rounded-md" onClick={() => setRisingOnly((value) => !value)}>
           <Flame aria-hidden="true" className="size-3.5" />
           시선 집중
