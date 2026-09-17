@@ -5,6 +5,11 @@ import { unstable_cache } from "next/cache";
 import { createParticipantBroadcastCache } from "../../lib/participant-broadcast-cache";
 import { normalizeChzzkLiveThumbnailUrl } from "../../lib/chzzk-thumbnail-url";
 import { refreshParticipantBroadcastMetadata } from "../../lib/participant-broadcasts";
+import {
+  ACTIVE_BROADCAST_REFRESH_SECONDS,
+  getParticipantBroadcastRefreshPolicy,
+  INACTIVE_BROADCAST_REFRESH_SECONDS,
+} from "../../lib/participant-broadcast-refresh-policy";
 import { getParticipants } from "../../lib/participants";
 import type {
   CachedParticipantBroadcastsResult,
@@ -12,7 +17,7 @@ import type {
 } from "../../types/participant-broadcast";
 import { getParticipantBroadcasts } from "./participant-broadcasts";
 
-export const CHZZK_LIVE_CACHE_SECONDS = 15 * 60;
+export const CHZZK_LIVE_CACHE_SECONDS = INACTIVE_BROADCAST_REFRESH_SECONDS;
 
 function normalizeBroadcastThumbnails(broadcasts: ParticipantBroadcastSnapshot["broadcasts"]) {
   return broadcasts.map((broadcast) => {
@@ -38,8 +43,10 @@ class BroadcastLoadError extends Error {
   }
 }
 
-const getCachedBroadcastSnapshot = unstable_cache(
+function createCachedBroadcastSnapshot(revalidate: number, key: string) {
+  return unstable_cache(
   async (): Promise<ParticipantBroadcastSnapshot> => {
+    console.info("[chzzk] LIVE cache miss; fetching upstream", { revalidate });
     const result = await getParticipantBroadcasts();
 
     if (result.status === "error") {
@@ -52,21 +59,45 @@ const getCachedBroadcastSnapshot = unstable_cache(
       fetchedAt: new Date().toISOString(),
     };
   },
-  ["chzzk-participant-broadcasts"],
-  { revalidate: CHZZK_LIVE_CACHE_SECONDS },
+  [key],
+  { revalidate },
+  );
+}
+
+const getActiveCachedBroadcastSnapshot = createCachedBroadcastSnapshot(
+  ACTIVE_BROADCAST_REFRESH_SECONDS,
+  "chzzk-participant-broadcasts-active",
+);
+const getInactiveCachedBroadcastSnapshot = createCachedBroadcastSnapshot(
+  INACTIVE_BROADCAST_REFRESH_SECONDS,
+  "chzzk-participant-broadcasts-inactive",
 );
 
-const getFromProcessCache = createParticipantBroadcastCache(
-  getCachedBroadcastSnapshot,
-  CHZZK_LIVE_CACHE_SECONDS,
+const getFromActiveProcessCache = createParticipantBroadcastCache(
+  getActiveCachedBroadcastSnapshot,
+  ACTIVE_BROADCAST_REFRESH_SECONDS,
+);
+const getFromInactiveProcessCache = createParticipantBroadcastCache(
+  getInactiveCachedBroadcastSnapshot,
+  INACTIVE_BROADCAST_REFRESH_SECONDS,
 );
 
 export async function getCachedParticipantBroadcasts(): Promise<CachedParticipantBroadcastsResult> {
-  const result = await getFromProcessCache();
+  const policy = getParticipantBroadcastRefreshPolicy();
+  const result = policy.intervalSeconds === ACTIVE_BROADCAST_REFRESH_SECONDS
+    ? await getFromActiveProcessCache()
+    : await getFromInactiveProcessCache();
 
   if (result.status === "error") {
+    console.warn("[chzzk] LIVE snapshot unavailable", { cache: "miss" });
     const error = result.cause instanceof BroadcastLoadError ? result.cause.kind : "upstream";
     return { status: "error", participants: getParticipants(), error };
+  }
+
+  if (result.status === "stale") {
+    console.warn("[chzzk] serving stale LIVE snapshot after refresh failure", {
+      cacheAgeSeconds: result.cacheAgeSeconds,
+    });
   }
 
   return {

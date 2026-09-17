@@ -1,4 +1,4 @@
-export type ScheduleStatus = "OPEN" | "CLOSED" | "DAY_OFF";
+export type ScheduleStatus = "PRE_OPEN" | "OPEN" | "CLOSED" | "DAY_OFF";
 
 export type BongnudoSchedule = {
   status: ScheduleStatus;
@@ -35,6 +35,14 @@ export function getBongnudoScheduleStatus(now: Date = new Date()): BongnudoSched
   }
 
   if (!isOperatingHours) {
+    if (hour === 17) {
+      if (operatingDate.getUTCDay() === 5) {
+        return { status: "DAY_OFF", operatingDate: formatOperatingDate(operatingDate) };
+      }
+
+      return { status: "PRE_OPEN", operatingDate: formatOperatingDate(operatingDate) };
+    }
+
     return { status: "CLOSED", operatingDate: formatOperatingDate(operatingDate) };
   }
 

@@ -25,6 +25,23 @@ describe("participant broadcast cache", () => {
     expect(load).toHaveBeenCalledTimes(2);
   });
 
+  it("supports the five-minute LIVE refresh TTL used during pre-open and open hours", async () => {
+    let currentTime = Date.parse("2026-01-01T00:00:00.000Z");
+    const load = vi
+      .fn<() => Promise<ParticipantBroadcastSnapshot>>()
+      .mockResolvedValueOnce(snapshot("2026-01-01T00:00:00.000Z"))
+      .mockResolvedValueOnce(snapshot("2026-01-01T00:05:00.000Z"));
+    const getCached = createParticipantBroadcastCache(load, 300, () => currentTime);
+
+    await getCached();
+    currentTime += 299_000;
+    await getCached();
+    currentTime += 1_000;
+    await getCached();
+
+    expect(load).toHaveBeenCalledTimes(2);
+  });
+
   it("deduplicates concurrent refreshes", async () => {
     const load = vi.fn<() => Promise<ParticipantBroadcastSnapshot>>().mockResolvedValue(snapshot("2026-01-01T00:00:00.000Z"));
     const getCached = createParticipantBroadcastCache(load, 900, () => Date.parse("2026-01-01T00:00:00.000Z"));
