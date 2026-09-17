@@ -22,51 +22,56 @@ function getMultiviewPath(channelIds: readonly string[]): string {
 }
 
 async function mockParticipantBroadcasts(page: Page) {
-  await page.route("**/api/chzzk/participant-broadcasts", (route) => route.fulfill({
-    json: {
-      status: "fresh",
-      cacheAgeSeconds: 0,
-      fetchedAt: "2026-09-14T00:00:00.000Z",
-      ambiguousMatches: [],
-      broadcasts: [...channelIds.map((channelId, index) => ({
-        participant: {
-          streamerName: `Streamer ${index + 1}`,
-          rpName: `Role ${index + 1}`,
-          channelId,
-          affiliations: index < 2 ? [{ type: "public", name: "병원", role: "간호사" }] : [],
-          groups: index === 0 ? ["픽셀", "인챈트", "플라네타"] : index === 1 ? ["스텔라이브"] : [],
-          tags: index === 0 ? ["ignored-json-tag"] : [],
-          aliases: index === 0 ? ["별칭 1"] : [],
-        },
-        isLive: true,
-        live: {
-          channelId,
-          channelName: `Channel ${index + 1}`,
-          liveTitle: `LIVE ${index + 1}`,
-          viewerCount: 100 - index,
-          thumbnailUrl: null,
-          channelImageUrl: null,
-          tags: [],
-          categoryType: null,
-          liveCategory: null,
-          liveCategoryValue: null,
-        },
-      })), {
-        participant: {
-          streamerName: "Offline Streamer",
-          rpName: "Offline Role",
-          channelId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          affiliations: [{ type: "public", name: "병원", role: "간호사" }],
-          groups: ["픽셀"],
-          tags: [],
-          aliases: ["Offline Alias"],
-        },
-        isLive: false,
-        live: null,
-        channelImageUrl: "https://cdn.example.com/offline-channel.jpg",
-      }],
-    },
-  }));
+  await page.route("**/api/chzzk/participant-broadcasts", (route) =>
+    route.fulfill({
+      json: {
+        status: "fresh",
+        cacheAgeSeconds: 0,
+        fetchedAt: "2026-09-14T00:00:00.000Z",
+        ambiguousMatches: [],
+        broadcasts: [
+          ...channelIds.map((channelId, index) => ({
+            participant: {
+              streamerName: `Streamer ${index + 1}`,
+              rpName: `Role ${index + 1}`,
+              channelId,
+              affiliations: index < 2 ? [{ type: "public", name: "병원", role: "간호사" }] : [],
+              groups: index === 0 ? ["픽셀", "인챈트", "플라네타"] : index === 1 ? ["스텔라이브"] : [],
+              tags: index === 0 ? ["ignored-json-tag"] : [],
+              aliases: index === 0 ? ["별칭 1"] : [],
+            },
+            isLive: true,
+            live: {
+              channelId,
+              channelName: `Channel ${index + 1}`,
+              liveTitle: `LIVE ${index + 1}`,
+              viewerCount: 100 - index,
+              thumbnailUrl: null,
+              channelImageUrl: null,
+              tags: [],
+              categoryType: null,
+              liveCategory: null,
+              liveCategoryValue: null,
+            },
+          })),
+          {
+            participant: {
+              streamerName: "Offline Streamer",
+              rpName: "Offline Role",
+              channelId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              affiliations: [{ type: "public", name: "병원", role: "간호사" }],
+              groups: ["픽셀"],
+              tags: [],
+              aliases: ["Offline Alias"],
+            },
+            isLive: false,
+            live: null,
+            channelImageUrl: "https://cdn.example.com/offline-channel.jpg",
+          },
+        ],
+      },
+    }),
+  );
 }
 
 test("shows the ChCTV discovery workspace", async ({ page }) => {
@@ -181,7 +186,9 @@ test("shows participant groups and restores the RP name preference", async ({ pa
   await expect(firstCard.getByText("+1", { exact: true })).toBeVisible();
   await expect(firstCard.getByRole("list", { name: "Participant groups" })).toBeVisible();
   await expect(firstCard.getByText("ignored-json-tag", { exact: true })).toHaveCount(0);
-  await expect(page.locator("article").filter({ hasText: "Streamer 3" }).getByRole("list", { name: "Participant groups" })).toHaveCount(0);
+  await expect(
+    page.locator("article").filter({ hasText: "Streamer 3" }).getByRole("list", { name: "Participant groups" }),
+  ).toHaveCount(0);
   await expect(firstCard.getByText("Role 1", { exact: true })).toHaveCount(0);
 
   const rpNameSwitch = page.getByRole("switch", { name: /RP 이름/ });
@@ -191,7 +198,9 @@ test("shows participant groups and restores the RP name preference", async ({ pa
 
   await page.reload();
   await expect(page.getByRole("switch", { name: /RP 이름/ })).toHaveAttribute("aria-checked", "true");
-  await expect(page.locator("article").filter({ hasText: "Streamer 1" }).getByText("Role 1", { exact: true })).toBeVisible();
+  await expect(
+    page.locator("article").filter({ hasText: "Streamer 1" }).getByText("Role 1", { exact: true }),
+  ).toBeVisible();
 });
 
 test("shows offline participants automatically for active discovery filters", async ({ page }) => {
@@ -205,7 +214,10 @@ test("shows offline participants automatically for active discovery filters", as
   await expect(offlineCard).toBeVisible();
   await expect(page.getByRole("heading", { name: "오프라인 참가자 1명" })).toBeVisible();
   await expect(offlineCard.getByText("OFFLINE", { exact: true })).toBeVisible();
-  await expect(offlineCard.getByRole("img", { name: "Offline Streamer 채널 이미지" })).toHaveAttribute("src", "https://cdn.example.com/offline-channel.jpg");
+  await expect(offlineCard.getByRole("img", { name: "Offline Streamer 채널 이미지" })).toHaveAttribute(
+    "src",
+    "https://cdn.example.com/offline-channel.jpg",
+  );
   await expect(offlineCard.getByRole("button")).toHaveCount(0);
   await expect(page.locator("article").filter({ hasText: "Streamer 1" })).toHaveCount(0);
 
@@ -289,7 +301,9 @@ test("keeps RP names out of the remote and saves unnamed multiviews", async ({ p
   await remote.getByRole("button", { name: "저장" }).click();
   await expect(remote.getByText("직접 입력한 이름", { exact: true })).toBeVisible();
 
-  await expect.poll(() => page.evaluate(() => window.localStorage.getItem("chctv.saved-multiviews"))).toContain("멀티뷰 1");
+  await expect
+    .poll(() => page.evaluate(() => window.localStorage.getItem("chctv.saved-multiviews")))
+    .toContain("멀티뷰 1");
 });
 
 test("starts multiview with ordered channel query parameters", async ({ page }) => {
@@ -306,26 +320,24 @@ test("starts multiview with ordered channel query parameters", async ({ page }) 
 
   const popupPromise = page.waitForEvent("popup");
   const multiviewLink = page.getByRole("link", { name: "멀티뷰 시작" });
-  await expect(multiviewLink).toHaveAttribute(
-    "href",
-    `/multiview?channel=${channelIds[0]}&channel=${channelIds[1]}`,
-  );
+  await expect(multiviewLink).toHaveAttribute("href", `/multiview?channel=${channelIds[0]}&channel=${channelIds[1]}`);
   await expect(multiviewLink).toHaveAttribute("target", "_blank");
   await expect(multiviewLink).toHaveAttribute("rel", "noopener noreferrer");
   await multiviewLink.click();
   const multiviewWindow = await popupPromise;
 
   await expect(page).toHaveURL("/");
-  await expect(multiviewWindow).toHaveURL(
-    `/multiview?channel=${channelIds[0]}&channel=${channelIds[1]}`,
-  );
+  await expect(multiviewWindow).toHaveURL(`/multiview?channel=${channelIds[0]}&channel=${channelIds[1]}`);
   const viewers = multiviewWindow.locator("iframe");
   await expect(viewers).toHaveCount(3);
 
   await multiviewWindow.reload();
   await expect(multiviewWindow.locator("iframe")).toHaveCount(3);
   await expect(viewers.nth(0)).toHaveAttribute("src", `https://chzzk.naver.com/live/${channelIds[0]}`);
-  await expect(viewers.nth(0)).toHaveAttribute("allow", "autoplay; fullscreen; encrypted-media; local-network-access; loopback-network");
+  await expect(viewers.nth(0)).toHaveAttribute(
+    "allow",
+    "autoplay; fullscreen; encrypted-media; local-network-access; loopback-network",
+  );
   await expect(viewers.nth(0)).toHaveAttribute("scrolling", "no");
   await expect(viewers.nth(1)).toHaveAttribute("src", `https://chzzk.naver.com/live/${channelIds[1]}`);
   await expect(viewers.nth(2)).toHaveAttribute("src", `https://chzzk.naver.com/live/${channelIds[0]}/chat`);
@@ -335,7 +347,7 @@ test("handles direct multiview access without channel parameters", async ({ page
   await page.goto("/multiview");
 
   await expect(page.getByText("선택된 방송이 없습니다.", { exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Discovery로 돌아가기" })).toHaveAttribute("href", "/");
+  await expect(page.getByRole("link", { name: "라이브 선택 페이지로 돌아가기" })).toHaveAttribute("href", "/");
 });
 
 test("uses the same empty state after removing the last multiview frame", async ({ page }) => {
@@ -345,7 +357,7 @@ test("uses the same empty state after removing the last multiview frame", async 
   await page.getByRole("button", { name: "Main 제거" }).click();
 
   await expect(page.getByText("선택된 방송이 없습니다.", { exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Discovery로 돌아가기" })).toHaveAttribute("href", "/");
+  await expect(page.getByRole("link", { name: "라이브 선택 페이지로 돌아가기" })).toHaveAttribute("href", "/");
   await expect(page).toHaveURL("/multiview");
 });
 
@@ -361,9 +373,11 @@ test("uses two layouts for two channels without reloading viewer iframes", async
     const iframes = [...document.querySelectorAll<HTMLIFrameElement>("[data-viewer-slot] iframe")];
     const state = { iframes, loadCount: 0 };
 
-    iframes.forEach((iframe) => iframe.addEventListener("load", () => {
-      state.loadCount += 1;
-    }));
+    iframes.forEach((iframe) =>
+      iframe.addEventListener("load", () => {
+        state.loadCount += 1;
+      }),
+    );
     Object.assign(window, { __twoChannelViewerState: state });
   });
 
@@ -371,17 +385,21 @@ test("uses two layouts for two channels without reloading viewer iframes", async
   await page.getByRole("button", { name: "Focus Right" }).click();
   await page.waitForTimeout(1000);
 
-  expect(await page.evaluate(() => {
-    const state = (window as Window & {
-      __twoChannelViewerState: { iframes: HTMLIFrameElement[]; loadCount: number };
-    }).__twoChannelViewerState;
-    const currentIframes = [...document.querySelectorAll<HTMLIFrameElement>("[data-viewer-slot] iframe")];
+  expect(
+    await page.evaluate(() => {
+      const state = (
+        window as Window & {
+          __twoChannelViewerState: { iframes: HTMLIFrameElement[]; loadCount: number };
+        }
+      ).__twoChannelViewerState;
+      const currentIframes = [...document.querySelectorAll<HTMLIFrameElement>("[data-viewer-slot] iframe")];
 
-    return {
-      identitiesMatch: state.iframes.every((iframe, index) => iframe === currentIframes[index]),
-      loadCount: state.loadCount,
-    };
-  })).toEqual({ identitiesMatch: true, loadCount: 0 });
+      return {
+        identitiesMatch: state.iframes.every((iframe, index) => iframe === currentIframes[index]),
+        loadCount: state.loadCount,
+      };
+    }),
+  ).toEqual({ identitiesMatch: true, loadCount: 0 });
 });
 
 test("uses Crown controls to identify and change the Main viewer", async ({ page }) => {
@@ -404,7 +422,11 @@ test("uses Crown controls to identify and change the Main viewer", async ({ page
 test("keeps every multiview slot at 16:9 across layouts and desktop widths", async ({ page }) => {
   const layouts = ["Focus Right", "Focus Bottom", "Balanced"];
 
-  for (const [width, height] of [[1280, 800], [1440, 900], [1920, 1080]]) {
+  for (const [width, height] of [
+    [1280, 800],
+    [1440, 900],
+    [1920, 1080],
+  ]) {
     await page.setViewportSize({ width, height });
 
     for (let count = 1; count <= 6; count += 1) {
@@ -412,7 +434,9 @@ test("keeps every multiview slot at 16:9 across layouts and desktop widths", asy
       await expect(page.locator("[data-viewer-slot]")).toHaveCount(count);
 
       if (count === 1) {
-        await expect(page.getByText("채팅을 접고 T 키를 누르면 더 깔끔하게 시청할 수 있습니다.", { exact: true })).toBeVisible();
+        await expect(
+          page.getByText("채팅을 접고 T 키를 누르면 더 깔끔하게 시청할 수 있습니다.", { exact: true }),
+        ).toBeVisible();
       }
 
       const availableLayouts = count === 2 ? layouts.filter((layout) => layout !== "Balanced") : layouts;
@@ -429,11 +453,18 @@ test("keeps every multiview slot at 16:9 across layouts and desktop widths", asy
         );
 
         expect(slotMeasurements).toHaveLength(count);
-        expect(slotMeasurements.every(({ width: slotWidth, height: slotHeight }) => Math.abs((slotWidth / slotHeight) - (16 / 9)) < 0.02)).toBe(true);
-        expect(await page.evaluate(() => (
-          document.documentElement.scrollWidth <= window.innerWidth
-          && document.documentElement.scrollHeight <= window.innerHeight
-        ))).toBe(true);
+        expect(
+          slotMeasurements.every(
+            ({ width: slotWidth, height: slotHeight }) => Math.abs(slotWidth / slotHeight - 16 / 9) < 0.02,
+          ),
+        ).toBe(true);
+        expect(
+          await page.evaluate(
+            () =>
+              document.documentElement.scrollWidth <= window.innerWidth &&
+              document.documentElement.scrollHeight <= window.innerHeight,
+          ),
+        ).toBe(true);
       }
     }
   }
