@@ -419,6 +419,42 @@ test("uses Crown controls to identify and change the Main viewer", async ({ page
   );
 });
 
+test("keeps four viewer iframe nodes in DOM order when changing the Main slot", async ({ page }) => {
+  for (const [subSlot, expectedMain] of [["sub1", channelIds[1]], ["sub2", channelIds[2]], ["sub3", channelIds[3]]] as const) {
+    await page.goto(getMultiviewPath(channelIds.slice(0, 4)));
+    await expect(page.locator("[data-viewer-slot]")).toHaveCount(4);
+
+    await page.evaluate(() => {
+      const iframes = [...document.querySelectorAll<HTMLIFrameElement>("[data-viewer-slot] iframe")];
+      const state = { bySrc: new Map(iframes.map((iframe) => [iframe.src, iframe])), loadCount: 0 };
+      iframes.forEach((iframe) => iframe.addEventListener("load", () => { state.loadCount += 1; }));
+      Object.assign(window, { __mainSwapViewerState: state });
+    });
+
+    await page.locator(`[data-viewer-slot="${subSlot}"] button`).first().click();
+    await page.waitForTimeout(300);
+
+    expect(await page.evaluate(() => {
+      const state = (window as Window & {
+        __mainSwapViewerState: { bySrc: Map<string, HTMLIFrameElement>; loadCount: number };
+      }).__mainSwapViewerState;
+      const iframes = [...document.querySelectorAll<HTMLIFrameElement>("[data-viewer-slot] iframe")];
+
+      return {
+        domOrder: iframes.map((iframe) => iframe.src),
+        identitiesMatch: iframes.every((iframe) => state.bySrc.get(iframe.src) === iframe),
+        loadCount: state.loadCount,
+        mainSrc: document.querySelector<HTMLIFrameElement>('[data-viewer-slot="main"] iframe')?.src,
+      };
+    })).toEqual({
+      domOrder: channelIds.slice(0, 4).map((channelId) => `https://chzzk.naver.com/live/${channelId}`),
+      identitiesMatch: true,
+      loadCount: 0,
+      mainSrc: `https://chzzk.naver.com/live/${expectedMain}`,
+    });
+  }
+});
+
 test("keeps every multiview slot at 16:9 across layouts and desktop widths", async ({ page }) => {
   const layouts = ["Focus Right", "Focus Bottom", "Balanced"];
 
