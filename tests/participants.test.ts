@@ -73,8 +73,8 @@ describe("participant catalog", () => {
       participants.filter((participant) => participant.affiliations.some((affiliation) => affiliation.name === name)).length;
 
     expect(participants).toHaveLength(230);
-    expect(participants.filter((participant) => participant.rpName !== null)).toHaveLength(212);
-    expect(participants.filter((participant) => participant.rpName === null)).toHaveLength(18);
+    expect(participants.filter((participant) => participant.rpName !== null)).toHaveLength(221);
+    expect(participants.filter((participant) => participant.rpName === null)).toHaveLength(9);
     expect(participants.filter((participant) => participant.channelId !== null)).toHaveLength(230);
     expect(countByRole("시장")).toBe(1);
     expect(countByRole("경찰")).toBe(15);
@@ -87,6 +87,24 @@ describe("participant catalog", () => {
     expect(countByAffiliation("봉누도방송국")).toBe(10);
     expect(countByAffiliation("교통정비공사")).toBe(11);
     expect(participants.filter((participant) => participant.affiliations.length === 0)).toHaveLength(176);
+  });
+
+  it("reflects the confirmed roster corrections and second-admission RP names", () => {
+    const participantsByStreamerName = new Map(getParticipants().map((participant) => [participant.streamerName, participant]));
+
+    expect(participantsByStreamerName.get("쇼코코 도리")).toMatchObject({ rpName: "도라희" });
+    expect(participantsByStreamerName.get("버찌")).toMatchObject({ rpName: "찹츄르" });
+    expect(participantsByStreamerName.get("셀리")).toMatchObject({ rpName: "안망고" });
+    expect(participantsByStreamerName.get("김아테")).toMatchObject({ rpName: "김즥진" });
+    expect(participantsByStreamerName.get("니르")).toMatchObject({ rpName: "오뒤세" });
+    expect(participantsByStreamerName.get("마무")).toMatchObject({ rpName: "김개똥" });
+    expect(participantsByStreamerName.get("망징이")).toMatchObject({ rpName: "망키호테" });
+    expect(participantsByStreamerName.get("시아 이르엘린")).toMatchObject({ rpName: "탈옥순" });
+    expect(participantsByStreamerName.get("초깨비")).toMatchObject({ rpName: "야근중" });
+    expect(participantsByStreamerName.get("쿠뽀미")).toMatchObject({ rpName: "구루마" });
+    expect(participantsByStreamerName.get("나나양")).toMatchObject({ rpName: null });
+    expect(participantsByStreamerName.get("두니주니")).toMatchObject({ rpName: null });
+    expect(participantsByStreamerName.get("디온")).toMatchObject({ rpName: null });
   });
 
   it("contains no invalid or duplicate participant identifiers", () => {

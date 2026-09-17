@@ -311,7 +311,7 @@
       }
     ],
     "aliases": [],
-    "groups": ["샌드박스"],
+    "groups": ["샌드박스", "베이라이트"],
     "tags": []
   },
   {
@@ -700,7 +700,21 @@
         "role": "기사"
       }
     ],
-    "aliases": ["혁수", "남규", "날두", "민준", "상현", "민혁", "혁재", "진규", "진호"],
+    "aliases": [
+      "혁수",
+      "남규",
+      "남수",
+      "날두",
+      "민준",
+      "상현",
+      "민혁",
+      "혁재",
+      "진규",
+      "진호",
+      "메시",
+      "오타니",
+      "수혁"
+    ],
     "groups": [],
     "tags": []
   },
@@ -828,7 +842,7 @@
     "tags": []
   },
   {
-    "streamerName": "광말구짱",
+    "streamerName": "광말구",
     "rpName": "돌만이",
     "channelId": "195e40531e373d386ef37bcfd48418e1",
     "affiliations": [],
@@ -1040,7 +1054,7 @@
     "channelId": "0bd59e5f864251961191315e9efecaf1",
     "affiliations": [],
     "aliases": [],
-    "groups": [],
+    "groups": ["샌드박스", "베이라이트"],
     "tags": []
   },
   {
@@ -1234,7 +1248,7 @@
   },
   {
     "streamerName": "박시윤",
-    "rpName": null,
+    "rpName": "알감자",
     "channelId": "4e5d48497c61773a8602b1c2583d970c",
     "affiliations": [],
     "aliases": [],
@@ -1287,8 +1301,8 @@
     "tags": []
   },
   {
-    "streamerName": "버찌 BUZZI",
-    "rpName": "챱츄르",
+    "streamerName": "버찌",
+    "rpName": "찹츄르",
     "channelId": "85fa9f08b940d363395f6b3f29b91c4c",
     "affiliations": [],
     "aliases": [],
@@ -1377,7 +1391,7 @@
     "tags": []
   },
   {
-    "streamerName": "셀리55",
+    "streamerName": "셀리",
     "rpName": "안망고",
     "channelId": "6031a22fe7f1f2a3f877b7f7d2a0ee38",
     "affiliations": [],
@@ -1387,7 +1401,7 @@
   },
   {
     "streamerName": "소우릎",
-    "rpName": null,
+    "rpName": "서어디",
     "channelId": "fc00d47a77ed2d1156cd5997eba30310",
     "affiliations": [],
     "aliases": ["테란"],
@@ -1441,7 +1455,7 @@
   },
   {
     "streamerName": "싱압둘",
-    "rpName": "이미란",
+    "rpName": "이므란빌랄알리",
     "channelId": "14a414f8fee245c88ebc02de2ec2d2bf",
     "affiliations": [],
     "aliases": [],
@@ -1675,7 +1689,7 @@
   },
   {
     "streamerName": "유세라",
-    "rpName": "유욱기",
+    "rpName": "유옥기",
     "channelId": "9199eb6eb3dea874f47bbb35bd1dfee2",
     "affiliations": [],
     "aliases": [],
@@ -1738,7 +1752,7 @@
   },
   {
     "streamerName": "이소에",
-    "rpName": "쏘에로",
+    "rpName": "소에로",
     "channelId": "343c202c69ba6d11b7ec51741f9591ac",
     "affiliations": [],
     "aliases": [],
@@ -1936,7 +1950,7 @@
   },
   {
     "streamerName": "쵸쵸우",
-    "rpName": "의심해",
+    "rpName": "으심해",
     "channelId": "6ec2829475b485474e7bd1df449cb160",
     "affiliations": [],
     "aliases": [],
@@ -1999,7 +2013,7 @@
   },
   {
     "streamerName": "쿠레나이 나츠키",
-    "rpName": "나삐꼬",
+    "rpName": "나삐코",
     "channelId": "a54372e8197f6d241a43a318279860d6",
     "affiliations": [],
     "aliases": [],
@@ -2241,11 +2255,11 @@
     "tags": []
   },
   {
-    "streamerName": "쇼코코도리",
+    "streamerName": "쇼코코 도리",
     "rpName": "도라희",
     "channelId": "cb0ceb32cbf6bced3bac7892cbca37e1",
     "affiliations": [],
-    "aliases": ["쇼코코 도리"],
+    "aliases": ["쇼코코도리"],
     "groups": ["리스텔라"],
     "tags": []
   },
@@ -2286,7 +2300,7 @@
     "tags": []
   },
   {
-    "streamerName": "테리눈나",
+    "streamerName": "테리 눈나",
     "rpName": "박대리",
     "channelId": "0a2020b09b8cc7f2285b7ae5de2ce4d3",
     "affiliations": [],
@@ -2304,8 +2318,8 @@
     "tags": []
   },
   {
-    "streamerName": "김아테 l Ate",
-    "rpName": null,
+    "streamerName": "김아테",
+    "rpName": "김즥진",
     "channelId": "f42e97f59c3177b8686dccfbf90792dd",
     "affiliations": [],
     "aliases": [],
@@ -2322,8 +2336,8 @@
     "tags": []
   },
   {
-    "streamerName": "니르 Niru",
-    "rpName": null,
+    "streamerName": "니르",
+    "rpName": "오뒤세",
     "channelId": "e0b11eab54ad5ecf2306fdd2d7e4f5c2",
     "affiliations": [],
     "aliases": [],
@@ -2340,7 +2354,7 @@
     "tags": []
   },
   {
-    "streamerName": "디온 Dion",
+    "streamerName": "디온",
     "rpName": null,
     "channelId": "f380f620615fffd54451032686932f9d",
     "affiliations": [],
@@ -2349,8 +2363,8 @@
     "tags": []
   },
   {
-    "streamerName": "마무 Mamuu",
-    "rpName": null,
+    "streamerName": "마무",
+    "rpName": "김개똥",
     "channelId": "902744ac298720925b661711d76f7133",
     "affiliations": [],
     "aliases": [],
@@ -2359,7 +2373,7 @@
   },
   {
     "streamerName": "망징이",
-    "rpName": null,
+    "rpName": "망키호테",
     "channelId": "5b1edd3b95c1513cb502ca2cdd391670",
     "affiliations": [],
     "aliases": [],
@@ -2368,16 +2382,16 @@
   },
   {
     "streamerName": "시아 이르엘린",
-    "rpName": null,
+    "rpName": "탈옥순",
     "channelId": "93e5e28013a8ab45c1a09fc5ae6135d1",
     "affiliations": [],
     "aliases": [],
-    "groups": [],
+    "groups": ["샌드박스", "베이라이트"],
     "tags": []
   },
   {
     "streamerName": "초깨비",
-    "rpName": null,
+    "rpName": "야근중",
     "channelId": "58fbc220638009db28385db1112d22df",
     "affiliations": [],
     "aliases": [],
@@ -2386,7 +2400,7 @@
   },
   {
     "streamerName": "쿠뽀미",
-    "rpName": null,
+    "rpName": "구루마",
     "channelId": "73fc52c403eb3485524c02e1a0f2e623",
     "affiliations": [],
     "aliases": [],

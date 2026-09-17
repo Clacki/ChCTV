@@ -1,11 +1,11 @@
 "use client";
 
 import { Columns2, Crown, LayoutGrid, MessageSquare, Rows2, X } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ChzzkChat, ChzzkViewer } from "@/features/multiview/chzzk-viewer";
+import { MultiviewEmptyState } from "@/features/multiview/multiview-empty-state";
 import {
   getDefaultMultiviewLayoutPreset,
   getMultiviewLayout,
@@ -85,15 +85,7 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
   };
 
   if (activeChannelIds.length === 0) {
-    return (
-      <main className="min-h-dvh p-6">
-        <section className="mx-auto max-w-3xl rounded-xl border bg-card p-6">
-          <h1 className="text-xl font-semibold">Multiview</h1>
-          <p className="mt-6 text-sm text-muted-foreground">선택한 방송이 없습니다.</p>
-          <Link href="/" className="mt-3 inline-flex text-primary underline underline-offset-4">선택 페이지로 이동</Link>
-        </section>
-      </main>
-    );
+    return <MultiviewEmptyState />;
   }
 
   return (

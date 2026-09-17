@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Check, Eye, ImageOff, Plus } from "lucide-react";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 import { ChzzkLiveLink } from "@/components/streams/chzzk-live-link";
 import { Avatar } from "@/components/ui/avatar";
@@ -21,7 +21,7 @@ type StreamCardProps = {
   showRpName?: boolean;
 };
 
-export function StreamCard({
+export const StreamCard = memo(function StreamCard({
   stream,
   selected = false,
   onAdd,
@@ -185,7 +185,7 @@ export function StreamCard({
       </div>
     </article>
   );
-}
+});
 
 export function StreamCardSkeleton() {
   return (

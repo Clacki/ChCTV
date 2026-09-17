@@ -338,6 +338,17 @@ test("handles direct multiview access without channel parameters", async ({ page
   await expect(page.getByRole("link", { name: "Discovery로 돌아가기" })).toHaveAttribute("href", "/");
 });
 
+test("uses the same empty state after removing the last multiview frame", async ({ page }) => {
+  await page.route("https://chzzk.naver.com/live/**", (route) => route.fulfill({ body: "CHZZK LIVE" }));
+  await page.goto(getMultiviewPath([channelIds[0]]));
+
+  await page.getByRole("button", { name: "Main 제거" }).click();
+
+  await expect(page.getByText("선택된 방송이 없습니다.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Discovery로 돌아가기" })).toHaveAttribute("href", "/");
+  await expect(page).toHaveURL("/multiview");
+});
+
 test("uses two layouts for two channels without reloading viewer iframes", async ({ page }) => {
   await page.goto(getMultiviewPath(channelIds.slice(0, 2)));
   await expect(page.locator("[data-viewer-slot]")).toHaveCount(2);

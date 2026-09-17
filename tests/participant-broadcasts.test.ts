@@ -4,6 +4,7 @@ import {
   createBroadcastDiscoveryError,
   mergeParticipantsWithLives,
   normalizeChannelName,
+  refreshParticipantBroadcastMetadata,
   sortParticipantBroadcasts,
 } from "../src/lib/participant-broadcasts";
 import type { Participant } from "../src/types/participant";
@@ -103,5 +104,24 @@ describe("participant live matching", () => {
     const result = createBroadcastDiscoveryError(participants, "network");
 
     expect(result).toEqual({ status: "error", participants, error: "network" });
+  });
+
+  it("refreshes cached broadcast participant metadata without changing cached LIVE state", () => {
+    const channelId = "b".repeat(32);
+    const cachedBroadcasts = mergeParticipantsWithLives(
+      [participant({ channelId, groups: ["기존 그룹"] })],
+      [live({ channelId })],
+    ).broadcasts;
+
+    const refreshed = refreshParticipantBroadcastMetadata(
+      cachedBroadcasts,
+      [participant({ channelId, groups: ["새 그룹 A", "새 그룹 B"] })],
+    );
+
+    expect(refreshed[0]).toMatchObject({
+      participant: { groups: ["새 그룹 A", "새 그룹 B"] },
+      isLive: true,
+      live: { channelId },
+    });
   });
 });
