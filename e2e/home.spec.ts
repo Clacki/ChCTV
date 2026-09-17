@@ -24,13 +24,12 @@ function getMultiviewPath(channelIds: readonly string[]): string {
 async function mockParticipantBroadcasts(page: Page, options: {
   risingHistoryReady?: boolean;
   risingCount?: number;
-  gtaLiveCount?: number;
   risingIncreases?: readonly number[];
   risingSortValues?: readonly number[];
   risingFlags?: readonly boolean[];
   viewerCounts?: readonly number[];
 } = {}) {
-  const { risingHistoryReady = true, risingCount = 2, gtaLiveCount = channelIds.length, risingIncreases = [], risingSortValues = [], risingFlags = [], viewerCounts = [] } = options;
+  const { risingHistoryReady = true, risingCount = 2, risingIncreases = [], risingSortValues = [], risingFlags = [], viewerCounts = [] } = options;
   await page.route("**/api/chzzk/participant-broadcasts", (route) =>
     route.fulfill({
       json: {
@@ -69,8 +68,8 @@ async function mockParticipantBroadcasts(page: Page, options: {
               channelImageUrl: null,
               tags: [],
               categoryType: null,
-              liveCategory: index < gtaLiveCount ? "Grand_Theft_Auto_V" : "MapleStory",
-              liveCategoryValue: index < gtaLiveCount ? "Grand Theft Auto V" : "메이플스토리",
+              liveCategory: index === 0 ? "Grand_Theft_Auto_V" : index === 1 ? "MapleStory" : null,
+              liveCategoryValue: index === 0 ? "Grand Theft Auto V" : index === 1 ? "MapleStory" : null,
             },
           };
           }),
@@ -126,15 +125,14 @@ test("shows only displayable rising candidates in focus order", async ({ page })
   await expect(page.locator("article").filter({ hasText: /Streamer [345]/ })).toHaveCount(0);
 });
 
-test("defaults to GTA broadcasts during OPEN while allowing the filter to be disabled", async ({ page }) => {
-  await mockParticipantBroadcasts(page, { gtaLiveCount: 2 });
+test("shows all live broadcasts regardless of category without a GTA filter", async ({ page }) => {
+  await mockParticipantBroadcasts(page);
   await page.goto("/");
 
-  await expect(page.locator("article").filter({ hasText: /Streamer [12]/ })).toHaveCount(2);
-  await expect(page.locator("article").filter({ hasText: "Streamer 3" })).toHaveCount(0);
-
-  await page.getByRole("button", { name: "GTA", exact: true }).click();
+  await expect(page.locator("article").filter({ hasText: "Streamer 1" })).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "Streamer 2" })).toBeVisible();
   await expect(page.locator("article").filter({ hasText: "Streamer 3" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "GTA", exact: true })).toHaveCount(0);
 });
 
 test("uses server rising metadata immediately for the focus filter", async ({ page }) => {
