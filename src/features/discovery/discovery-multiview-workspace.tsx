@@ -30,7 +30,7 @@ const restrictSelectedStreamToVerticalAxis: Modifier = ({ active, transform }) =
   active?.data.current?.type === "selected-stream" ? { ...transform, x: 0 } : transform;
 
 export function DiscoveryMultiviewWorkspace() {
-  const { streams, members, status, retry } = useParticipantBroadcasts();
+  const { streams, members, status, risingHistoryReady, retry } = useParticipantBroadcasts();
   const selectionState = useMultiviewSelection();
   const [activeStreamId, setActiveStreamId] = useState<string | null>(null);
   const [isSelectionDropZoneActive, setIsSelectionDropZoneActive] = useState(false);
@@ -160,6 +160,7 @@ export function DiscoveryMultiviewWorkspace() {
             onAddStream={selectionState.addStream}
             isLoading={status === "loading"}
             hasError={status === "error"}
+            risingHistoryReady={risingHistoryReady}
             onRetry={retry}
           />
         </section>

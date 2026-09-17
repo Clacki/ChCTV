@@ -103,6 +103,10 @@ export function mergeParticipantsWithLives(
         participant,
         isLive: live !== null,
         live,
+        isRising: false,
+        risingIncrease: null,
+        risingRate: null,
+        risingSortValue: null,
       };
     }),
     ambiguousMatches,

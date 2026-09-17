@@ -5,6 +5,7 @@ import { createBroadcastDiscoveryError, mergeParticipantsWithLives } from "../..
 import type { BroadcastDiscoveryResult } from "../../types/participant-broadcast";
 import { getCachedChzzkChannelImages } from "./channel-metadata-cache";
 import { ChzzkApiError, getCurrentChzzkLives } from "./client";
+import { applyServerRisingMetadata, recordRisingHistory } from "./rising-history";
 
 export async function getParticipantBroadcasts(): Promise<BroadcastDiscoveryResult> {
   const participants = getParticipants();
@@ -26,7 +27,14 @@ export async function getParticipantBroadcasts(): Promise<BroadcastDiscoveryResu
       channelImageUrl: broadcast.live?.channelImageUrl ?? (broadcast.participant.channelId ? channelImages.get(broadcast.participant.channelId) ?? null : null),
     }));
 
-    return { status: "success", broadcasts: broadcastsWithChannelImages, ambiguousMatches };
+    const risingHistory = await recordRisingHistory(broadcastsWithChannelImages);
+
+    return {
+      status: "success",
+      broadcasts: applyServerRisingMetadata(broadcastsWithChannelImages, risingHistory?.results ?? null),
+      ambiguousMatches,
+      risingHistoryReady: risingHistory?.ready ?? false,
+    };
   } catch (error) {
     if (error instanceof ChzzkApiError) {
       return createBroadcastDiscoveryError(participants, error.kind);

@@ -21,16 +21,31 @@ function getMultiviewPath(channelIds: readonly string[]): string {
   return `/multiview?${params.toString()}`;
 }
 
-async function mockParticipantBroadcasts(page: Page) {
+async function mockParticipantBroadcasts(page: Page, options: {
+  risingHistoryReady?: boolean;
+  risingCount?: number;
+  gtaLiveCount?: number;
+  risingIncreases?: readonly number[];
+  risingSortValues?: readonly number[];
+  risingFlags?: readonly boolean[];
+  viewerCounts?: readonly number[];
+} = {}) {
+  const { risingHistoryReady = true, risingCount = 2, gtaLiveCount = channelIds.length, risingIncreases = [], risingSortValues = [], risingFlags = [], viewerCounts = [] } = options;
   await page.route("**/api/chzzk/participant-broadcasts", (route) =>
     route.fulfill({
       json: {
         status: "fresh",
         cacheAgeSeconds: 0,
+        risingHistoryReady,
         fetchedAt: "2026-09-14T00:00:00.000Z",
         ambiguousMatches: [],
         broadcasts: [
-          ...channelIds.map((channelId, index) => ({
+          ...channelIds.map((channelId, index) => {
+            const isRising = risingFlags[index] ?? index < risingCount;
+            const risingIncrease = isRising ? risingIncreases[index] ?? 142 - index * 68 : null;
+            const viewerCount = viewerCounts[index] ?? 200 - index;
+
+            return {
             participant: {
               streamerName: `Streamer ${index + 1}`,
               rpName: `Role ${index + 1}`,
@@ -41,19 +56,24 @@ async function mockParticipantBroadcasts(page: Page) {
               aliases: index === 0 ? ["별칭 1"] : [],
             },
             isLive: true,
+            isRising,
+            risingIncrease,
+            risingRate: risingIncrease === null ? null : risingIncrease / (viewerCount - risingIncrease),
+            risingSortValue: isRising ? risingSortValues[index] ?? risingIncrease : null,
             live: {
               channelId,
               channelName: `Channel ${index + 1}`,
               liveTitle: `LIVE ${index + 1}`,
-              viewerCount: 100 - index,
+              viewerCount,
               thumbnailUrl: null,
               channelImageUrl: null,
               tags: [],
               categoryType: null,
-              liveCategory: null,
-              liveCategoryValue: null,
+              liveCategory: index < gtaLiveCount ? "Grand_Theft_Auto_V" : "MapleStory",
+              liveCategoryValue: index < gtaLiveCount ? "Grand Theft Auto V" : "메이플스토리",
             },
-          })),
+          };
+          }),
           {
             participant: {
               streamerName: "Offline Streamer",
@@ -67,12 +87,89 @@ async function mockParticipantBroadcasts(page: Page) {
             isLive: false,
             live: null,
             channelImageUrl: "https://cdn.example.com/offline-channel.jpg",
+            isRising: false,
+            risingIncrease: null,
+            risingRate: null,
+            risingSortValue: null,
           },
         ],
       },
     }),
   );
 }
+
+test("hides card rising increases outside the focus filter", async ({ page }) => {
+  await mockParticipantBroadcasts(page, { risingCount: 1, risingIncreases: [50] });
+  await page.goto("/");
+
+  const card = page.locator("article").filter({ hasText: "Streamer 1" });
+  await expect(card.getByText("+50", { exact: true })).toHaveCount(0);
+  await expect(card.locator('[title="최근 시청자 +50명"]')).toHaveCount(0);
+});
+
+test("shows only displayable rising candidates in focus order", async ({ page }) => {
+  await mockParticipantBroadcasts(page, {
+    risingCount: 4,
+    risingIncreases: [31, 80, 30, 12],
+    risingSortValues: [50, 40, 30, 12],
+    viewerCounts: [150, 200, 150, 120],
+  });
+  await page.goto("/");
+  await page.locator("button").filter({ has: page.locator("svg.lucide-flame") }).click();
+
+  const cards = page.locator("article").filter({ hasText: /Streamer [12]/ });
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toContainText("Streamer 1");
+  await expect(cards.nth(1)).toContainText("Streamer 2");
+  await expect(cards.nth(0).getByText("+31", { exact: true })).toBeVisible();
+  await expect(cards.nth(1).getByText("+80", { exact: true })).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: /Streamer [345]/ })).toHaveCount(0);
+});
+
+test("defaults to GTA broadcasts during OPEN while allowing the filter to be disabled", async ({ page }) => {
+  await mockParticipantBroadcasts(page, { gtaLiveCount: 2 });
+  await page.goto("/");
+
+  await expect(page.locator("article").filter({ hasText: /Streamer [12]/ })).toHaveCount(2);
+  await expect(page.locator("article").filter({ hasText: "Streamer 3" })).toHaveCount(0);
+
+  await page.getByRole("button", { name: "GTA", exact: true }).click();
+  await expect(page.locator("article").filter({ hasText: "Streamer 3" })).toBeVisible();
+});
+
+test("uses server rising metadata immediately for the focus filter", async ({ page }) => {
+  await mockParticipantBroadcasts(page);
+  await page.goto("/");
+
+  await page.locator("button").filter({ has: page.locator("svg.lucide-flame") }).click();
+  const cards = page.locator("article").filter({ hasText: /Streamer [12]/ });
+  await expect(cards).toHaveCount(2);
+  await expect(cards.nth(0)).toContainText("Streamer 1");
+  await expect(cards.nth(1)).toContainText("Streamer 2");
+  await expect(cards.nth(0).getByText("+142", { exact: true })).toBeVisible();
+  await expect(cards.nth(0).locator('[title="최근 시청자 +142명"]')).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "Streamer 3" })).toHaveCount(0);
+
+  await page.locator("input").first().fill("Streamer 3");
+  await expect(page.locator("article").filter({ hasText: /Streamer [12]/ })).toHaveCount(0);
+});
+
+test("uses server history readiness for focus empty states", async ({ page }) => {
+  await mockParticipantBroadcasts(page, { risingHistoryReady: false, risingCount: 0 });
+  await page.goto("/");
+  await page.locator("button").filter({ has: page.locator("svg.lucide-flame") }).click();
+  await expect(page.getByText("시선 집중 데이터를 확인하고 있습니다.", { exact: true })).toBeVisible();
+
+  await mockParticipantBroadcasts(page, {
+    risingHistoryReady: true,
+    risingCount: 2,
+    risingIncreases: [30, 12],
+    viewerCounts: [150, 120],
+  });
+  await page.reload();
+  await page.locator("button").filter({ has: page.locator("svg.lucide-flame") }).click();
+  await expect(page.getByText("아직 시선이 집중된 방송이 없습니다.", { exact: true })).toBeVisible();
+});
 
 test("shows the ChCTV discovery workspace", async ({ page }) => {
   await mockParticipantBroadcasts(page);
