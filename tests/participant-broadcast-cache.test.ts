@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import { createParticipantBroadcastCache } from "../src/lib/participant-broadcast-cache";
 import type { ParticipantBroadcastSnapshot } from "../src/types/participant-broadcast";
 
-function snapshot(fetchedAt: string): ParticipantBroadcastSnapshot {
-  return { broadcasts: [], ambiguousMatches: [], fetchedAt };
+function snapshot(fetchedAt: string, risingHistoryReady = false): ParticipantBroadcastSnapshot {
+  return { broadcasts: [], ambiguousMatches: [], risingHistoryReady, fetchedAt };
 }
 
 describe("participant broadcast cache", () => {
@@ -63,6 +63,20 @@ describe("participant broadcast cache", () => {
     currentTime += 901_000;
 
     await expect(getCached()).resolves.toMatchObject({ status: "stale", cacheAgeSeconds: 901 });
+  });
+
+  it("preserves cached rising readiness on cache hits and stale fallbacks", async () => {
+    let currentTime = Date.parse("2026-01-01T00:00:00.000Z");
+    const load = vi
+      .fn<() => Promise<ParticipantBroadcastSnapshot>>()
+      .mockResolvedValueOnce(snapshot("2026-01-01T00:00:00.000Z", true))
+      .mockRejectedValueOnce(new Error("network"));
+    const getCached = createParticipantBroadcastCache(load, 900, () => currentTime);
+
+    await expect(getCached()).resolves.toMatchObject({ status: "fresh", snapshot: { risingHistoryReady: true } });
+    currentTime += 901_000;
+    await expect(getCached()).resolves.toMatchObject({ status: "stale", snapshot: { risingHistoryReady: true } });
+    expect(load).toHaveBeenCalledTimes(2);
   });
 
   it("uses fetchedAt when a new process receives an older shared-cache snapshot", async () => {

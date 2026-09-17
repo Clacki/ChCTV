@@ -18,6 +18,10 @@ export type ParticipantBroadcast = {
   isLive: boolean;
   live: ChzzkLiveChannel | null;
   channelImageUrl?: string | null;
+  isRising: boolean;
+  risingIncrease: number | null;
+  risingRate: number | null;
+  risingSortValue: number | null;
 };
 
 export type AmbiguousLiveMatch = {
@@ -31,6 +35,7 @@ export type BroadcastDiscoveryResult =
       status: "success";
       broadcasts: ParticipantBroadcast[];
       ambiguousMatches: AmbiguousLiveMatch[];
+      risingHistoryReady: boolean;
     }
   | {
       status: "error";
@@ -41,6 +46,7 @@ export type BroadcastDiscoveryResult =
 export type ParticipantBroadcastSnapshot = {
   broadcasts: ParticipantBroadcast[];
   ambiguousMatches: AmbiguousLiveMatch[];
+  risingHistoryReady: boolean;
   fetchedAt: string;
 };
 

@@ -10,7 +10,11 @@ export type StreamCardData = {
   rpName: string | null;
   channelId: string | null;
   category: string | null;
+  categoryKey?: string | null;
   tags: string[];
   displayGroups: string[];
   aliases: string[];
+  isRising?: boolean;
+  risingIncrease?: number | null;
+  risingSortValue?: number | null;
 };

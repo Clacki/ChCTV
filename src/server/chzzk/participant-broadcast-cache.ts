@@ -56,6 +56,7 @@ function createCachedBroadcastSnapshot(revalidate: number, key: string) {
     return {
       broadcasts: result.broadcasts,
       ambiguousMatches: result.ambiguousMatches,
+      risingHistoryReady: result.risingHistoryReady,
       fetchedAt: new Date().toISOString(),
     };
   },
@@ -106,6 +107,7 @@ export async function getCachedParticipantBroadcasts(): Promise<CachedParticipan
       refreshParticipantBroadcastMetadata(result.snapshot.broadcasts, getParticipants()),
     ),
     ambiguousMatches: result.snapshot.ambiguousMatches,
+    risingHistoryReady: result.snapshot.risingHistoryReady,
     fetchedAt: result.snapshot.fetchedAt,
     cacheAgeSeconds: result.cacheAgeSeconds,
   };

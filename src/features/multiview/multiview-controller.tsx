@@ -1,23 +1,19 @@
 "use client";
 
 import { useDroppable } from "@dnd-kit/core";
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Bookmark, GripVertical, Play, RotateCcw, Trash2, X } from "lucide-react";
 import { useState } from "react";
 
 import { Avatar } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { analytics } from "@/lib/analytics/events";
 import { getMultiviewSlotLabel } from "@/features/multiview/multiview-slot";
 import { getMultiviewUrl } from "@/features/multiview/multiview-url";
 import { getSavedMultiviewStatus } from "@/features/multiview/saved-multiview";
 import { useSavedMultiviews } from "@/features/multiview/use-saved-multiviews";
+import { analytics } from "@/lib/analytics/events";
+import { cn } from "@/lib/utils";
 import type { StreamCardData } from "@/types/stream-card";
 
 type MultiviewControllerProps = {
@@ -94,7 +90,9 @@ export function MultiviewController({
       <header className="p-4 pb-3">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-base font-semibold">멀티뷰 리모컨</h2>
-          <span className="shrink-0 text-sm font-medium text-primary">{selection.length} / {selectionLimit} 선택</span>
+          <span className="shrink-0 text-sm font-medium text-primary">
+            {selection.length} / {selectionLimit} 선택
+          </span>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">선택한 방송의 순서를 조정하세요.</p>
       </header>
@@ -108,12 +106,19 @@ export function MultiviewController({
         aria-labelledby="current-selection-heading"
       >
         <div className="flex items-center justify-between gap-3">
-          <h3 id="current-selection-heading" className="text-sm font-medium">현재 선택</h3>
-          <span className="shrink-0 text-xs text-muted-foreground">{selection.length} / {selectionLimit}</span>
+          <h3 id="current-selection-heading" className="text-sm font-medium">
+            현재 선택
+          </h3>
+          <span className="shrink-0 text-xs text-muted-foreground">
+            {selection.length} / {selectionLimit}
+          </span>
         </div>
 
         {selection.length > 0 ? (
-          <SortableContext items={selection.map((streamId) => `selected:${streamId}`)} strategy={verticalListSortingStrategy}>
+          <SortableContext
+            items={selection.map((streamId) => `selected:${streamId}`)}
+            strategy={verticalListSortingStrategy}
+          >
             <ol className="mt-2 flex min-h-0 w-full max-w-full flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto pr-1">
               {selection.map((streamId, index) => {
                 const stream = streamsById.get(streamId);
@@ -134,9 +139,18 @@ export function MultiviewController({
           </SortableContext>
         ) : (
           <div className="mt-2 flex min-h-0 flex-1 items-center justify-center pb-8">
-            <p className={cn("max-w-60 text-center text-sm leading-6 text-muted-foreground", isDropZoneActive && "text-foreground")}>
+            <p
+              className={cn(
+                "max-w-64 text-center text-sm leading-6 text-muted-foreground",
+                isDropZoneActive && "text-foreground",
+              )}
+            >
               선택한 방송이 없습니다.
-              <span className="mt-1 block text-xs text-tertiary">왼쪽 방송의 <span className="font-medium text-muted-foreground">+ 추가</span>를 누르거나 카드를 이곳으로 드래그하세요.</span>
+              <span className="mt-1 block text-xs text-tertiary">
+                왼쪽 방송에서 <span className="whitespace-nowrap font-medium text-muted-foreground">+ 추가</span>를
+                누르거나
+                <span className="block">카드를 이곳으로 드래그하세요.</span>
+              </span>
             </p>
           </div>
         )}
@@ -152,15 +166,18 @@ export function MultiviewController({
               onClick={captureMultiviewStart}
               className={buttonVariants({ size: "md" })}
             >
-              <Play aria-hidden="true" className="size-4" />멀티뷰 시작
+              <Play aria-hidden="true" className="size-4" />
+              멀티뷰 시작
             </a>
           ) : (
             <Button type="button" size="md" disabled>
-              <Play aria-hidden="true" className="size-4" />멀티뷰 시작
+              <Play aria-hidden="true" className="size-4" />
+              멀티뷰 시작
             </Button>
           )}
           <Button type="button" variant="ghost" size="md" onClick={onClearSelection} disabled={selection.length === 0}>
-            <RotateCcw aria-hidden="true" className="size-4" />초기화
+            <RotateCcw aria-hidden="true" className="size-4" />
+            초기화
           </Button>
         </div>
       </div>
@@ -168,7 +185,9 @@ export function MultiviewController({
       <section className="border-t p-4" aria-labelledby="save-multiview-heading">
         <div className="flex items-center gap-2">
           <Bookmark aria-hidden="true" className="size-4 text-primary" />
-          <h3 id="save-multiview-heading" className="text-sm font-medium">멀티뷰 묶음 저장</h3>
+          <h3 id="save-multiview-heading" className="text-sm font-medium">
+            멀티뷰 묶음 저장
+          </h3>
         </div>
         <form
           className="mt-3 flex gap-2"
@@ -177,7 +196,9 @@ export function MultiviewController({
             handleSave();
           }}
         >
-          <label className="sr-only" htmlFor="multiview-name">묶음 이름</label>
+          <label className="sr-only" htmlFor="multiview-name">
+            묶음 이름
+          </label>
           <input
             id="multiview-name"
             value={savedMultiviewName}
@@ -189,13 +210,19 @@ export function MultiviewController({
             className="h-10 min-w-0 flex-1 rounded-md border bg-background px-3 text-sm outline-none placeholder:text-tertiary focus:border-border-strong focus:outline-2 focus:outline-offset-2 focus:outline-primary"
             placeholder="묶음 이름"
           />
-          <Button type="submit" variant="secondary" size="md" disabled={!canSave}>저장</Button>
+          <Button type="submit" variant="secondary" size="md" disabled={!canSave}>
+            저장
+          </Button>
         </form>
-        <p aria-live="polite" className="mt-1 min-h-4 text-xs text-live">{saveFeedback}</p>
+        <p aria-live="polite" className="mt-1 min-h-4 text-xs text-live">
+          {saveFeedback}
+        </p>
       </section>
 
       <section className="min-h-0 px-4 pb-4 pt-3" aria-labelledby="saved-multiviews-heading">
-        <h3 id="saved-multiviews-heading" className="text-sm font-medium">저장된 묶음 <span className="text-primary">{savedMultiviews.length}개</span></h3>
+        <h3 id="saved-multiviews-heading" className="text-sm font-medium">
+          저장된 묶음 <span className="text-primary">{savedMultiviews.length}개</span>
+        </h3>
         <ul className="mt-2 max-h-36 divide-y overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable] [scrollbar-width:thin]">
           {savedMultiviews.map((multiview) => {
             const status = getSavedMultiviewStatus(multiview.channelIds, streamsByChannelId);
@@ -210,7 +237,11 @@ export function MultiviewController({
                 >
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium text-foreground">{multiview.name}</span>
-                    <span className="block text-xs text-muted-foreground"><span className="text-live">{status.liveCount} / {status.channelCount} LIVE</span></span>
+                    <span className="block text-xs text-muted-foreground">
+                      <span className="text-live">
+                        {status.liveCount} / {status.channelCount} LIVE
+                      </span>
+                    </span>
                   </span>
                 </button>
                 <button
@@ -283,14 +314,18 @@ function SortableSelectedStreamItem({
         <span
           className={cn(
             "inline-flex h-6 w-12 shrink-0 items-center justify-center rounded-sm border px-1.5 text-[11px] font-semibold leading-none",
-            slotLabel === "Main"
-              ? "border-primary bg-primary text-primary-foreground"
-              : "border-primary text-primary",
+            slotLabel === "Main" ? "border-primary bg-primary text-primary-foreground" : "border-primary text-primary",
           )}
         >
           {slotLabel}
         </span>
-        <Avatar src={channelImageUrl} alt={`${streamerName} 채널 이미지`} fallback={streamerName} size="sm" className="size-7 text-[10px]" />
+        <Avatar
+          src={channelImageUrl}
+          alt={`${streamerName} 채널 이미지`}
+          fallback={streamerName}
+          size="sm"
+          className="size-7 text-[10px]"
+        />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium">{streamerName}</p>
         </div>

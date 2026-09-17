@@ -8,11 +8,11 @@ import type { CachedParticipantBroadcastsResult } from "@/types/participant-broa
 import type { StreamCardData } from "@/types/stream-card";
 
 type ParticipantBroadcastState =
-  | { status: "loading"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[] }
-  | { status: "success"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[] }
-  | { status: "error"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[] };
+  | { status: "loading"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[]; risingHistoryReady: false }
+  | { status: "success"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[]; risingHistoryReady: boolean }
+  | { status: "error"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[]; risingHistoryReady: false };
 
-const initialState: ParticipantBroadcastState = { status: "loading", streams: [], members: [] };
+const initialState: ParticipantBroadcastState = { status: "loading", streams: [], members: [], risingHistoryReady: false };
 
 export function useParticipantBroadcasts() {
   const [state, setState] = useState<ParticipantBroadcastState>(initialState);
@@ -46,11 +46,12 @@ export function useParticipantBroadcasts() {
             status: "success",
             streams: members.flatMap((member) => member.status === "LIVE" ? [member.stream] : []),
             members,
+            risingHistoryReady: result.risingHistoryReady,
           });
         }
       } catch (error) {
         if (!disposed && (error as DOMException).name !== "AbortError") {
-          setState({ status: "error", streams: [], members: [] });
+          setState({ status: "error", streams: [], members: [], risingHistoryReady: false });
         }
       } finally {
         requestInFlight = false;

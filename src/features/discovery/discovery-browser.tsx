@@ -1,8 +1,8 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
-import { LoaderCircle, Search, X } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { Flame, LoaderCircle, Search, X } from "lucide-react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { OfflineMemberCard } from "@/components/streams/offline-member-card";
 import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card";
@@ -11,6 +11,8 @@ import { Chip } from "@/components/ui/chip";
 import { FacetFilter } from "@/components/ui/facet-filter";
 import type { DiscoveryMember } from "@/features/discovery/participant-broadcast-adapter";
 import { GROUP_FILTER_SECTIONS, GROUP_FILTER_VALUES } from "@/features/discovery/discovery-filter-config";
+import { getBongnudoScheduleStatus, type ScheduleStatus } from "@/lib/bongnudo-schedule";
+import { getDefaultGtaFilterEnabled, isChzzkGtaCategory } from "@/lib/chzzk-category";
 import { getParticipants, matchesParticipantFilters } from "@/lib/participants";
 import { cn } from "@/lib/utils";
 import type { ParticipantFilters } from "@/types/participant";
@@ -31,12 +33,31 @@ type DiscoveryBrowserProps = {
   onAddStream: (streamId: string) => void;
   isLoading?: boolean;
   hasError?: boolean;
+  risingHistoryReady?: boolean;
   onRetry?: () => void;
 };
 
 const streamGridClassName = "mt-3 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-3";
 const loadingSkeletonCount = 8;
 export const discoveryShowRpNameStorageKey = "chctv.discovery.show-rp-name";
+
+function isRisingCandidate(stream: StreamCardData) {
+  return stream.isRising === true
+    && stream.risingIncrease !== null
+    && stream.risingIncrease !== undefined
+    && stream.risingIncrease > 30;
+}
+
+function useScheduleStatus(): ScheduleStatus {
+  const [scheduleStatus, setScheduleStatus] = useState(() => getBongnudoScheduleStatus().status);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setScheduleStatus(getBongnudoScheduleStatus().status), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return scheduleStatus;
+}
 
 export function DiscoveryBrowser({
   members,
@@ -45,11 +66,17 @@ export function DiscoveryBrowser({
   onAddStream,
   isLoading = false,
   hasError = false,
+  risingHistoryReady = false,
   onRetry,
 }: DiscoveryBrowserProps) {
+  const scheduleStatus = useScheduleStatus();
+  const isOpen = getDefaultGtaFilterEnabled(scheduleStatus);
   const [query, setQuery] = useState("");
   const [affiliations, setAffiliations] = useState<string[]>([]);
   const [groups, setGroups] = useState<string[]>([]);
+  const [risingOnly, setRisingOnly] = useState(false);
+  const [gtaOnly, setGtaOnly] = useState(() => isOpen);
+  const wasOpenRef = useRef(isOpen);
   const [showRpName, setShowRpName] = useState(false);
   const [hasRestoredRpNamePreference, setHasRestoredRpNamePreference] = useState(false);
 
@@ -68,6 +95,15 @@ export function DiscoveryBrowser({
     }
   }, [hasRestoredRpNamePreference, showRpName]);
 
+  useEffect(() => {
+    if (isOpen && !wasOpenRef.current) {
+      setGtaOnly(true);
+    } else if (!isOpen && wasOpenRef.current) {
+      setGtaOnly(false);
+    }
+    wasOpenRef.current = isOpen;
+  }, [isOpen]);
+
   const catalogParticipants = useMemo(() => getParticipants(), []);
   const affiliationOptions = useMemo(
     () => uniqueSorted(catalogParticipants.flatMap((participant) => participant.affiliations.map((affiliation) => affiliation.name))),
@@ -77,7 +113,11 @@ export function DiscoveryBrowser({
     () => uniqueSorted([...GROUP_FILTER_VALUES, ...catalogParticipants.flatMap((participant) => participant.groups)]),
     [catalogParticipants],
   );
-  const hasActiveFilter = Boolean(normalize(query)) || affiliations.length > 0 || groups.length > 0;
+  const risingCandidates = useMemo(
+    () => members.flatMap((member) => member.status === "LIVE" && isRisingCandidate(member.stream) ? [member.stream] : []),
+    [members],
+  );
+  const hasActiveFilter = Boolean(normalize(query)) || affiliations.length > 0 || groups.length > 0 || risingOnly || gtaOnly;
 
   const filteredMembers = useMemo(() => {
     const normalizedQuery = normalize(query);
@@ -89,13 +129,16 @@ export function DiscoveryBrowser({
       const matchesQuery = !normalizedQuery || searchValues.some((value) => value !== null && normalize(value).includes(normalizedQuery));
       const matchesFilters = matchesParticipantFilters(participant, filters);
 
-      return matchesQuery && matchesFilters;
+      return matchesQuery
+        && matchesFilters
+        && (!gtaOnly || (member.status === "LIVE" && isChzzkGtaCategory(member.stream.categoryKey)))
+        && (!risingOnly || (member.status === "LIVE" && isRisingCandidate(member.stream)));
     });
-  }, [affiliations, groups, members, query]);
+  }, [affiliations, groups, gtaOnly, members, query, risingOnly]);
 
   const visibleStreams = useMemo(
-    () => filteredMembers.flatMap((member) => member.status === "LIVE" ? [member.stream] : []).sort((left, right) => right.viewerCount - left.viewerCount),
-    [filteredMembers],
+    () => filteredMembers.flatMap((member) => member.status === "LIVE" ? [member.stream] : []).sort((left, right) => risingOnly ? (right.risingSortValue ?? 0) - (left.risingSortValue ?? 0) : right.viewerCount - left.viewerCount),
+    [filteredMembers, risingOnly],
   );
   const offlineMembers = useMemo(
     () => hasActiveFilter ? filteredMembers.flatMap((member) => member.status === "OFFLINE" ? [member] : []) : [],
@@ -106,6 +149,8 @@ export function DiscoveryBrowser({
     setQuery("");
     setAffiliations([]);
     setGroups([]);
+    setRisingOnly(false);
+    setGtaOnly(false);
   };
 
   return (
@@ -133,6 +178,11 @@ export function DiscoveryBrowser({
         </label>
         <FacetFilter label="그룹" options={groupOptions} sections={GROUP_FILTER_SECTIONS} selectedValues={groups} onChange={setGroups} />
         <FacetFilter label="봉누도 소속" options={affiliationOptions} selectedValues={affiliations} onChange={setAffiliations} />
+        <Chip selected={gtaOnly} className="h-9 rounded-md" onClick={() => setGtaOnly((value) => !value)}>GTA</Chip>
+        <Chip selected={risingOnly} className="h-9 rounded-md" onClick={() => setRisingOnly((value) => !value)}>
+          <Flame aria-hidden="true" className="size-3.5" />
+          시선 집중
+        </Chip>
         <button
           type="button"
           role="switch"
@@ -194,6 +244,7 @@ export function DiscoveryBrowser({
                     canAdd={selection.length < selectionLimit}
                     onAddStream={onAddStream}
                     showRpName={showRpName}
+                    showRisingIncrease={risingOnly && isRisingCandidate(stream)}
                   />
                 </li>
               ))}
@@ -211,7 +262,19 @@ export function DiscoveryBrowser({
               </ul>
             </section>
           )}
-          {visibleStreams.length === 0 && offlineMembers.length === 0 && (
+          {visibleStreams.length === 0 && offlineMembers.length === 0 && risingOnly && !risingHistoryReady && (
+            <div className="mt-4 rounded-xl border border-dashed p-8 text-center">
+              <p className="text-sm font-medium">시선 집중 데이터를 확인하고 있습니다.</p>
+              <p className="mt-1 text-sm text-muted-foreground">방송의 시청자 변화가 쌓이면 자동으로 표시됩니다.</p>
+            </div>
+          )}
+          {visibleStreams.length === 0 && offlineMembers.length === 0 && risingOnly && risingHistoryReady && risingCandidates.length === 0 && (
+            <div className="mt-4 rounded-xl border border-dashed p-8 text-center">
+              <p className="text-sm font-medium">아직 시선이 집중된 방송이 없습니다.</p>
+              <p className="mt-1 text-sm text-muted-foreground">시청자가 빠르게 늘어나는 방송이 감지되면 표시됩니다.</p>
+            </div>
+          )}
+          {visibleStreams.length === 0 && offlineMembers.length === 0 && (!risingOnly || (risingHistoryReady && risingCandidates.length > 0)) && (
             <div className="mt-4 rounded-xl border border-dashed p-8 text-center">
               <p className="text-sm font-medium">조건에 맞는 방송이 없습니다.</p>
               <p className="mt-1 text-sm text-muted-foreground">필터 조건을 변경하거나 초기화해 보세요.</p>
@@ -230,12 +293,14 @@ const DraggableDiscoveryStream = memo(function DraggableDiscoveryStream({
   canAdd,
   onAddStream,
   showRpName,
+  showRisingIncrease,
 }: Readonly<{
   stream: StreamCardData;
   selected: boolean;
   canAdd: boolean;
   onAddStream: (streamId: string) => void;
   showRpName: boolean;
+  showRisingIncrease: boolean;
 }>) {
   const handleAdd = useCallback(() => onAddStream(stream.id), [onAddStream, stream.id]);
   const canInteract = !selected && canAdd;
@@ -270,6 +335,7 @@ const DraggableDiscoveryStream = memo(function DraggableDiscoveryStream({
         addDisabled={!canInteract}
         draggable={canInteract}
         showRpName={showRpName}
+        showRisingIncrease={showRisingIncrease}
       />
     </div>
   );

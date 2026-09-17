@@ -29,9 +29,13 @@ function toDiscoveryStreamCard(broadcast: ParticipantBroadcast): StreamCardData 
       rpName: broadcast.participant.rpName,
       channelId: broadcast.live.channelId,
       category: broadcast.live.liveCategoryValue ?? broadcast.live.liveCategory,
+      categoryKey: broadcast.live.liveCategory,
       tags: broadcast.participant.tags,
       displayGroups: getDisplayGroups(broadcast),
       aliases: broadcast.participant.aliases,
+      isRising: broadcast.isRising,
+      risingIncrease: broadcast.risingIncrease,
+      risingSortValue: broadcast.risingSortValue,
     };
 }
 

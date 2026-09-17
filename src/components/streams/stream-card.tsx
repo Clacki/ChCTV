@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Check, Eye, ImageOff, Plus } from "lucide-react";
+import { Check, Eye, Flame, ImageOff, Plus } from "lucide-react";
 import { memo, useState } from "react";
 
 import { ChzzkLiveLink } from "@/components/streams/chzzk-live-link";
@@ -19,6 +19,7 @@ type StreamCardProps = {
   addDisabled?: boolean;
   draggable?: boolean;
   showRpName?: boolean;
+  showRisingIncrease?: boolean;
 };
 
 export const StreamCard = memo(function StreamCard({
@@ -28,6 +29,7 @@ export const StreamCard = memo(function StreamCard({
   addDisabled = false,
   draggable = false,
   showRpName = false,
+  showRisingIncrease = false,
 }: StreamCardProps) {
   const [thumbnail, setThumbnail] = useState<{
     src: string | null;
@@ -41,6 +43,9 @@ export const StreamCard = memo(function StreamCard({
       : "loading";
   const visibleGroups = stream.displayGroups.slice(0, 3);
   const hiddenGroups = stream.displayGroups.slice(3);
+  const risingIncrease = showRisingIncrease && stream.risingIncrease !== null && stream.risingIncrease !== undefined && stream.risingIncrease > 30
+    ? stream.risingIncrease
+    : null;
   const cornerMarkerClass = cn(
     "pointer-events-none absolute size-4 transition-colors group-hover:border-white/85",
     selected ? "border-primary/80 group-hover:border-primary" : "border-white/60",
@@ -102,6 +107,12 @@ export const StreamCard = memo(function StreamCard({
               <Eye aria-hidden="true" className="size-3" />
               <span className="sr-only">시청자 </span>
               {stream.viewerCount.toLocaleString("ko-KR")}
+              {risingIncrease !== null && (
+                <span title={`최근 시청자 +${risingIncrease.toLocaleString("ko-KR")}명`} className="ml-1 inline-flex items-center gap-0.5 text-primary/85">
+                  <Flame aria-hidden="true" className="size-3" />
+                  +{risingIncrease.toLocaleString("ko-KR")}
+                </span>
+              )}
               <span className="sr-only">명</span>
             </span>
           </>

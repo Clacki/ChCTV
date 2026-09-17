@@ -1333,7 +1333,7 @@
     "channelId": "5c897b3e639045ca6e314bbaff991f73",
     "affiliations": [],
     "aliases": [],
-    "groups": [],
+    "groups": ["프로젝트아이"],
     "tags": []
   },
   {
@@ -1944,7 +1944,7 @@
     "rpName": "장구룩",
     "channelId": "65c3035bdc598c81f15a8fe0e958b3ce",
     "affiliations": [],
-    "aliases": ["저그", "승쬐"],
+    "aliases": ["마당개"],
     "groups": ["인챈트", "플라네타"],
     "tags": []
   },
@@ -1980,8 +1980,8 @@
     "rpName": "임플란",
     "channelId": "573994c85d061e56952d7b2e0483d012",
     "affiliations": [],
-    "aliases": [],
-    "groups": [],
+    "aliases": ["삐약이"],
+    "groups": ["리액트KR"],
     "tags": []
   },
   {
@@ -2070,7 +2070,7 @@
     "rpName": "구레온",
     "channelId": "75bd327f6ba6f57106c79fe3f2c3d19f",
     "affiliations": [],
-    "aliases": [],
+    "aliases": ["독수리"],
     "groups": ["인챈트"],
     "tags": []
   },
