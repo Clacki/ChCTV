@@ -76,7 +76,7 @@ test("shows the ChCTV discovery workspace", async ({ page }) => {
   await expect(page.locator('[aria-live="polite"] [aria-label^="봉누도"]')).toBeVisible();
   await expect(page.getByText("8개 채널 방송 중", { exact: true })).toHaveCount(0);
   const wikiLink = page.getByRole("link", { name: "공식 위키" });
-  await expect(wikiLink).toHaveAttribute("href", "https://bongnudo.super.site/");
+  await expect(wikiLink).toHaveAttribute("href", "https://www.bongnudo.site/");
   await expect(wikiLink).toHaveAttribute("target", "_blank");
   await expect(wikiLink).toHaveAttribute("rel", "noopener noreferrer");
   await expect(page.getByRole("heading", { name: "봉누도 상황실" })).toHaveCount(0);
