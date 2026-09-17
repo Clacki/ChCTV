@@ -7,6 +7,9 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "ChCTV",
+  icons: {
+    icon: "/favicon.png",
+  },
   description: "치지직 합방을 더 편하게 보는 방법.",
 };
 

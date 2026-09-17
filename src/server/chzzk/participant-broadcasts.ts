@@ -3,7 +3,8 @@ import "server-only";
 import { getParticipants } from "../../lib/participants";
 import { createBroadcastDiscoveryError, mergeParticipantsWithLives } from "../../lib/participant-broadcasts";
 import type { BroadcastDiscoveryResult } from "../../types/participant-broadcast";
-import { ChzzkApiError, getChzzkChannelImages, getCurrentChzzkLives } from "./client";
+import { getCachedChzzkChannelImages } from "./channel-metadata-cache";
+import { ChzzkApiError, getCurrentChzzkLives } from "./client";
 
 export async function getParticipantBroadcasts(): Promise<BroadcastDiscoveryResult> {
   const participants = getParticipants();
@@ -13,7 +14,7 @@ export async function getParticipantBroadcasts(): Promise<BroadcastDiscoveryResu
     let channelImages = new Map<string, string>();
 
     try {
-      channelImages = await getChzzkChannelImages(participants.flatMap((participant) => participant.channelId ? [participant.channelId] : []));
+      channelImages = await getCachedChzzkChannelImages(participants.flatMap((participant) => participant.channelId ? [participant.channelId] : []));
     } catch {
       // Keep the LIVE discovery response available when optional roster avatars cannot be refreshed.
     }
