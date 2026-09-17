@@ -36,6 +36,9 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
   const [layoutPreset, setLayoutPreset] = useState<MultiviewLayoutPreset>(() => getDefaultMultiviewLayoutPreset(channelIds.length));
   const [slots, setSlots] = useState(() => createMultiviewSlots(channelIds));
   const activeChannelIds = getMultiviewChannelIds(slots);
+  // Keep each channel's iframe in its original DOM position. Slot changes only
+  // alter its visual grid area, avoiding iframe reloads caused by DOM moves.
+  const renderedChannelIds = channelIds.filter((channelId) => getMultiviewSlotKeyByChannelId(slots, channelId));
   const layout = getMultiviewLayout(activeChannelIds.length, layoutPreset);
   const visibleLayoutControls = activeChannelIds.length === 2
     ? layoutControls.filter(({ preset }) => preset !== "balanced")
@@ -133,7 +136,7 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
             gridTemplateAreas: layout.areas,
           }}
         >
-          {activeChannelIds.map((channelId) => {
+          {renderedChannelIds.map((channelId) => {
             const slotKey = getMultiviewSlotKeyByChannelId(slots, channelId);
             if (!slotKey) {
               return null;
