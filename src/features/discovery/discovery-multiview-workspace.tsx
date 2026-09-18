@@ -14,6 +14,7 @@ import {
 } from "@dnd-kit/core";
 import { ExternalLink, Radio } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 import { DiscoveryBrowser } from "@/features/discovery/discovery-browser";
@@ -129,9 +130,15 @@ export function DiscoveryMultiviewWorkspace() {
           </div>
         </div>
         <nav
-          aria-label="봉누도 외부 링크"
+          aria-label="봉누도 링크"
           className="ml-auto hidden shrink-0 items-center gap-5 text-sm font-medium text-muted-foreground lg:flex"
         >
+          <Link
+            href="/vods"
+            className="inline-flex items-center text-foreground/85 hover:text-primary hover:underline hover:underline-offset-4"
+          >
+            봉누도 다시보기
+          </Link>
           <a
             href="https://www.bongnudo.site/"
             target="_blank"

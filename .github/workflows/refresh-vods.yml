@@ -1,0 +1,17 @@
+name: Refresh Bongnudo VOD snapshot
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: bongnudo-vod-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh production snapshot
+        run: curl --fail-with-body --request POST --header "Authorization: Bearer ${{ secrets.VOD_REFRESH_SECRET }}" "${{ secrets.VOD_REFRESH_URL }}"
