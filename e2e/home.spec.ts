@@ -631,6 +631,10 @@ test("keeps four viewer iframe nodes in DOM order when changing the Main slot", 
 test("keeps every multiview slot at 16:9 across layouts and desktop widths", async ({ page }) => {
   const layouts = ["Focus Right", "Focus Bottom", "Balanced"];
 
+  await page.route("https://chzzk.naver.com/live/**", (route) =>
+    route.fulfill({ contentType: "text/html", body: "<!doctype html><title>CHZZK test frame</title>" }),
+  );
+
   for (const [width, height] of [
     [1280, 800],
     [1440, 900],
@@ -639,7 +643,7 @@ test("keeps every multiview slot at 16:9 across layouts and desktop widths", asy
     await page.setViewportSize({ width, height });
 
     for (let count = 1; count <= 6; count += 1) {
-      await page.goto(getMultiviewPath(channelIds.slice(0, count)));
+      await page.goto(getMultiviewPath(channelIds.slice(0, count)), { waitUntil: "load" });
       await expect(page.locator("[data-viewer-slot]")).toHaveCount(count);
 
       if (count === 1) {
@@ -652,7 +656,11 @@ test("keeps every multiview slot at 16:9 across layouts and desktop widths", asy
       await expect(page.getByRole("button", { name: "Balanced" })).toHaveCount(count === 2 ? 0 : 1);
 
       for (const layout of availableLayouts) {
-        await page.getByRole("button", { name: layout }).click();
+        const layoutButton = page.getByRole("button", { name: layout });
+
+        await layoutButton.click();
+        await expect(layoutButton).toHaveAttribute("aria-pressed", "true");
+
         const slotMeasurements = await page.evaluate(() =>
           [...document.querySelectorAll<HTMLElement>("[data-viewer-slot]")].map((slot) => {
             const { width: slotWidth, height: slotHeight } = slot.getBoundingClientRect();
