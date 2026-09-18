@@ -4,18 +4,30 @@ import { useEffect, useRef, useState } from "react";
 
 import { toDiscoveryMembers, type DiscoveryMember } from "@/features/discovery/participant-broadcast-adapter";
 import { getParticipantBroadcastRefreshPolicy } from "@/lib/participant-broadcast-refresh-policy";
+import type { ScheduleStatus } from "@/lib/bongnudo-schedule";
 import type { CachedParticipantBroadcastsResult } from "@/types/participant-broadcast";
 import type { StreamCardData } from "@/types/stream-card";
 
-type ParticipantBroadcastState =
-  | { status: "loading"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[]; risingHistoryReady: false }
-  | { status: "success"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[]; risingHistoryReady: boolean }
-  | { status: "error"; streams: readonly StreamCardData[]; members: readonly DiscoveryMember[]; risingHistoryReady: false };
+type ParticipantBroadcastState = {
+  status: "loading" | "success" | "error";
+  streams: readonly StreamCardData[];
+  members: readonly DiscoveryMember[];
+  risingHistoryReady: boolean;
+  scheduleStatus: ScheduleStatus;
+};
 
-const initialState: ParticipantBroadcastState = { status: "loading", streams: [], members: [], risingHistoryReady: false };
+function getInitialState(): ParticipantBroadcastState {
+  return {
+    status: "loading",
+    streams: [],
+    members: [],
+    risingHistoryReady: false,
+    scheduleStatus: getParticipantBroadcastRefreshPolicy().scheduleStatus,
+  };
+}
 
 export function useParticipantBroadcasts() {
-  const [state, setState] = useState<ParticipantBroadcastState>(initialState);
+  const [state, setState] = useState<ParticipantBroadcastState>(getInitialState);
   const retryRef = useRef<() => void>(() => undefined);
 
   useEffect(() => {
@@ -31,6 +43,8 @@ export function useParticipantBroadcasts() {
 
       requestInFlight = true;
       controller = new AbortController();
+      const refreshPolicy = getParticipantBroadcastRefreshPolicy();
+      setState((current) => ({ ...current, scheduleStatus: refreshPolicy.scheduleStatus }));
 
       try {
         const response = await fetch("/api/chzzk/participant-broadcasts", { signal: controller.signal });
@@ -47,11 +61,12 @@ export function useParticipantBroadcasts() {
             streams: members.flatMap((member) => member.status === "LIVE" ? [member.stream] : []),
             members,
             risingHistoryReady: result.risingHistoryReady,
+            scheduleStatus: refreshPolicy.scheduleStatus,
           });
         }
       } catch (error) {
         if (!disposed && (error as DOMException).name !== "AbortError") {
-          setState({ status: "error", streams: [], members: [], risingHistoryReady: false });
+          setState({ status: "error", streams: [], members: [], risingHistoryReady: false, scheduleStatus: refreshPolicy.scheduleStatus });
         }
       } finally {
         requestInFlight = false;
@@ -92,7 +107,7 @@ export function useParticipantBroadcasts() {
     }
 
     retryRef.current = () => {
-      setState(initialState);
+      setState(getInitialState());
       refreshAndSchedule();
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);

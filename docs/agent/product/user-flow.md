@@ -12,6 +12,6 @@ Discovery → Selection → Viewing
 4. 선택 목록 및 순서 확인
 5. 멀티뷰 시작
 6. 멀티뷰 시청
-7. 필요 시 확대, 교체, 재배치
+7. 필요 시 Main 교체, layout 변경, 채팅 열기·닫기, frame 제거
 
 각 구간의 기능 범위는 [Discovery](../features/discovery.md)와 [Multiview](../features/multiview.md)를 따른다. 공통 UI 규칙은 [디자인 시스템](../design/design-system.md)을 따른다.

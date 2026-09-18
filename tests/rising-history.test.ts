@@ -10,6 +10,7 @@ import {
   recordRisingHistoryWithRedis,
   type RedisSnapshot,
 } from "../src/server/chzzk/rising-history";
+import { shouldRecordRisingHistory } from "../src/lib/participant-broadcast-refresh-policy";
 import type { Participant } from "../src/types/participant";
 import type { ChzzkLiveChannel } from "../src/types/participant-broadcast";
 
@@ -24,6 +25,15 @@ const snapshots = (counts: number[]): RedisSnapshot[] => counts.map((viewerCount
 }));
 
 describe("shared rising history", () => {
+  it.each([
+    ["PRE_OPEN", "2024-01-01T08:00:00.000Z", true],
+    ["OPEN", "2024-01-01T09:00:00.000Z", true],
+    ["CLOSED", "2024-01-01T07:00:00.000Z", false],
+    ["DAY_OFF", "2024-01-05T09:00:00.000Z", false],
+  ])("writes a fresh snapshot only during %s", (_status, value, expected) => {
+    expect(shouldRecordRisingHistory(new Date(value))).toBe(expected);
+  });
+
   it("adds rising metadata to a participant broadcast and exposes readiness after two snapshots", () => {
     const history = createServerRisingHistory(snapshots([120, 140]));
     const result = applyServerRisingMetadata(broadcasts(140), history.results)[0];

@@ -12,6 +12,7 @@ ChCTV는 NAVER Corp. 또는 CHZZK가 제공·운영·승인하는 공식 서비�
 - 스트리머명, RP명, 별칭 검색
 - 참가자 그룹과 봉누도 소속 필터
 - 카드의 category와 참가자 그룹·소속 chip 표시
+- 시청자 변화 기반의 `시선 집중` 필터 및 정렬 (선택적 Upstash Redis history)
 - 1~6개 방송 선택, 중복 방지, 선택 순서 변경
 - 선택 묶음 저장·불러오기·삭제 (브라우저 localStorage)
 
@@ -21,6 +22,7 @@ ChCTV는 NAVER Corp. 또는 CHZZK가 제공·운영·승인하는 공식 서비�
 - 2채널 좌우 / 위아래 1:1 레이아웃
 - 3~6채널 가로형 / 세로형 / 균등형 레이아웃
 - Main / Sub 교체
+- 개별 frame 제거와 마지막 frame 제거 후 공통 Empty State
 - CHZZK LIVE iframe 시청과 Main Chat iframe
 - 채팅 패널 열기 / 닫기와 360px 안전 폭 유지
 - 16:9 슬롯, viewport fit, 중앙 정렬, 1280×720 virtual iframe viewport
@@ -73,6 +75,8 @@ corepack pnpm chzzk:diagnose
 | --- | --- | --- |
 | `CHZZK_CLIENT_ID` | 공식 CHZZK LIVE API Client ID | 서버 전용 |
 | `CHZZK_CLIENT_SECRET` | 공식 CHZZK LIVE API Client Secret | 서버 전용 |
+| `UPSTASH_REDIS_REST_URL` | 선택적 시선 집중 history Redis endpoint | 서버 전용 |
+| `UPSTASH_REDIS_REST_TOKEN` | 선택적 시선 집중 history Redis token | 서버 전용 |
 | `NEXT_PUBLIC_POSTHOG_KEY` | 선택적 PostHog 프로젝트 키 | 클라이언트 공개 값 |
 | `NEXT_PUBLIC_POSTHOG_HOST` | PostHog 수집 호스트 | 클라이언트 공개 값 |
 
@@ -83,7 +87,6 @@ corepack pnpm chzzk:diagnose
 - Desktop Web 중심으로 제공됩니다.
 - 모바일 최적화는 현재 범위에 포함하지 않습니다.
 - 브라우저 확장프로그램 기능은 제공하지 않습니다.
-- 멀티뷰 실행 중 채널 삭제 기능은 현재 제공하지 않습니다.
 
 ## Disclaimer / Legal
 

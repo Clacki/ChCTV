@@ -21,6 +21,7 @@ import { useParticipantBroadcasts } from "@/features/discovery/use-participant-b
 import { MultiviewController } from "@/features/multiview/multiview-controller";
 import { multiviewSelectionLimit, useMultiviewSelection } from "@/features/multiview/use-multiview-selection";
 import { getBongnudoScheduleStatus } from "@/lib/bongnudo-schedule";
+import { isRisingAvailable } from "@/lib/participant-broadcast-refresh-policy";
 import { cn } from "@/lib/utils";
 import type { StreamCardData } from "@/types/stream-card";
 
@@ -30,7 +31,7 @@ const restrictSelectedStreamToVerticalAxis: Modifier = ({ active, transform }) =
   active?.data.current?.type === "selected-stream" ? { ...transform, x: 0 } : transform;
 
 export function DiscoveryMultiviewWorkspace() {
-  const { streams, members, status, risingHistoryReady, retry } = useParticipantBroadcasts();
+  const { streams, members, status, risingHistoryReady, scheduleStatus, retry } = useParticipantBroadcasts();
   const selectionState = useMultiviewSelection();
   const [activeStreamId, setActiveStreamId] = useState<string | null>(null);
   const [isSelectionDropZoneActive, setIsSelectionDropZoneActive] = useState(false);
@@ -161,6 +162,7 @@ export function DiscoveryMultiviewWorkspace() {
             isLoading={status === "loading"}
             hasError={status === "error"}
             risingHistoryReady={risingHistoryReady}
+            risingEnabled={isRisingAvailable(scheduleStatus)}
             onRetry={retry}
           />
         </section>

@@ -21,6 +21,36 @@ function getMultiviewPath(channelIds: readonly string[]): string {
   return `/multiview?${params.toString()}`;
 }
 
+async function mockScheduleClock(page: Page, initialNow: string) {
+  await page.addInitScript(({ now }) => {
+    const RealDate = Date;
+    let currentNow = now;
+
+    class ControlledDate extends RealDate {
+      constructor(...args: ConstructorParameters<DateConstructor>) {
+        super(...(args.length === 0 ? [currentNow] : args));
+      }
+
+      static now() {
+        return new RealDate(currentNow).valueOf();
+      }
+    }
+
+    Object.setPrototypeOf(ControlledDate, RealDate);
+    window.Date = ControlledDate as DateConstructor;
+    Object.assign(window, {
+      __setChctvScheduleClock: (nextNow: string) => { currentNow = nextNow; },
+    });
+  }, { now: initialNow });
+}
+
+async function setScheduleClock(page: Page, now: string) {
+  await page.evaluate((nextNow) => {
+    (window as Window & { __setChctvScheduleClock: (value: string) => void }).__setChctvScheduleClock(nextNow);
+    document.dispatchEvent(new Event("visibilitychange"));
+  }, now);
+}
+
 async function mockParticipantBroadcasts(page: Page, options: {
   risingHistoryReady?: boolean;
   risingCount?: number;
@@ -28,8 +58,18 @@ async function mockParticipantBroadcasts(page: Page, options: {
   risingSortValues?: readonly number[];
   risingFlags?: readonly boolean[];
   viewerCounts?: readonly number[];
+  scheduleNow?: string;
 } = {}) {
-  const { risingHistoryReady = true, risingCount = 2, risingIncreases = [], risingSortValues = [], risingFlags = [], viewerCounts = [] } = options;
+  const {
+    risingHistoryReady = true,
+    risingCount = 2,
+    risingIncreases = [],
+    risingSortValues = [],
+    risingFlags = [],
+    viewerCounts = [],
+    scheduleNow = "2024-01-01T09:00:00.000Z",
+  } = options;
+  await mockScheduleClock(page, scheduleNow);
   await page.route("**/api/chzzk/participant-broadcasts", (route) =>
     route.fulfill({
       json: {
@@ -104,6 +144,44 @@ test("hides card rising increases outside the focus filter", async ({ page }) =>
   const card = page.locator("article").filter({ hasText: "Streamer 1" });
   await expect(card.getByText("+50", { exact: true })).toHaveCount(0);
   await expect(card.locator('[title="최근 시청자 +50명"]')).toHaveCount(0);
+});
+
+test("enables focus only during pre-open or open hours", async ({ page }) => {
+  for (const [now, enabled] of [
+    ["2024-01-01T08:00:00.000Z", true],
+    ["2024-01-01T09:00:00.000Z", true],
+    ["2024-01-01T07:00:00.000Z", false],
+    ["2024-01-05T09:00:00.000Z", false],
+  ]) {
+    await mockParticipantBroadcasts(page, { scheduleNow: now });
+    await page.goto("/");
+
+    const risingFilter = page.getByRole("button", { name: "시선 집중" });
+    if (enabled) {
+      await expect(risingFilter).toBeEnabled();
+    } else {
+      await expect(risingFilter).toBeDisabled();
+      await risingFilter.locator("xpath=..").hover();
+      await expect(page.getByRole("tooltip", { name: "운영시간에 사용할 수 있습니다." })).toBeVisible();
+    }
+  }
+});
+
+test("clears the focus filter when the schedule closes and does not restore it", async ({ page }) => {
+  await mockParticipantBroadcasts(page, { scheduleNow: "2024-01-01T09:00:00.000Z" });
+  await page.goto("/");
+
+  const risingFilter = page.getByRole("button", { name: "시선 집중" });
+  await risingFilter.click();
+  await expect(page.locator("article").filter({ hasText: /Streamer [345]/ })).toHaveCount(0);
+
+  await setScheduleClock(page, "2024-01-01T07:00:00.000Z");
+  await expect(risingFilter).toBeDisabled();
+  await expect(page.locator("article").filter({ hasText: "Streamer 3" })).toBeVisible();
+
+  await setScheduleClock(page, "2024-01-01T08:00:00.000Z");
+  await expect(risingFilter).toBeEnabled();
+  await expect(page.locator("article").filter({ hasText: "Streamer 3" })).toBeVisible();
 });
 
 test("shows only displayable rising candidates in focus order", async ({ page }) => {
@@ -553,6 +631,10 @@ test("keeps four viewer iframe nodes in DOM order when changing the Main slot", 
 test("keeps every multiview slot at 16:9 across layouts and desktop widths", async ({ page }) => {
   const layouts = ["Focus Right", "Focus Bottom", "Balanced"];
 
+  await page.route("https://chzzk.naver.com/live/**", (route) =>
+    route.fulfill({ contentType: "text/html", body: "<!doctype html><title>CHZZK test frame</title>" }),
+  );
+
   for (const [width, height] of [
     [1280, 800],
     [1440, 900],
@@ -561,7 +643,7 @@ test("keeps every multiview slot at 16:9 across layouts and desktop widths", asy
     await page.setViewportSize({ width, height });
 
     for (let count = 1; count <= 6; count += 1) {
-      await page.goto(getMultiviewPath(channelIds.slice(0, count)));
+      await page.goto(getMultiviewPath(channelIds.slice(0, count)), { waitUntil: "load" });
       await expect(page.locator("[data-viewer-slot]")).toHaveCount(count);
 
       if (count === 1) {
@@ -574,7 +656,11 @@ test("keeps every multiview slot at 16:9 across layouts and desktop widths", asy
       await expect(page.getByRole("button", { name: "Balanced" })).toHaveCount(count === 2 ? 0 : 1);
 
       for (const layout of availableLayouts) {
-        await page.getByRole("button", { name: layout }).click();
+        const layoutButton = page.getByRole("button", { name: layout });
+
+        await layoutButton.click();
+        await expect(layoutButton).toHaveAttribute("aria-pressed", "true");
+
         const slotMeasurements = await page.evaluate(() =>
           [...document.querySelectorAll<HTMLElement>("[data-viewer-slot]")].map((slot) => {
             const { width: slotWidth, height: slotHeight } = slot.getBoundingClientRect();

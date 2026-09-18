@@ -2,6 +2,7 @@ import "server-only";
 
 import { getParticipants } from "../../lib/participants";
 import { createBroadcastDiscoveryError, mergeParticipantsWithLives } from "../../lib/participant-broadcasts";
+import { shouldRecordRisingHistory } from "../../lib/participant-broadcast-refresh-policy";
 import type { BroadcastDiscoveryResult } from "../../types/participant-broadcast";
 import { getCachedChzzkChannelImages } from "./channel-metadata-cache";
 import { ChzzkApiError, getCurrentChzzkLives } from "./client";
@@ -27,7 +28,9 @@ export async function getParticipantBroadcasts(): Promise<BroadcastDiscoveryResu
       channelImageUrl: broadcast.live?.channelImageUrl ?? (broadcast.participant.channelId ? channelImages.get(broadcast.participant.channelId) ?? null : null),
     }));
 
-    const risingHistory = await recordRisingHistory(broadcastsWithChannelImages);
+    const risingHistory = shouldRecordRisingHistory()
+      ? await recordRisingHistory(broadcastsWithChannelImages)
+      : null;
 
     return {
       status: "success",

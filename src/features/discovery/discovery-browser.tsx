@@ -2,7 +2,7 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { Flame, LoaderCircle, Search, X } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useId, useMemo, useState } from "react";
 
 import { OfflineMemberCard } from "@/components/streams/offline-member-card";
 import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card";
@@ -32,6 +32,7 @@ type DiscoveryBrowserProps = {
   isLoading?: boolean;
   hasError?: boolean;
   risingHistoryReady?: boolean;
+  risingEnabled?: boolean;
   onRetry?: () => void;
 };
 
@@ -54,12 +55,14 @@ export function DiscoveryBrowser({
   isLoading = false,
   hasError = false,
   risingHistoryReady = false,
+  risingEnabled = true,
   onRetry,
 }: DiscoveryBrowserProps) {
   const [query, setQuery] = useState("");
   const [affiliations, setAffiliations] = useState<string[]>([]);
   const [groups, setGroups] = useState<string[]>([]);
   const [risingOnly, setRisingOnly] = useState(false);
+  const [previousRisingEnabled, setPreviousRisingEnabled] = useState(risingEnabled);
   const [showRpName, setShowRpName] = useState(false);
   const [hasRestoredRpNamePreference, setHasRestoredRpNamePreference] = useState(false);
 
@@ -77,6 +80,13 @@ export function DiscoveryBrowser({
       window.localStorage.setItem(discoveryShowRpNameStorageKey, String(showRpName));
     }
   }, [hasRestoredRpNamePreference, showRpName]);
+
+  if (risingEnabled !== previousRisingEnabled) {
+    setPreviousRisingEnabled(risingEnabled);
+    if (!risingEnabled) {
+      setRisingOnly(false);
+    }
+  }
 
   const catalogParticipants = useMemo(() => getParticipants(), []);
   const affiliationOptions = useMemo(
@@ -150,10 +160,11 @@ export function DiscoveryBrowser({
         </label>
         <FacetFilter label="그룹" options={groupOptions} sections={GROUP_FILTER_SECTIONS} selectedValues={groups} onChange={setGroups} />
         <FacetFilter label="봉누도 소속" options={affiliationOptions} selectedValues={affiliations} onChange={setAffiliations} />
-        <Chip selected={risingOnly} className="h-9 rounded-md" onClick={() => setRisingOnly((value) => !value)}>
-          <Flame aria-hidden="true" className="size-3.5" />
-          시선 집중
-        </Chip>
+        <RisingFilter
+          enabled={risingEnabled}
+          selected={risingOnly}
+          onClick={() => setRisingOnly((value) => !value)}
+        />
         <button
           type="button"
           role="switch"
@@ -255,6 +266,41 @@ export function DiscoveryBrowser({
         </>
       )}
     </>
+  );
+}
+
+function RisingFilter({ enabled, selected, onClick }: Readonly<{
+  enabled: boolean;
+  selected: boolean;
+  onClick: () => void;
+}>) {
+  const tooltipId = useId();
+
+  if (enabled) {
+    return (
+      <Chip selected={selected} className="h-9 rounded-md" onClick={onClick}>
+        <Flame aria-hidden="true" className="size-3.5" />
+        시선 집중
+      </Chip>
+    );
+  }
+
+  return (
+    <span className="group/rising relative inline-flex shrink-0" tabIndex={0} aria-describedby={tooltipId}>
+      <Chip disabled className="h-9 rounded-md">
+        <Flame aria-hidden="true" className="size-3.5" />
+        시선 집중
+      </Chip>
+      <span
+        id={tooltipId}
+        role="tooltip"
+        className="invisible absolute left-1/2 top-full z-20 mt-1 w-max -translate-x-1/2 group-hover/rising:visible group-focus-visible/rising:visible"
+      >
+        <span className="block rounded border border-border bg-background px-2 py-1 text-xs text-foreground shadow-sm">
+          운영시간에 사용할 수 있습니다.
+        </span>
+      </span>
+    </span>
   );
 }
 
