@@ -122,4 +122,42 @@ describe("participant VOD collection", () => {
     expect(result.vods).toHaveLength(2);
     expect(result.vods.find((vod) => vod.videoNo === 10)).toMatchObject({ title: "갱신 제목", viewCount: 99 });
   });
+
+  it("keeps a failed channel's previous VODs while updating successful channels", async () => {
+    const firstChannelId = "c".repeat(32);
+    const failedChannelId = "d".repeat(32);
+    const participants: Participant[] = [firstChannelId, failedChannelId].map((channelId) => ({
+      streamerName: "참가자",
+      rpName: null,
+      channelId,
+      affiliations: [],
+      groups: [],
+      tags: [],
+      aliases: [],
+    }));
+    const existing: Vod = {
+      videoNo: 10,
+      channelId: failedChannelId,
+      title: "기존 다시보기",
+      thumbnailUrl: null,
+      viewCount: 1,
+      duration: 1,
+      publishedAt: 1,
+      videoType: "REPLAY",
+      channelName: "기존 채널",
+      channelImageUrl: null,
+    };
+
+    const result = await getParticipantVods(
+      { startAt: 1, existingVods: [existing] },
+      participants,
+      async (channelId) => {
+        if (channelId === failedChannelId) throw new Error("network");
+        return [{ ...existing, videoNo: 11, channelId }];
+      },
+    );
+
+    expect(result.vods.map((vod) => vod.videoNo).sort()).toEqual([10, 11]);
+    expect(result.failures).toEqual([{ channelId: failedChannelId, kind: "unknown" }]);
+  });
 });
