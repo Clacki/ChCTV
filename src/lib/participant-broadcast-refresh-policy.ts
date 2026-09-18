@@ -8,12 +8,20 @@ export type ParticipantBroadcastRefreshPolicy = {
   intervalSeconds: number;
 };
 
+export function isRisingAvailable(scheduleStatus: ScheduleStatus): boolean {
+  return scheduleStatus === "PRE_OPEN" || scheduleStatus === "OPEN";
+}
+
+export function shouldRecordRisingHistory(now: Date = new Date()): boolean {
+  return isRisingAvailable(getParticipantBroadcastRefreshPolicy(now).scheduleStatus);
+}
+
 /** Keeps browser polling and server snapshot freshness on the same schedule. */
 export function getParticipantBroadcastRefreshPolicy(
   now: Date = new Date(),
 ): ParticipantBroadcastRefreshPolicy {
   const schedule = getBongnudoScheduleStatus(now);
-  const intervalSeconds = schedule.status === "PRE_OPEN" || schedule.status === "OPEN"
+  const intervalSeconds = isRisingAvailable(schedule.status)
     ? ACTIVE_BROADCAST_REFRESH_SECONDS
     : INACTIVE_BROADCAST_REFRESH_SECONDS;
 

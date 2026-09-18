@@ -24,7 +24,7 @@
 3. 방송 선택
 4. 선택 목록 및 순서 확인
 5. 멀티뷰 시작
-6. 시청 중 확대 / 교체 / 재배치
+6. 시청 중 Main 교체 / layout 변경 / frame 제거
 핵심 경험:
 - **Discovery** — 방송 탐색
 - **Selection** — 멀티뷰 구성
@@ -37,7 +37,7 @@ CCTV와 치즈는 그 다음 인상이다.
 # 2. Design Principles
 - **Content First** — 방송 콘텐츠가 가장 큰 시각적 비중을 가진다.
 - **Discovery Before Viewing** — 좋은 멀티뷰 경험은 좋은 방송 선택 경험에서 시작한다.
-- **Multiview First** — 추가·제거·재배치·확대를 빠르게 수행할 수 있어야 한다.
+- **Multiview First** — 추가·제거·Main 교체·layout 변경을 빠르게 수행할 수 있어야 한다.
 - **Functional Before Decorative** — CCTV/치즈 표현이 사용성을 낮추면 제거한다.
 - **Dark Monitoring Base** — 탐색과 시청 화면은 Dark UI를 기본으로 한다.
 - **Cheese as Accent** — Yellow는 CTA, Selected, Active, Focus에 사용한다.
@@ -203,17 +203,7 @@ Multiview
 
 # 7. Discovery UI
 ## 7.1 Search & Filter
-검색 대상:
-- 스트리머
-- 방송 제목
-- 카테고리
-Primary Filter는 최소한으로 둔다.
-예:
-- 전체
-- 카테고리
-- LIVE
-- 정렬
-추가 필터는 Popover / Drawer로 분리한다.
+검색 대상은 스트리머명, RP명, 별칭이다. 현재 facet은 그룹과 봉누도 소속이며, category는 카드 정보로만 표시한다. GTA를 포함한 category를 기본 필터로 사용하지 않는다. 세부 동작은 [Discovery](../features/discovery.md)를 따른다.
 ## 7.2 Stream Grid
 - Card 최소 폭: `280~320px`
 - Grid Gap: `12~16px`
@@ -274,17 +264,9 @@ Selection 순서와 실제 Multiview Slot 순서를 연결한다.
 
 # 10. Multiview
 ## 10.1 Default Grid
-| View | Grid |
-| ---: | --- |
-| 1 | 1 × 1 |
-| 2 | 2 × 1 |
-| 3~4 | 2 × 2 |
-| 5~6 | 3 × 2 |
-| 7~9 | 3 × 3 |
-실제 Layout은 영상 비율, Viewport, Focus View, 사용자 재배치를 함께 고려한다.
+현재 지원 범위는 1~6채널이다. 2채널은 가로/세로 1:1, 3~6채널은 Focus Right, Focus Bottom, Balanced layout을 제공한다. 정확한 CSS grid area와 16:9 geometry는 [Multiview](../features/multiview.md)를 따른다.
 ## 10.2 Focus Mode
-Focus는 별도 페이지가 아니라 Multiview Grid의 상태다.
-특정 방송을 크게 보면서 다른 방송에 빠르게 접근할 수 있어야 한다.
+Focus는 별도 페이지가 아니라 Multiview Grid의 layout 상태다. Main slot을 크게 두는 Focus Right 또는 Focus Bottom과 균등 배치를 전환할 수 있다.
 ## 10.3 Monitoring UI
 사용 가능한 CCTV 문법:
 - `CAM 01`
@@ -317,16 +299,8 @@ Breakpoint는 실제 Layout이 깨지는 지점을 우선한다.
 ### Wide / Desktop
 - Stream Grid + Selection Panel
 - Selection Panel 고정 폭
-### Tablet
-Selection Panel을 Bottom Bar / Drawer로 전환한다.
-```text
-선택됨 3 / 4        [ 선택 보기 ]
-```
-### Mobile
-- Discovery: 1~2열
-- Selection: Bottom Bar + Bottom Sheet / Drawer
-- Multiview: Desktop Grid 단순 축소 금지
-작은 화면에서는 Main Stream + Secondary Stream 등 우선순위 기반 Layout을 사용할 수 있다.
+### Tablet / Mobile
+현재 MVP는 desktop web 중심이다. 모바일용 Bottom Bar, Bottom Sheet, 우선순위 기반 viewer 재구성은 현재 구현으로 간주하지 않는다.
 ---
 
 # 12. Component Basics
