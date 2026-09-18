@@ -44,8 +44,10 @@ TanStack Query, nuqs, Zod는 실제 기능에 필요할 때 도입한다. Zustan
 
 ## CHZZK 연동과 개인정보
 
-- 공식적으로 이용 가능한 CHZZK API와 연동 방식만 사용한다.
-- 비공개 API, reverse engineering, 스트림 URL/m3u8·credential 추출, 공식 서비스에 해가 되는 구현은 금지한다.
+- 공식 API뿐 아니라 공개적으로 접근 가능한 CHZZK 웹 API를 서비스에 필요한 범위에서 사용할 수 있다.
+- 문서화되지 않은 웹 API는 변경 가능성이 높으므로 서버 전용 adapter/mapper 뒤에서 사용하고, 외부 응답을 프론트엔드에서 직접 사용하지 않는다.
+- 과도한 요청을 피하며, 캐시, 호출 주기 제한, 중복 요청 방지를 추가할 수 있는 구조로 설계한다.
+- 스트림 URL/m3u8, credential, 인증 토큰 등 보호된 정보의 추출이나 우회 접근, 공식 서비스에 해가 되는 구현은 금지한다.
 - Client ID, Secret, Token은 서버 전용으로 관리하고 브라우저 번들에 노출하지 않는다.
 - 로그인 기능이 없는 현재 서비스에서는 `posthog.identify()`를 사용하지 않는다.
 - PostHog에는 네이버·CHZZK 계정 ID, 이메일, 실명, 인증 정보 등 개인식별정보를 보내지 않는다. 공개 channel_id는 제품 기능 분석에 필요한 경우에만 허용한다.
