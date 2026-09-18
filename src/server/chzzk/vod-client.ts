@@ -42,7 +42,7 @@ export async function getChzzkChannelVodPage(channelId: string, page = 1): Promi
   try {
     const url = new URL(`${CHZZK_CHANNEL_VIDEOS_API_URL}/${encodeURIComponent(channelId)}/videos`);
     url.searchParams.set("sortType", "LATEST");
-    url.searchParams.set("videoType", "");
+    url.searchParams.set("videoType", "REPLAY");
     url.searchParams.set("page", String(page));
     response = await fetch(url, { cache: "no-store" });
   } catch {
