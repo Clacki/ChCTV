@@ -16,6 +16,7 @@ export type ParticipantVodFailure = {
 export type ParticipantVodCollection = {
   vods: Vod[];
   failures: ParticipantVodFailure[];
+  attemptedChannelCount: number;
 };
 
 export type ParticipantVodOptions = {
@@ -88,5 +89,5 @@ export async function getParticipantVods(
     );
   });
 
-  return { vods: [...vodsByVideoNo.values()], failures };
+  return { vods: [...vodsByVideoNo.values()], failures, attemptedChannelCount: participantChannelIds.length };
 }
