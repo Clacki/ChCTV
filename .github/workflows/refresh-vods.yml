@@ -14,9 +14,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Refresh production snapshot
+      - name: Validate refresh configuration
+        shell: bash
+        env:
+          VOD_REFRESH_URL: ${{ secrets.VOD_REFRESH_URL }}
+          VOD_REFRESH_SECRET: ${{ secrets.VOD_REFRESH_SECRET }}
         run: |
-          curl --fail-with-body \
-            --request POST \
-            --header "Authorization: Bearer ${{ secrets.VOD_REFRESH_SECRET }}" \
-            "${{ secrets.VOD_REFRESH_URL }}"
+          if [ -z "$VOD_REFRESH_URL" ]; then
+            echo "::error::VOD_REFRESH_URL is not configured"
+            exit 1
+          fi
+
+          if [ -z "$VOD_REFRESH_SECRET" ]; then
+            echo "::error::VOD_REFRESH_SECRET is not configured"
+            exit 1
+          fi
+
+          case "$VOD_REFRESH_URL" in
+            https://*)
+              ;;
+            *)
+              echo "::error::VOD_REFRESH_URL must start with https://"
+              exit 1
+              ;;
+          esac
+
+      - name: Read refresh plan and update batches
+        shell: bash
+        env:
+          VOD_REFRESH_URL: ${{ secrets.VOD_REFRESH_URL }}
+          VOD_REFRESH_SECRET: ${{ secrets.VOD_REFRESH_SECRET }}
+        run: |
+          REFRESH_URL="${VOD_REFRESH_URL%/}"
+          PLAN_URL="${REFRESH_URL%/refresh}/refresh-plan"
+          PLAN=$(curl --fail-with-body \
+            --silent \
+            --show-error \
+            --request GET \
+            --header "Authorization: Bearer ${VOD_REFRESH_SECRET}" \
+            "${PLAN_URL}")
+          BATCH_COUNT=$(jq --exit-status --raw-output '.batchCount | select(type == "number" and . >= 0 and floor == .)' <<<"${PLAN}")
+
+          for ((batch=0; batch<BATCH_COUNT; batch++)); do
+            curl --fail-with-body \
+              --silent \
+              --show-error \
+              --request POST \
+              --header "Authorization: Bearer ${VOD_REFRESH_SECRET}" \
+              "${REFRESH_URL}?batch=${batch}"
+          done
