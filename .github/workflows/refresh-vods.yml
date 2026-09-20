@@ -88,4 +88,3 @@ jobs:
           done
 
           echo "VOD refresh completed"
-```
