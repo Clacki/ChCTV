@@ -1052,7 +1052,7 @@
     "streamerName": "루루엘 아스트리온",
     "rpName": "최초면",
     "channelId": "0bd59e5f864251961191315e9efecaf1",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "흑수협" }],
     "aliases": [],
     "groups": ["샌드박스", "베이라이트"],
     "tags": []
@@ -1151,7 +1151,7 @@
     "streamerName": "먼닉",
     "rpName": "먼정학",
     "channelId": "16f23f1ae8b57b026e5451b29b0b7c0d",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "흑수협" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1259,7 +1259,7 @@
     "streamerName": "박시초",
     "rpName": "흑수염",
     "channelId": "d75e06d8625a0c83b3b5f8d32f48732d",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "흑수협" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1340,7 +1340,7 @@
     "streamerName": "비행돼지",
     "rpName": "새아빠",
     "channelId": "8c0a733110437062e1a1381706312c80",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "흑수협" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -2240,7 +2240,7 @@
     "streamerName": "다주",
     "rpName": "감도이",
     "channelId": "bdc57cc4217173f0e89f63fba2f1c6e5",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "흑수협" }],
     "aliases": ["양띵크루"],
     "groups": ["인챈트"],
     "tags": []
@@ -2402,6 +2402,96 @@
     "streamerName": "쿠뽀미",
     "rpName": "구루마",
     "channelId": "73fc52c403eb3485524c02e1a0f2e623",
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "나는벌레",
+    "rpName": "찰리박",
+    "channelId": null,
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "두간",
+    "rpName": null,
+    "channelId": null,
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "밑줄",
+    "rpName": "긴빠이더맨",
+    "channelId": null,
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "백은하",
+    "rpName": "백감동",
+    "channelId": null,
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "요시론",
+    "rpName": "원장선생님",
+    "channelId": null,
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "우말",
+    "rpName": "안경척",
+    "channelId": null,
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "애플",
+    "rpName": "엥무새",
+    "channelId": null,
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "이도나",
+    "rpName": "나군기",
+    "channelId": null,
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "조이냥",
+    "rpName": null,
+    "channelId": null,
+    "affiliations": [],
+    "aliases": [],
+    "groups": [],
+    "tags": []
+  },
+  {
+    "streamerName": "토꽁",
+    "rpName": "토나와",
+    "channelId": null,
     "affiliations": [],
     "aliases": [],
     "groups": [],

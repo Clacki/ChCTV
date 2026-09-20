@@ -47,19 +47,33 @@ jobs:
         run: |
           REFRESH_URL="${VOD_REFRESH_URL%/}"
           PLAN_URL="${REFRESH_URL%/refresh}/refresh-plan"
+
+          echo "Reading VOD refresh plan..."
+
           PLAN=$(curl --fail-with-body \
             --silent \
             --show-error \
             --request GET \
             --header "Authorization: Bearer ${VOD_REFRESH_SECRET}" \
             "${PLAN_URL}")
-          BATCH_COUNT=$(jq --exit-status --raw-output '.batchCount | select(type == "number" and . >= 0 and floor == .)' <<<"${PLAN}")
+
+          BATCH_COUNT=$(jq --exit-status --raw-output \
+            '.batchCount | select(type == "number" and . >= 0 and floor == .)' \
+            <<<"${PLAN}")
+
+          echo "VOD refresh plan: ${BATCH_COUNT} batches"
 
           for ((batch=0; batch<BATCH_COUNT; batch++)); do
-            curl --fail-with-body \
+            echo "Refreshing VOD batch ${batch}/${BATCH_COUNT}"
+
+            RESPONSE=$(curl --fail-with-body \
               --silent \
               --show-error \
               --request POST \
               --header "Authorization: Bearer ${VOD_REFRESH_SECRET}" \
-              "${REFRESH_URL}?batch=${batch}"
+              "${REFRESH_URL}?batch=${batch}")
+
+            echo "Batch ${batch} completed: ${RESPONSE}"
           done
+
+          echo "VOD refresh completed"
