@@ -93,6 +93,19 @@ export function DiscoveryBrowser({
     () => uniqueSorted(catalogParticipants.flatMap((participant) => participant.affiliations.map((affiliation) => affiliation.name))),
     [catalogParticipants],
   );
+  const affiliationSections = useMemo(
+    () => [
+      { label: "공무직", type: "public" },
+      { label: "사업체", type: "business" },
+      { label: "갱단", type: "gang" },
+    ].map(({ label, type }) => ({
+      label,
+      values: uniqueSorted(catalogParticipants.flatMap((participant) =>
+        participant.affiliations.filter((affiliation) => affiliation.type === type).map((affiliation) => affiliation.name),
+      )),
+    })).filter((section) => section.values.length > 0),
+    [catalogParticipants],
+  );
   const groupOptions = useMemo(
     () => uniqueSorted([...GROUP_FILTER_VALUES, ...catalogParticipants.flatMap((participant) => participant.groups)]),
     [catalogParticipants],
@@ -159,7 +172,7 @@ export function DiscoveryBrowser({
           )}
         </label>
         <FacetFilter label="그룹" options={groupOptions} sections={GROUP_FILTER_SECTIONS} selectedValues={groups} onChange={setGroups} />
-        <FacetFilter label="봉누도 소속" options={affiliationOptions} selectedValues={affiliations} onChange={setAffiliations} />
+        <FacetFilter label="봉누도 소속" options={affiliationOptions} sections={affiliationSections} selectedValues={affiliations} onChange={setAffiliations} />
         <RisingFilter
           enabled={risingEnabled}
           selected={risingOnly}

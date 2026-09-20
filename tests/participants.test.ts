@@ -123,8 +123,16 @@ describe("participant catalog", () => {
       expect(participantsByStreamerName.get(streamerName)).toMatchObject({ rpName });
     }
 
-    for (const streamerName of ["나는벌레", "두간", "밑줄", "백은하", "요시론", "우말", "애플", "이도나", "조이냥", "토꽁"]) {
-      expect(participantsByStreamerName.get(streamerName)).toMatchObject({ channelId: null });
+    const confirmedChannelIds = {
+      나는벌레: "1a2fe478d52f44d5621f005c91dfa487", 두간: "07bba51bf0a233f3f44b54431704b190",
+      밑줄: "16fc49ff5ba7ec5d25a5a978cee3bdda", 백은하: "85eb67daa4822df8a31f1cdbd74c34da",
+      요시론: "d510a81b4e261ba7fca8894ac7fc601a", 우말: "00c4d5bbb8b8b874732066dc7e49b47a",
+      애플: "e291f5f835f5f7b206413227cf9186da", 이도나: "d81d59f432489a1f9e2af897bf8eab7a",
+      조이냥: "a9983d950a0ba4471b3d60bb9c5e0dd7", 토꽁: "5b78a2610119f246785e67761edf2125",
+    };
+
+    for (const [streamerName, channelId] of Object.entries(confirmedChannelIds)) {
+      expect(participantsByStreamerName.get(streamerName)).toMatchObject({ channelId });
     }
 
     expect(filterParticipants({ affiliations: ["흑수협"] }).map((participant) => participant.rpName).sort()).toEqual([

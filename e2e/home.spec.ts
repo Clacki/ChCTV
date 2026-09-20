@@ -402,6 +402,9 @@ test("shows offline participants automatically for active discovery filters", as
   await expect(offlineCard).toBeVisible();
 
   await page.getByRole("button", { name: "봉누도 소속" }).click();
+  await expect(page.getByText("공무직", { exact: true })).toBeVisible();
+  await expect(page.getByText("사업체", { exact: true })).toBeVisible();
+  await expect(page.getByText("갱단", { exact: true })).toBeVisible();
   await page.getByRole("option", { name: "병원" }).click();
   await expect(offlineCard).toBeVisible();
 });
