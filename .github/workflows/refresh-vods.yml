@@ -12,7 +12,6 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-
     steps:
       - name: Validate refresh configuration
         shell: bash
@@ -50,28 +49,40 @@ jobs:
 
           echo "Reading VOD refresh plan..."
 
-          PLAN=$(curl --fail-with-body \
+          if ! PLAN=$(curl --fail-with-body \
             --silent \
             --show-error \
             --request GET \
             --header "Authorization: Bearer ${VOD_REFRESH_SECRET}" \
-            "${PLAN_URL}")
+            "${PLAN_URL}"); then
+            echo "::error::Failed to read VOD refresh plan"
+            echo "${PLAN}"
+            exit 1
+          fi
 
-          BATCH_COUNT=$(jq --exit-status --raw-output \
+          if ! BATCH_COUNT=$(jq --exit-status --raw-output \
             '.batchCount | select(type == "number" and . >= 0 and floor == .)' \
-            <<<"${PLAN}")
+            <<<"${PLAN}"); then
+            echo "::error::Invalid VOD refresh plan"
+            echo "${PLAN}"
+            exit 1
+          fi
 
           echo "VOD refresh plan: ${BATCH_COUNT} batches"
 
           for ((batch=0; batch<BATCH_COUNT; batch++)); do
             echo "Refreshing VOD batch ${batch}/${BATCH_COUNT}"
 
-            RESPONSE=$(curl --fail-with-body \
+            if ! RESPONSE=$(curl --fail-with-body \
               --silent \
               --show-error \
               --request POST \
               --header "Authorization: Bearer ${VOD_REFRESH_SECRET}" \
-              "${REFRESH_URL}?batch=${batch}")
+              "${REFRESH_URL}?batch=${batch}"); then
+              echo "::error::VOD batch ${batch} failed"
+              echo "${RESPONSE}"
+              exit 1
+            fi
 
             echo "Batch ${batch} completed: ${RESPONSE}"
           done

@@ -953,7 +953,7 @@
     "streamerName": "눈꽃",
     "rpName": "김영준",
     "channelId": "343fc0e877aa8ca0cad5106b33d6fa95",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "본헤이터" }],
     "aliases": ["양띵크루"],
     "groups": ["픽셀"],
     "tags": []
@@ -1052,7 +1052,7 @@
     "streamerName": "루루엘 아스트리온",
     "rpName": "최초면",
     "channelId": "0bd59e5f864251961191315e9efecaf1",
-    "affiliations": [{ "type": "gang", "name": "흑수협" }],
+    "affiliations": [{ "type": "business", "name": "흑수협" }],
     "aliases": [],
     "groups": ["샌드박스", "베이라이트"],
     "tags": []
@@ -1151,7 +1151,7 @@
     "streamerName": "먼닉",
     "rpName": "먼정학",
     "channelId": "16f23f1ae8b57b026e5451b29b0b7c0d",
-    "affiliations": [{ "type": "gang", "name": "흑수협" }],
+    "affiliations": [{ "type": "business", "name": "흑수협" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1160,7 +1160,7 @@
     "streamerName": "명예훈장",
     "rpName": "조온경",
     "channelId": "5d53f8fa5bef9b1bd4dc884f9907c079",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "블랙리스트" }],
     "aliases": ["존경", "기특", "특이", "특수", "정상화"],
     "groups": ["카론"],
     "tags": []
@@ -1232,7 +1232,7 @@
     "streamerName": "바뀐",
     "rpName": "할리뀐",
     "channelId": "416d86cee659cca1320eac67f0e6fc22",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "블랙리스트" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1259,7 +1259,7 @@
     "streamerName": "박시초",
     "rpName": "흑수염",
     "channelId": "d75e06d8625a0c83b3b5f8d32f48732d",
-    "affiliations": [{ "type": "gang", "name": "흑수협" }],
+    "affiliations": [{ "type": "business", "name": "흑수협" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1340,7 +1340,7 @@
     "streamerName": "비행돼지",
     "rpName": "새아빠",
     "channelId": "8c0a733110437062e1a1381706312c80",
-    "affiliations": [{ "type": "gang", "name": "흑수협" }],
+    "affiliations": [{ "type": "business", "name": "흑수협" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1367,7 +1367,7 @@
     "streamerName": "빙하유",
     "rpName": "빙초선",
     "channelId": "a048127622edd6c3ee8e477471a1d823",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "본헤이터" }],
     "aliases": [],
     "groups": ["오버더월"],
     "tags": []
@@ -1412,7 +1412,7 @@
     "streamerName": "쇼카",
     "rpName": "신미정",
     "channelId": "1963bb156cd9a572916827d4fef7516e",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "본헤이터" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1421,7 +1421,7 @@
     "streamerName": "숀쟝",
     "rpName": "김겨란",
     "channelId": "981f18d74bceeb1972197209b7400fc4",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "블랙리스트" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1493,7 +1493,7 @@
     "streamerName": "아라하시 타비",
     "rpName": "황천길",
     "channelId": "a6c4ddb09cdb160478996007bff35296",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "블랙리스트" }],
     "aliases": [],
     "groups": ["스텔라이브"],
     "tags": []
@@ -1727,7 +1727,7 @@
     "streamerName": "이렌",
     "rpName": "이한별",
     "channelId": "6ddd2ff1d43ae1e23e04e72409e40d84",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "본헤이터" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1763,7 +1763,7 @@
     "streamerName": "이신",
     "rpName": "이랑",
     "channelId": "8775b3047a658f3f637797c244ba4b34",
-    "affiliations": [],
+    "affiliations": [{ "type": "business", "name": "흑수협" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1835,7 +1835,7 @@
     "streamerName": "조별하",
     "rpName": "독고촉",
     "channelId": "ead28b71f3fdd5e8b52321825217a065",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "본헤이터" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1853,7 +1853,7 @@
     "streamerName": "주혀미",
     "rpName": "주혜미",
     "channelId": "8f433fe01faac742a5cf0819e42397de",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "블랙리스트" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1880,7 +1880,7 @@
     "streamerName": "쫑민",
     "rpName": "쫑장비",
     "channelId": "1703c76cfc62ebee9254a6fd2ef83b2a",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "본헤이터" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1889,7 +1889,7 @@
     "streamerName": "찡스",
     "rpName": "골아파덕",
     "channelId": "c8e5611851a6df0e76a0ba35d1be2542",
-    "affiliations": [],
+    "affiliations": [{ "type": "business", "name": "흑수협" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1898,7 +1898,7 @@
     "streamerName": "채로키",
     "rpName": "채도규",
     "channelId": "a46c7bc953605de49b192a4049328274",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "블랙리스트" }],
     "aliases": [],
     "groups": ["카론"],
     "tags": []
@@ -1916,7 +1916,7 @@
     "streamerName": "천용이",
     "rpName": "봉예나",
     "channelId": "2e64626093fbf9777311b5602a94af82",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "블랙리스트" }],
     "aliases": [],
     "groups": [],
     "tags": []
@@ -1943,7 +1943,7 @@
     "streamerName": "초승달",
     "rpName": "장구룩",
     "channelId": "65c3035bdc598c81f15a8fe0e958b3ce",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "본헤이터" }],
     "aliases": ["마당개"],
     "groups": ["인챈트", "플라네타"],
     "tags": []
@@ -2069,7 +2069,7 @@
     "streamerName": "푸린",
     "rpName": "구레온",
     "channelId": "75bd327f6ba6f57106c79fe3f2c3d19f",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "본헤이터" }],
     "aliases": ["독수리"],
     "groups": ["인챈트"],
     "tags": []
@@ -2078,7 +2078,7 @@
     "streamerName": "핑맨",
     "rpName": "까치",
     "channelId": "0dcec72cd1033032a77dfced6c0c91f8",
-    "affiliations": [],
+    "affiliations": [{ "type": "gang", "name": "블랙리스트" }],
     "aliases": ["늪지대"],
     "groups": ["픽셀"],
     "tags": []
@@ -2240,7 +2240,7 @@
     "streamerName": "다주",
     "rpName": "감도이",
     "channelId": "bdc57cc4217173f0e89f63fba2f1c6e5",
-    "affiliations": [{ "type": "gang", "name": "흑수협" }],
+    "affiliations": [{ "type": "business", "name": "흑수협" }],
     "aliases": ["양띵크루"],
     "groups": ["인챈트"],
     "tags": []
