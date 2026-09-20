@@ -107,6 +107,35 @@ describe("participant catalog", () => {
     }
   });
 
+  it("keeps the confirmed first through third admission RP names and filters the confirmed Black Water gang members", () => {
+    const participantsByStreamerName = new Map(getParticipants().map((participant) => [participant.streamerName, participant]));
+
+    const confirmedRpNames = {
+      기령: "기세령", 다주: "감도이", "미사키 하루": "하게", "쇼코코 도리": "도라희", 슈향: "오왕식",
+      유할매: "일오삼", 청목: "청송이", 쵸꾸미: "조규미", "테리 눈나": "박대리", 하네: "쌀먹쥐",
+      김아테: "김즥진", 나나양: "나마자", 니르: "오뒤세", 두니주니: null, 디온: "머라카노",
+      마무: "김개똥", 망징이: "망키호테", "시아 이르엘린": "탈옥순", 초깨비: "야근중", 쿠뽀미: "구루마",
+      나는벌레: "찰리박", 두간: null, 밑줄: "긴빠이더맨", 백은하: "백감동", 요시론: "원장선생님",
+      우말: "안경척", 애플: "엥무새", 이도나: "나군기", 조이냥: null, 토꽁: "토나와",
+    };
+
+    for (const [streamerName, rpName] of Object.entries(confirmedRpNames)) {
+      expect(participantsByStreamerName.get(streamerName)).toMatchObject({ rpName });
+    }
+
+    for (const streamerName of ["나는벌레", "두간", "밑줄", "백은하", "요시론", "우말", "애플", "이도나", "조이냥", "토꽁"]) {
+      expect(participantsByStreamerName.get(streamerName)).toMatchObject({ channelId: null });
+    }
+
+    expect(filterParticipants({ affiliations: ["흑수협"] }).map((participant) => participant.rpName).sort()).toEqual([
+      "감도이",
+      "먼정학",
+      "새아빠",
+      "최초면",
+      "흑수염",
+    ]);
+  });
+
   it("contains no invalid or duplicate participant identifiers", () => {
     const participants = getParticipants();
     const streamerNames = participants.map((participant) => participant.streamerName);
@@ -125,7 +154,8 @@ describe("participant catalog", () => {
     expect(participants.every((participant) => Array.isArray(participant.tags))).toBe(true);
     expect(participants.every((participant) => participant.affiliations.every((affiliation) => Boolean(affiliation.type && affiliation.name)))).toBe(true);
     expect(participants.every((participant) => participant.groups.every((group) => group.trim().length > 0))).toBe(true);
-    expect(participants.every((participant) => participant.affiliations.every((affiliation) => affiliation.type === "public" && affiliation.name.trim().length > 0 && affiliation.role?.trim()))).toBe(true);
+    expect(participants.every((participant) => participant.affiliations.every((affiliation) => affiliation.name.trim().length > 0))).toBe(true);
+    expect(participants.every((participant) => participant.affiliations.every((affiliation) => affiliation.type !== "public" || affiliation.role?.trim()))).toBe(true);
     expect(participants.every((participant) => new Set(participant.groups).size === participant.groups.length)).toBe(true);
     expect(participants.every((participant) => new Set(participant.affiliations.map((affiliation) => `${affiliation.type}:${affiliation.name}:${affiliation.role ?? ""}`)).size === participant.affiliations.length)).toBe(true);
   });
