@@ -129,6 +129,7 @@ describe("participant catalog", () => {
 
     expect(filterParticipants({ affiliations: ["흑수협"] }).map((participant) => participant.rpName).sort()).toEqual([
       "감도이",
+      "골아파덕",
       "먼정학",
       "새아빠",
       "이랑",
