@@ -16,6 +16,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, batch: Number(batch), refreshedAt: snapshot.refreshedAt, vodCount: snapshot.vods.length, failureCount: snapshot.failures.length });
   } catch (error) {
     if (error instanceof VodRefreshBatchError) return NextResponse.json({ ok: false }, { status: 400 });
-    return NextResponse.json({ ok: false }, { status: 500 });
+
+    console.error("[VOD refresh] failed", { batch: Number(batch), error });
+    return NextResponse.json({ ok: false, batch: Number(batch) }, { status: 500 });
   }
 }

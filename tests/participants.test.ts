@@ -107,7 +107,7 @@ describe("participant catalog", () => {
     }
   });
 
-  it("keeps the confirmed first through third admission RP names and filters the confirmed Black Water gang members", () => {
+  it("keeps the confirmed first through third admission RP names and filters the confirmed Black Water business members", () => {
     const participantsByStreamerName = new Map(getParticipants().map((participant) => [participant.streamerName, participant]));
 
     const confirmedRpNames = {
@@ -131,8 +131,35 @@ describe("participant catalog", () => {
       "감도이",
       "먼정학",
       "새아빠",
+      "이랑",
       "최초면",
       "흑수염",
+    ]);
+  });
+
+  it("filters the confirmed Blacklist and Bon Hater gang members", () => {
+    expect(filterParticipants({ affiliations: ["흑수협"] }).every((participant) =>
+      participant.affiliations.some((affiliation) => affiliation.type === "business" && affiliation.name === "흑수협"),
+    )).toBe(true);
+    expect(filterParticipants({ affiliations: ["블랙리스트"] }).map((participant) => participant.channelId).sort()).toEqual([
+      "0dcec72cd1033032a77dfced6c0c91f8",
+      "2e64626093fbf9777311b5602a94af82",
+      "416d86cee659cca1320eac67f0e6fc22",
+      "5d53f8fa5bef9b1bd4dc884f9907c079",
+      "8f433fe01faac742a5cf0819e42397de",
+      "981f18d74bceeb1972197209b7400fc4",
+      "a46c7bc953605de49b192a4049328274",
+      "a6c4ddb09cdb160478996007bff35296",
+    ]);
+    expect(filterParticipants({ affiliations: ["본헤이터"] }).map((participant) => participant.channelId).sort()).toEqual([
+      "1703c76cfc62ebee9254a6fd2ef83b2a",
+      "1963bb156cd9a572916827d4fef7516e",
+      "343fc0e877aa8ca0cad5106b33d6fa95",
+      "65c3035bdc598c81f15a8fe0e958b3ce",
+      "6ddd2ff1d43ae1e23e04e72409e40d84",
+      "75bd327f6ba6f57106c79fe3f2c3d19f",
+      "a048127622edd6c3ee8e477471a1d823",
+      "ead28b71f3fdd5e8b52321825217a065",
     ]);
   });
 
