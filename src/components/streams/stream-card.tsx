@@ -12,13 +12,15 @@ import { Tag } from "@/components/ui/tag";
 import { cn } from "@/lib/utils";
 import type { StreamCardData } from "@/types/stream-card";
 
+export type NameDisplayMode = "both" | "streamer" | "rp";
+
 type StreamCardProps = {
   stream: StreamCardData;
   selected?: boolean;
   onAdd?: () => void;
   addDisabled?: boolean;
   draggable?: boolean;
-  showRpName?: boolean;
+  nameDisplayMode?: NameDisplayMode;
   showRisingIncrease?: boolean;
 };
 
@@ -28,7 +30,7 @@ export const StreamCard = memo(function StreamCard({
   onAdd,
   addDisabled = false,
   draggable = false,
-  showRpName = false,
+  nameDisplayMode = "both",
   showRisingIncrease = false,
 }: StreamCardProps) {
   const [thumbnail, setThumbnail] = useState<{
@@ -50,6 +52,8 @@ export const StreamCard = memo(function StreamCard({
     "pointer-events-none absolute size-4 transition-colors group-hover:border-white/85",
     selected ? "border-primary/80 group-hover:border-primary" : "border-white/60",
   );
+  const displayedName = nameDisplayMode === "rp" ? stream.rpName ?? stream.streamerName : stream.streamerName;
+  const showsRpName = nameDisplayMode === "both" && stream.rpName !== null;
 
   return (
     <article
@@ -123,9 +127,9 @@ export const StreamCard = memo(function StreamCard({
         <div className="flex h-8 min-w-0 items-center gap-2">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <Avatar src={stream.channelImageUrl} alt={`${stream.streamerName} 채널 이미지`} size="sm" />
-            <p className="min-w-0 truncate text-sm leading-4 text-muted-foreground" title={showRpName && stream.rpName ? `${stream.streamerName} · RP ${stream.rpName}` : stream.streamerName}>
-              <span className="font-medium text-foreground/85">{stream.streamerName}</span>
-              {showRpName && stream.rpName && (
+            <p className="min-w-0 truncate text-sm leading-4 text-muted-foreground" title={showsRpName ? `${stream.streamerName} · RP ${stream.rpName}` : displayedName}>
+              <span className="font-medium text-foreground/85">{displayedName}</span>
+              {showsRpName && (
                 <>
                   <span className="text-tertiary"> · RP </span>
                   <span className="text-muted-foreground">{stream.rpName}</span>
