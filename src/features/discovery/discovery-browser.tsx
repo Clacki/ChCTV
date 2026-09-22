@@ -1,11 +1,11 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
-import { Flame, LoaderCircle, Search, X } from "lucide-react";
+import { ChevronDown, Flame, LoaderCircle, Search, X } from "lucide-react";
 import { memo, useCallback, useEffect, useId, useMemo, useState } from "react";
 
 import { OfflineMemberCard } from "@/components/streams/offline-member-card";
-import { StreamCard, StreamCardSkeleton } from "@/components/streams/stream-card";
+import { StreamCard, StreamCardSkeleton, type NameDisplayMode } from "@/components/streams/stream-card";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { FacetFilter } from "@/components/ui/facet-filter";
@@ -38,7 +38,17 @@ type DiscoveryBrowserProps = {
 
 const streamGridClassName = "mt-3 grid grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] items-start gap-3";
 const loadingSkeletonCount = 8;
-export const discoveryShowRpNameStorageKey = "chctv.discovery.show-rp-name";
+export const discoveryNameDisplayModeStorageKey = "chctv.discovery.name-display-mode";
+
+const nameDisplayLabels: Record<NameDisplayMode, string> = {
+  both: "스트리머 + RP",
+  streamer: "스트리머명",
+  rp: "RP명",
+};
+
+function isNameDisplayMode(value: string | null): value is NameDisplayMode {
+  return value === "both" || value === "streamer" || value === "rp";
+}
 
 function isRisingCandidate(stream: StreamCardData) {
   return stream.isRising === true
@@ -63,23 +73,24 @@ export function DiscoveryBrowser({
   const [groups, setGroups] = useState<string[]>([]);
   const [risingOnly, setRisingOnly] = useState(false);
   const [previousRisingEnabled, setPreviousRisingEnabled] = useState(risingEnabled);
-  const [showRpName, setShowRpName] = useState(false);
-  const [hasRestoredRpNamePreference, setHasRestoredRpNamePreference] = useState(false);
+  const [nameDisplayMode, setNameDisplayMode] = useState<NameDisplayMode>("both");
+  const [hasRestoredNameDisplayMode, setHasRestoredNameDisplayMode] = useState(false);
 
   useEffect(() => {
     const restoreFrame = window.requestAnimationFrame(() => {
-      setShowRpName(window.localStorage.getItem(discoveryShowRpNameStorageKey) === "true");
-      setHasRestoredRpNamePreference(true);
+      const storedNameDisplayMode = window.localStorage.getItem(discoveryNameDisplayModeStorageKey);
+      setNameDisplayMode(isNameDisplayMode(storedNameDisplayMode) ? storedNameDisplayMode : "both");
+      setHasRestoredNameDisplayMode(true);
     });
 
     return () => window.cancelAnimationFrame(restoreFrame);
   }, []);
 
   useEffect(() => {
-    if (hasRestoredRpNamePreference) {
-      window.localStorage.setItem(discoveryShowRpNameStorageKey, String(showRpName));
+    if (hasRestoredNameDisplayMode) {
+      window.localStorage.setItem(discoveryNameDisplayModeStorageKey, nameDisplayMode);
     }
-  }, [hasRestoredRpNamePreference, showRpName]);
+  }, [hasRestoredNameDisplayMode, nameDisplayMode]);
 
   if (risingEnabled !== previousRisingEnabled) {
     setPreviousRisingEnabled(risingEnabled);
@@ -95,7 +106,7 @@ export function DiscoveryBrowser({
   );
   const affiliationSections = useMemo(
     () => [
-      { label: "공무직", type: "public" },
+      { label: "공공기관", type: "public" },
       { label: "사업체", type: "business" },
       { label: "갱단", type: "gang" },
     ].map(({ label, type }) => ({
@@ -172,24 +183,22 @@ export function DiscoveryBrowser({
           )}
         </label>
         <FacetFilter label="그룹" options={groupOptions} sections={GROUP_FILTER_SECTIONS} selectedValues={groups} onChange={setGroups} />
-        <FacetFilter label="봉누도 소속" options={affiliationOptions} sections={affiliationSections} selectedValues={affiliations} onChange={setAffiliations} />
+        <FacetFilter
+          label="봉누도 소속"
+          options={affiliationOptions}
+          sections={affiliationSections}
+          selectedValues={affiliations}
+          onChange={setAffiliations}
+          collapsibleSections
+          searchPlaceholder="조직명 검색"
+          onClear={() => setAffiliations([])}
+        />
         <RisingFilter
           enabled={risingEnabled}
           selected={risingOnly}
           onClick={() => setRisingOnly((value) => !value)}
         />
-        <button
-          type="button"
-          role="switch"
-          aria-checked={showRpName}
-          onClick={() => setShowRpName((value) => !value)}
-          className={cn(
-            "inline-flex h-9 shrink-0 cursor-pointer items-center rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-            showRpName ? "border-primary bg-primary/10 text-primary" : "bg-background text-muted-foreground hover:border-border-strong hover:text-foreground",
-          )}
-        >
-          RP 이름 {showRpName ? "ON" : "OFF"}
-        </button>
+        <NameDisplayFilter value={nameDisplayMode} onChange={setNameDisplayMode} />
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -238,7 +247,7 @@ export function DiscoveryBrowser({
                     selected={selection.includes(stream.id)}
                     canAdd={selection.length < selectionLimit}
                     onAddStream={onAddStream}
-                    showRpName={showRpName}
+                    nameDisplayMode={nameDisplayMode}
                     showRisingIncrease={risingOnly && isRisingCandidate(stream)}
                   />
                 </li>
@@ -251,7 +260,7 @@ export function DiscoveryBrowser({
               <ul className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(min(100%,11rem),1fr))] gap-2">
                 {offlineMembers.map((member) => (
                   <li key={member.participant.streamerName} className="min-w-0">
-                    <OfflineMemberCard participant={member.participant} channelImageUrl={member.channelImageUrl} showRpName={showRpName} />
+                    <OfflineMemberCard participant={member.participant} channelImageUrl={member.channelImageUrl} nameDisplayMode={nameDisplayMode} />
                   </li>
                 ))}
               </ul>
@@ -279,6 +288,57 @@ export function DiscoveryBrowser({
         </>
       )}
     </>
+  );
+}
+
+function NameDisplayFilter({ value, onChange }: Readonly<{
+  value: NameDisplayMode;
+  onChange: (value: NameDisplayMode) => void;
+}>) {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuId = useId();
+
+  return (
+    <div className="relative shrink-0">
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        aria-controls={menuId}
+        aria-haspopup="menu"
+        onClick={() => setIsOpen((open) => !open)}
+        className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-md border bg-card px-2.5 text-sm font-medium text-foreground transition-colors hover:border-border-strong hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        <span>{nameDisplayLabels[value]}</span>
+        <ChevronDown aria-hidden="true" className={cn("size-4 transition-transform duration-150", isOpen && "rotate-180")} />
+      </button>
+
+      {isOpen && (
+        <div id={menuId} role="menu" aria-label="이름 표시 방식" className="absolute right-0 z-20 mt-2 w-44 rounded-md border bg-card p-1 shadow-lg">
+          <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">이름 표시 방식</p>
+          {(Object.keys(nameDisplayLabels) as NameDisplayMode[]).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              role="menuitemradio"
+              aria-checked={value === mode}
+              onClick={() => {
+                onChange(mode);
+                setIsOpen(false);
+              }}
+              className={cn(
+                "flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-2 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary",
+                value === mode ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted",
+              )}
+            >
+              <span className={cn("flex size-4 items-center justify-center rounded-full border", value === mode ? "border-primary" : "border-border-strong")}>
+                {value === mode && <span className="size-2 rounded-full bg-primary" />}
+              </span>
+              {nameDisplayLabels[mode]}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -322,14 +382,14 @@ const DraggableDiscoveryStream = memo(function DraggableDiscoveryStream({
   selected,
   canAdd,
   onAddStream,
-  showRpName,
+  nameDisplayMode,
   showRisingIncrease,
 }: Readonly<{
   stream: StreamCardData;
   selected: boolean;
   canAdd: boolean;
   onAddStream: (streamId: string) => void;
-  showRpName: boolean;
+  nameDisplayMode: NameDisplayMode;
   showRisingIncrease: boolean;
 }>) {
   const handleAdd = useCallback(() => onAddStream(stream.id), [onAddStream, stream.id]);
@@ -364,7 +424,7 @@ const DraggableDiscoveryStream = memo(function DraggableDiscoveryStream({
         onAdd={handleAdd}
         addDisabled={!canInteract}
         draggable={canInteract}
-        showRpName={showRpName}
+        nameDisplayMode={nameDisplayMode}
         showRisingIncrease={showRisingIncrease}
       />
     </div>

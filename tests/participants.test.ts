@@ -115,8 +115,8 @@ describe("participant catalog", () => {
       유할매: "일오삼", 청목: "청송이", 쵸꾸미: "조규미", "테리 눈나": "박대리", 하네: "쌀먹쥐",
       김아테: "김즥진", 나나양: "나마자", 니르: "오뒤세", 두니주니: null, 디온: "머라카노",
       마무: "김개똥", 망징이: "망키호테", "시아 이르엘린": "탈옥순", 초깨비: "야근중", 쿠뽀미: "구루마",
-      나는벌레: "찰리박", 두간: null, 밑줄: "긴빠이더맨", 백은하: "백감동", 요시론: "원장선생님",
-      우말: "안경척", 애플: "엥무새", 이도나: "나군기", 조이냥: null, 토꽁: "토나와",
+      나는벌레: "찰리박", 두간: "두반장", 밑줄: "긴빠이더맨", 백은하: "백감동", 요시론: "원장선생님",
+      우말: "안경척", 애플: "엥무새", 이도나: "나군기", 조이냥: "조네오", 토꽁: "토나와",
     };
 
     for (const [streamerName, rpName] of Object.entries(confirmedRpNames)) {
@@ -170,6 +170,25 @@ describe("participant catalog", () => {
       "a048127622edd6c3ee8e477471a1d823",
       "ead28b71f3fdd5e8b52321825217a065",
     ]);
+  });
+
+  it.each([
+    ["business", "튜닝소", 7],
+    ["business", "씨드머니 농장", 8],
+    ["business", "카페 해영", 8],
+    ["business", "게이스시", 6],
+    ["business", "로동당 농장", 8],
+    ["gang", "부산갈매기", 8],
+    ["gang", "미친개", 8],
+    ["gang", "피트스탑", 6],
+    ["gang", "네오경찰", 7],
+    ["gang", "유젖무죄", 4],
+    ["gang", "느와르", 7],
+  ])("keeps the confirmed %s %s affiliation members", (type, affiliation, expectedCount) => {
+    const participants = filterParticipants({ affiliations: [affiliation] });
+
+    expect(participants).toHaveLength(expectedCount);
+    expect(participants.every((participant) => participant.affiliations.some((item) => item.type === type && item.name === affiliation))).toBe(true);
   });
 
   it("contains no invalid or duplicate participant identifiers", () => {

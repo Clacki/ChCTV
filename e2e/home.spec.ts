@@ -87,7 +87,7 @@ async function mockParticipantBroadcasts(page: Page, options: {
             return {
             participant: {
               streamerName: `Streamer ${index + 1}`,
-              rpName: `Role ${index + 1}`,
+              rpName: index === 2 ? null : `Role ${index + 1}`,
               channelId,
               affiliations: index < 2 ? [{ type: "public", name: "병원", role: "간호사" }] : [],
               groups: index === 0 ? ["픽셀", "인챈트", "플라네타"] : index === 1 ? ["스텔라이브"] : [],
@@ -350,32 +350,35 @@ test("isolates StreamCard CHZZK shortcut dragging and preserves card drag and dr
   await expect(card.getByLabel("추가됨", { exact: true })).toBeVisible();
 });
 
-test("shows participant groups and restores the RP name preference", async ({ page }) => {
+test("switches participant name display modes and restores the saved preference", async ({ page }) => {
   await mockParticipantBroadcasts(page);
   await page.goto("/");
 
-  const firstCard = page.locator("article").filter({ hasText: "Streamer 1" });
-  await expect(firstCard.getByText("픽셀", { exact: true })).toBeVisible();
-  await expect(firstCard.getByText("+1", { exact: true })).toBeVisible();
-  await expect(firstCard.getByRole("list", { name: "Participant groups" })).toBeVisible();
-  await expect(firstCard.getByText("ignored-json-tag", { exact: true })).toHaveCount(0);
-  await expect(
-    page.locator("article").filter({ hasText: "Streamer 3" }).getByRole("list", { name: "Participant groups" }),
-  ).toHaveCount(0);
-  await expect(firstCard.getByText("Role 1", { exact: true })).toHaveCount(0);
-
-  const rpNameSwitch = page.getByRole("switch", { name: /RP 이름/ });
-  await expect(rpNameSwitch).toHaveAttribute("aria-checked", "false");
-  await rpNameSwitch.click();
+  const firstCard = page.locator('article[aria-label^="Streamer 1"]');
+  const thirdCard = page.locator('article[aria-label^="Streamer 3"]');
+  await expect(page.getByRole("button", { name: "스트리머 + RP" })).toBeVisible();
+  await expect(firstCard.getByText("Streamer 1", { exact: true })).toBeVisible();
   await expect(firstCard.getByText("Role 1", { exact: true })).toBeVisible();
 
-  await page.reload();
-  await expect(page.getByRole("switch", { name: /RP 이름/ })).toHaveAttribute("aria-checked", "true");
-  await expect(
-    page.locator("article").filter({ hasText: "Streamer 1" }).getByText("Role 1", { exact: true }),
-  ).toBeVisible();
-});
+  await page.getByRole("button", { name: "스트리머 + RP" }).click();
+  await page.getByRole("menuitemradio", { name: "스트리머명" }).click();
+  await expect(firstCard.getByText("Streamer 1", { exact: true })).toBeVisible();
+  await expect(firstCard.getByText("Role 1", { exact: true })).toHaveCount(0);
 
+  const broadcastSearch = page.locator("input").first();
+  await broadcastSearch.fill("Role 1");
+  await expect(firstCard).toBeVisible();
+  await broadcastSearch.fill("");
+
+  await page.getByRole("button", { name: "스트리머명" }).click();
+  await page.getByRole("menuitemradio", { name: "RP명" }).click();
+  await expect(firstCard.getByText("Role 1", { exact: true })).toBeVisible();
+  await expect(thirdCard.getByText("Streamer 3", { exact: true })).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByRole("button", { name: "RP명" })).toBeVisible();
+  await page.evaluate(() => window.localStorage.removeItem("chctv.discovery.name-display-mode"));
+});
 test("shows offline participants automatically for active discovery filters", async ({ page }) => {
   await mockParticipantBroadcasts(page);
   await page.goto("/");
@@ -386,7 +389,7 @@ test("shows offline participants automatically for active discovery filters", as
   await page.getByPlaceholder("스트리머명, RP명 또는 별칭 검색...").fill("Offline Alias");
   await expect(offlineCard).toBeVisible();
   await expect(page.getByRole("heading", { name: "오프라인 참가자 1명" })).toBeVisible();
-  await expect(offlineCard.getByText("OFFLINE", { exact: true })).toBeVisible();
+  await expect(offlineCard.getByText("Offline Role", { exact: true })).toBeVisible();
   await expect(offlineCard.getByRole("img", { name: "Offline Streamer 채널 이미지" })).toHaveAttribute(
     "src",
     "https://cdn.example.com/offline-channel.jpg",
@@ -402,9 +405,10 @@ test("shows offline participants automatically for active discovery filters", as
   await expect(offlineCard).toBeVisible();
 
   await page.getByRole("button", { name: "봉누도 소속" }).click();
-  await expect(page.getByText("공무직", { exact: true })).toBeVisible();
+  await expect(page.getByText("공공기관", { exact: true })).toBeVisible();
   await expect(page.getByText("사업체", { exact: true })).toBeVisible();
   await expect(page.getByText("갱단", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "공공기관" }).click();
   await page.getByRole("option", { name: "병원" }).click();
   await expect(offlineCard).toBeVisible();
 });
@@ -429,6 +433,7 @@ test("keeps stable facet controls and applies group OR with affiliation AND", as
   await expect(page.locator("article").filter({ hasText: "Streamer 2" })).toBeVisible();
 
   await page.getByRole("button", { name: "봉누도 소속" }).click();
+  await page.getByRole("button", { name: "공공기관" }).click();
   await page.getByRole("option", { name: "병원" }).click();
   await expect(page.locator("article").filter({ hasText: "Streamer 1" })).toBeVisible();
   await expect(page.locator("article").filter({ hasText: "Streamer 2" })).toBeVisible();
@@ -448,6 +453,49 @@ test("keeps stable facet controls and applies group OR with affiliation AND", as
   await expect(page.locator("article").filter({ hasText: "Streamer 2" })).toHaveCount(0);
 });
 
+test("organizes Bongnudo affiliations with searchable multi-section selection", async ({ page }) => {
+  await mockParticipantBroadcasts(page);
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "봉누도 소속" }).click();
+  const publicSection = page.getByRole("button", { name: "공공기관" });
+  const businessSection = page.getByRole("button", { name: "사업체" });
+  const gangSection = page.getByRole("button", { name: "갱단" });
+
+  await expect(publicSection).toHaveAttribute("aria-expanded", "false");
+  await expect(businessSection).toHaveAttribute("aria-expanded", "false");
+  await expect(gangSection).toHaveAttribute("aria-expanded", "false");
+  await expect(page.getByRole("option", { name: "병원" })).toHaveCount(0);
+
+  await publicSection.click();
+  await page.getByRole("option", { name: "병원" }).click();
+  await expect(page.getByRole("button", { name: /공공기관 · 1/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /봉누도 소속 1/ })).toBeVisible();
+  await publicSection.click();
+  await expect(page.getByRole("option", { name: "병원" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /공공기관 · 1/ })).toBeVisible();
+
+  await businessSection.click();
+  await page.getByRole("option", { name: "흑수협" }).click();
+  await gangSection.click();
+  await page.getByRole("option", { name: "블랙리스트" }).click();
+  await expect(page.getByRole("button", { name: /봉누도 소속 3/ })).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "Streamer 1" })).toBeVisible();
+
+  const organizationSearch = page.getByRole("textbox", { name: "조직명 검색" });
+  await organizationSearch.fill("흑수");
+  await expect(page.getByRole("button", { name: "공공기관" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "갱단" })).toHaveCount(0);
+  await expect(page.getByRole("option", { name: "흑수협" })).toBeVisible();
+  await organizationSearch.fill("없는 조직");
+  await expect(page.getByText("일치하는 조직이 없습니다.", { exact: true })).toBeVisible();
+  await organizationSearch.fill("");
+
+  const affiliationFilter = page.getByRole("listbox", { name: "봉누도 소속 필터" });
+  await affiliationFilter.getByRole("button", { name: "초기화" }).click();
+  await expect(page.getByRole("button", { name: "봉누도 소속" })).toBeVisible();
+  await expect(affiliationFilter.getByRole("button", { name: "초기화" })).toBeDisabled();
+});
 test("keeps the Discovery utility within the viewport on desktop widths", async ({ page }) => {
   for (const width of [1280, 1440, 1920]) {
     await page.setViewportSize({ width, height: 1080 });
