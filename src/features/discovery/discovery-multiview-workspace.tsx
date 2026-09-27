@@ -170,6 +170,7 @@ export function DiscoveryMultiviewWorkspace() {
             hasError={status === "error"}
             risingHistoryReady={risingHistoryReady}
             risingEnabled={isRisingAvailable(scheduleStatus)}
+            scheduleStatus={scheduleStatus}
             onRetry={retry}
           />
         </section>

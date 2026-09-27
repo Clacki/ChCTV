@@ -1,5 +1,15 @@
+export const participantAffiliationTypes = [
+  "public",
+  "business",
+  "personal_business",
+  "illegal_business",
+  "gang",
+] as const;
+
+export type ParticipantAffiliationType = typeof participantAffiliationTypes[number];
+
 export type ParticipantAffiliation = {
-  type: string;
+  type: ParticipantAffiliationType;
   name: string;
   role?: string;
 };

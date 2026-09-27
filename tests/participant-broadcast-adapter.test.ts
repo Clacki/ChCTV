@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { toDiscoveryMembers, toDiscoveryStreamCards } from "../src/features/discovery/participant-broadcast-adapter";
+import {
+  filterDiscoveryMembersBySchedule,
+  toDiscoveryMembers,
+  toDiscoveryStreamCards,
+} from "../src/features/discovery/participant-broadcast-adapter";
 import { matchesParticipantFilters, getParticipants } from "../src/lib/participants";
 import type { ParticipantBroadcast } from "../src/types/participant-broadcast";
 
@@ -104,6 +108,33 @@ describe("toDiscoveryStreamCards", () => {
       expect.objectContaining({ status: "LIVE", participant: broadcasts[0].participant }),
       expect.objectContaining({ status: "OFFLINE", participant: broadcasts[1].participant, channelImageUrl: "https://cdn.example.com/offline-channel.jpg" }),
     ]);
+  });
+
+  it("shows only Grand Theft Auto V LIVE broadcasts during OPEN while preserving all broadcasts otherwise", () => {
+    const members = toDiscoveryMembers([
+      {
+        ...broadcasts[0],
+        live: { ...broadcasts[0].live!, liveCategoryValue: "Grand Theft Auto V" },
+      },
+      {
+        ...broadcasts[0],
+        participant: { ...broadcasts[0].participant, streamerName: "other category" },
+        live: { ...broadcasts[0].live!, channelId: "b".repeat(32), liveCategoryValue: "League of Legends" },
+      },
+      {
+        ...broadcasts[0],
+        participant: { ...broadcasts[0].participant, streamerName: "missing category" },
+        live: { ...broadcasts[0].live!, channelId: "c".repeat(32), liveCategory: "Grand Theft Auto V", liveCategoryValue: null },
+      },
+      broadcasts[1],
+    ]);
+
+    expect(filterDiscoveryMembersBySchedule(members, "OPEN")).toEqual([
+      expect.objectContaining({ status: "LIVE", stream: expect.objectContaining({ category: "Grand Theft Auto V" }) }),
+      expect.objectContaining({ status: "OFFLINE" }),
+    ]);
+    expect(filterDiscoveryMembersBySchedule(members, "CLOSED")).toHaveLength(4);
+    expect(filterDiscoveryMembersBySchedule(members, "DAY_OFF")).toHaveLength(4);
   });
 
   it("keeps catalog groups available to both LIVE cards and group filters", () => {
