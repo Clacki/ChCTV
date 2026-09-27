@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { FacetFilter } from "@/components/ui/facet-filter";
 import type { DiscoveryMember } from "@/features/discovery/participant-broadcast-adapter";
+import { filterDiscoveryMembersBySchedule } from "@/features/discovery/participant-broadcast-adapter";
 import { GROUP_FILTER_SECTIONS, GROUP_FILTER_VALUES } from "@/features/discovery/discovery-filter-config";
+import type { ScheduleStatus } from "@/lib/bongnudo-schedule";
 import { getParticipants, matchesParticipantFilters } from "@/lib/participants";
 import { cn } from "@/lib/utils";
 import type { ParticipantFilters } from "@/types/participant";
@@ -33,6 +35,7 @@ type DiscoveryBrowserProps = {
   hasError?: boolean;
   risingHistoryReady?: boolean;
   risingEnabled?: boolean;
+  scheduleStatus: ScheduleStatus;
   onRetry?: () => void;
 };
 
@@ -66,6 +69,7 @@ export function DiscoveryBrowser({
   hasError = false,
   risingHistoryReady = false,
   risingEnabled = true,
+  scheduleStatus,
   onRetry,
 }: DiscoveryBrowserProps) {
   const [query, setQuery] = useState("");
@@ -100,15 +104,21 @@ export function DiscoveryBrowser({
   }
 
   const catalogParticipants = useMemo(() => getParticipants(), []);
+  const visibleScheduleMembers = useMemo(
+    () => filterDiscoveryMembersBySchedule(members, scheduleStatus),
+    [members, scheduleStatus],
+  );
   const affiliationOptions = useMemo(
     () => uniqueSorted(catalogParticipants.flatMap((participant) => participant.affiliations.map((affiliation) => affiliation.name))),
     [catalogParticipants],
   );
   const affiliationSections = useMemo(
     () => [
-      { label: "공공기관", type: "public" },
+      { label: "공무기관", type: "public" },
       { label: "사업체", type: "business" },
       { label: "갱단", type: "gang" },
+      { label: "개인 사업체", type: "personal_business" },
+      { label: "불법 사업체", type: "illegal_business" },
     ].map(({ label, type }) => ({
       label,
       values: uniqueSorted(catalogParticipants.flatMap((participant) =>
@@ -122,8 +132,8 @@ export function DiscoveryBrowser({
     [catalogParticipants],
   );
   const risingCandidates = useMemo(
-    () => members.flatMap((member) => member.status === "LIVE" && isRisingCandidate(member.stream) ? [member.stream] : []),
-    [members],
+    () => visibleScheduleMembers.flatMap((member) => member.status === "LIVE" && isRisingCandidate(member.stream) ? [member.stream] : []),
+    [visibleScheduleMembers],
   );
   const hasActiveFilter = Boolean(normalize(query)) || affiliations.length > 0 || groups.length > 0 || risingOnly;
 
@@ -131,7 +141,7 @@ export function DiscoveryBrowser({
     const normalizedQuery = normalize(query);
     const filters: ParticipantFilters = { affiliations, groups };
 
-    return members.filter((member) => {
+    return visibleScheduleMembers.filter((member) => {
       const { participant } = member;
       const searchValues = [participant.streamerName, participant.rpName, ...participant.aliases];
       const matchesQuery = !normalizedQuery || searchValues.some((value) => value !== null && normalize(value).includes(normalizedQuery));
@@ -141,7 +151,7 @@ export function DiscoveryBrowser({
         && matchesFilters
         && (!risingOnly || (member.status === "LIVE" && isRisingCandidate(member.stream)));
     });
-  }, [affiliations, groups, members, query, risingOnly]);
+  }, [affiliations, groups, query, risingOnly, visibleScheduleMembers]);
 
   const visibleStreams = useMemo(
     () => filteredMembers.flatMap((member) => member.status === "LIVE" ? [member.stream] : []).sort((left, right) => risingOnly ? (right.risingSortValue ?? 0) - (left.risingSortValue ?? 0) : right.viewerCount - left.viewerCount),

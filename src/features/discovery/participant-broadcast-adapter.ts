@@ -1,9 +1,12 @@
 import type { StreamCardData } from "@/types/stream-card";
 import type { ParticipantBroadcast } from "@/types/participant-broadcast";
 import type { Participant } from "@/types/participant";
+import type { ScheduleStatus } from "@/lib/bongnudo-schedule";
+
+const bongnudoLiveCategory = "Grand Theft Auto V";
 
 export type DiscoveryMember =
-  | { status: "LIVE"; participant: Participant; stream: StreamCardData }
+  | { status: "LIVE"; participant: Participant; stream: StreamCardData; liveCategoryValue: string | null }
   | { status: "OFFLINE"; participant: Participant; channelImageUrl: string | null };
 
 function getDisplayGroups(broadcast: ParticipantBroadcast): string[] {
@@ -45,9 +48,23 @@ export function toDiscoveryMembers(broadcasts: readonly ParticipantBroadcast[]):
     const stream = toDiscoveryStreamCard(broadcast);
 
     return stream
-      ? { status: "LIVE", participant: broadcast.participant, stream }
+      ? { status: "LIVE", participant: broadcast.participant, stream, liveCategoryValue: broadcast.live?.liveCategoryValue ?? null }
       : { status: "OFFLINE", participant: broadcast.participant, channelImageUrl: broadcast.channelImageUrl ?? null };
   });
+}
+
+/** Filters only the Discovery display list; cached LIVE broadcasts remain unchanged. */
+export function filterDiscoveryMembersBySchedule(
+  members: readonly DiscoveryMember[],
+  scheduleStatus: ScheduleStatus,
+): DiscoveryMember[] {
+  if (scheduleStatus !== "OPEN") {
+    return [...members];
+  }
+
+  return members.filter((member) =>
+    member.status !== "LIVE" || member.liveCategoryValue === bongnudoLiveCategory,
+  );
 }
 
 export function toDiscoveryStreamCards(broadcasts: readonly ParticipantBroadcast[]): StreamCardData[] {

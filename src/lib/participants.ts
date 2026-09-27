@@ -1,7 +1,8 @@
 import participantData from "../data/participants.json";
-import type { Participant, ParticipantFilters } from "../types/participant";
+import { participantAffiliationTypes, type Participant, type ParticipantFilters } from "../types/participant";
 
-const participants: readonly Participant[] = participantData;
+const participants = participantData as readonly Participant[];
+const affiliationTypes = new Set<string>(participantAffiliationTypes);
 
 function normalize(value: string): string {
   return value.trim().toLocaleLowerCase("ko-KR");
@@ -11,6 +12,10 @@ function includesAny(values: readonly string[], selectedValues: readonly string[
   const selected = new Set(selectedValues.filter(Boolean).map(normalize));
 
   return values.some((value) => selected.has(normalize(value)));
+}
+
+export function isParticipantAffiliationType(value: string): value is Participant["affiliations"][number]["type"] {
+  return affiliationTypes.has(value);
 }
 
 /** Returns the complete static participant catalog. Treat the result as read-only. */
