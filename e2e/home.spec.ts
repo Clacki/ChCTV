@@ -575,6 +575,73 @@ test("handles direct multiview access without channel parameters", async ({ page
   await expect(page.getByRole("link", { name: "라이브 선택 페이지로 돌아가기" })).toHaveAttribute("href", "/");
 });
 
+test("renders the ChCTV Helper privacy policy as a public page", async ({ page }) => {
+  await page.goto("/privacy/chctv-helper");
+
+  await expect(page.getByRole("heading", { name: "ChCTV Helper 개인정보 안내" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "수집·저장하지 않는 정보" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "권한 사용 목적" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "ChCTV GitHub Issues" })).toHaveAttribute(
+    "href",
+    "https://github.com/Clacki/ChCTV/issues",
+  );
+});
+
+test("detects a ready ChCTV Helper without changing the multiview viewers", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.addEventListener("message", (event) => {
+      if (event.source !== window || event.data?.type !== "CHCTV_HELPER_PING") return;
+
+      window.postMessage(
+        { type: "CHCTV_HELPER_READY", requestId: event.data.requestId, ready: true },
+        window.location.origin,
+      );
+    });
+  });
+  await page.goto(getMultiviewPath(channelIds.slice(0, 2)));
+
+  await expect(page.getByLabel("Viewer 영역")).toHaveAttribute("data-chctv-helper-status", "ready");
+  await expect(page.locator("[data-viewer-slot]")).toHaveCount(2);
+  await expect(page.getByRole("heading", { name: "ChCTV Helper 연결 확인 중" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "멀티뷰를 사용하려면 ChCTV Helper가 필요합니다" })).toHaveCount(0);
+});
+
+test("shows the Helper installation notice only after the handshake is unavailable", async ({ page }) => {
+  await page.route("https://chzzk.naver.com/live/**", (route) => route.fulfill({ body: "CHZZK LIVE" }));
+  await page.goto(getMultiviewPath(channelIds.slice(0, 2)));
+
+  await expect(page.getByRole("heading", { name: "ChCTV Helper 연결 확인 중" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "멀티뷰를 사용하려면 ChCTV Helper가 필요합니다" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "ChCTV Helper 설치" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "다시 확인" })).toBeVisible();
+  await expect(page.getByLabel("Viewer 영역")).toHaveAttribute("data-chctv-helper-status", "unavailable");
+});
+
+test("rechecks the Helper without reloading the multiview page", async ({ page }) => {
+  await page.addInitScript(() => {
+    let helperReady = false;
+    Object.assign(window, { __setChctvHelperReady: () => { helperReady = true; } });
+    window.addEventListener("message", (event) => {
+      if (!helperReady || event.source !== window || event.data?.type !== "CHCTV_HELPER_PING") return;
+
+      window.postMessage(
+        { type: "CHCTV_HELPER_READY", requestId: event.data.requestId, ready: true },
+        window.location.origin,
+      );
+    });
+  });
+  const path = getMultiviewPath(channelIds.slice(0, 2));
+  await page.goto(path);
+  await expect(page.getByRole("heading", { name: "멀티뷰를 사용하려면 ChCTV Helper가 필요합니다" })).toBeVisible();
+
+  await page.evaluate(() => (window as Window & { __setChctvHelperReady: () => void }).__setChctvHelperReady());
+  await page.getByRole("button", { name: "다시 확인" }).click();
+
+  await expect(page.getByLabel("Viewer 영역")).toHaveAttribute("data-chctv-helper-status", "ready");
+  await expect(page).toHaveURL(path);
+  await expect(page.getByRole("heading", { name: "멀티뷰를 사용하려면 ChCTV Helper가 필요합니다" })).toHaveCount(0);
+});
+
 test("uses the same empty state after removing the last multiview frame", async ({ page }) => {
   await page.route("https://chzzk.naver.com/live/**", (route) => route.fulfill({ body: "CHZZK LIVE" }));
   await page.goto(getMultiviewPath([channelIds[0]]));

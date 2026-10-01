@@ -4,6 +4,7 @@ import { Columns2, Crown, LayoutGrid, MessageSquare, Rows2, X } from "lucide-rea
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ChctvHelperInstallNotice } from "@/features/multiview/chctv-helper-install-notice";
 import { ChzzkChat, ChzzkViewer } from "@/features/multiview/chzzk-viewer";
 import { MultiviewEmptyState } from "@/features/multiview/multiview-empty-state";
 import {
@@ -11,6 +12,7 @@ import {
   getMultiviewLayout,
   type MultiviewLayoutPreset,
 } from "@/features/multiview/multiview-layout";
+import { useChctvHelperStatus } from "@/features/multiview/use-chctv-helper-status";
 import {
   createMultiviewSlots,
   getMultiviewChannelIds,
@@ -33,6 +35,7 @@ const layoutControls: ReadonlyArray<{ preset: MultiviewLayoutPreset; label: stri
 ];
 
 export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readonly string[] }>) {
+  const { status: helperStatus, retry: retryHelper } = useChctvHelperStatus();
   const [layoutPreset, setLayoutPreset] = useState<MultiviewLayoutPreset>(() => getDefaultMultiviewLayoutPreset(channelIds.length));
   const [slots, setSlots] = useState(() => createMultiviewSlots(channelIds));
   const activeChannelIds = getMultiviewChannelIds(slots);
@@ -96,7 +99,7 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
       "grid h-dvh w-screen min-h-0 min-w-0 gap-2 overflow-hidden p-2",
       isChatVisible ? "grid-cols-[minmax(0,1fr)_360px]" : "grid-cols-[minmax(0,1fr)]",
     )}>
-      <section ref={viewerSectionRef} className="relative min-h-0 min-w-0 overflow-hidden" aria-label="Viewer 영역">
+      <section ref={viewerSectionRef} className="relative min-h-0 min-w-0 overflow-hidden" aria-label="Viewer 영역" data-chctv-helper-status={helperStatus}>
         <div className="absolute right-2 top-2 z-20 flex items-center gap-1 rounded-md border bg-card/90 p-1 backdrop-blur" aria-label="레이아웃 선택">
               {visibleLayoutControls.map(({ preset, label, icon: Icon }) => (
                 <Button
@@ -190,6 +193,7 @@ export function MultiviewWorkspace({ channelIds }: Readonly<{ channelIds: readon
             채팅을 접고 T 키를 누르면 더 깔끔하게 시청할 수 있습니다.
           </div>
         )}
+        {helperStatus !== "ready" && <ChctvHelperInstallNotice status={helperStatus} onRetry={retryHelper} />}
       </section>
 
       {isChatVisible && (

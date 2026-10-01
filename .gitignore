@@ -1,5 +1,7 @@
 node_modules/
 .next/
+extension/_metadata/
+extension/dist/
 out/
 playwright-report/
 test-results/

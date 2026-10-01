@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        {
+          "header": "content-security-policy",
+          "operation": "remove"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "|https://chzzk.naver.com/live/",
+      "resourceTypes": ["sub_frame"],
+      "initiatorDomains": ["localhost", "127.0.0.1", "chctv.vercel.app"]
+    }
+  }
+]
