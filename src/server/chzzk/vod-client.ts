@@ -1,5 +1,6 @@
 import "server-only";
 
+import { BONGNUDO_VOD_CATEGORY_VALUE, isBongnudoVodPublishedAt } from "@/lib/bongnudo-vod";
 import type { Vod } from "@/types/vod";
 
 import { mapChzzkVod } from "./vod-mapper";
@@ -75,23 +76,24 @@ export async function getChzzkChannelVodPage(channelId: string, page = 1): Promi
   }
 
   return {
-    vods: body.content.data.flatMap((item) => {
+    vods: body.content.data.map((item) => {
       const vod = mapChzzkVod(item);
-      return vod ? [vod] : [];
+      if (!vod) throw new ChzzkVodApiError("invalid_response", channelId);
+      return vod;
     }),
     page: responsePage,
     totalPages,
   };
 }
 
-/** Reads newest-first pages until the first VOD older than the requested service start. */
+/** Reads every available page because the upstream ordering is not a safe collection boundary. */
 export async function getChzzkChannelVods(
   channelId: string,
   startAt: number,
-  knownVideoNos: ReadonlySet<number> = new Set(),
+  endAt: number,
 ): Promise<Vod[]> {
-  if (!Number.isFinite(startAt)) {
-    throw new RangeError("VOD service start time must be a Unix timestamp in milliseconds");
+  if (!Number.isFinite(startAt) || !Number.isFinite(endAt) || endAt <= startAt) {
+    throw new RangeError("VOD collection range must be finite Unix timestamps with an end after the start");
   }
 
   const vods: Vod[] = [];
@@ -101,17 +103,14 @@ export async function getChzzkChannelVods(
   while (page <= totalPages) {
     const result = await getChzzkChannelVodPage(channelId, page);
     totalPages = result.totalPages;
-    const serviceVods = result.vods.filter((vod) => vod.videoType === "REPLAY" && vod.publishedAt >= startAt);
+    const serviceVods = result.vods.filter((vod) =>
+      vod.videoType === "REPLAY"
+      && vod.videoCategoryValue === BONGNUDO_VOD_CATEGORY_VALUE
+      && isBongnudoVodPublishedAt(vod.publishedAt, startAt, endAt),
+    );
     vods.push(...serviceVods);
 
-    // The complete current page is merged before stopping, so page-boundary VODs are not missed.
-    if (
-      result.vods.some((vod) => vod.publishedAt < startAt) ||
-      serviceVods.some((vod) => knownVideoNos.has(vod.videoNo)) ||
-      page >= totalPages
-    ) {
-      break;
-    }
+    if (page >= totalPages) break;
 
     page += 1;
   }

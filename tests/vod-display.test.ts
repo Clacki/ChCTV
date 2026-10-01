@@ -3,7 +3,7 @@ import { createVodDisplayItems, formatVodDuration, formatVodViewCount } from "..
 import type { Participant } from "../src/types/participant";
 import type { Vod } from "../src/types/vod";
 
-const vod = (overrides: Partial<Vod> = {}): Vod => ({ videoNo: 1, channelId: "a".repeat(32), title: "다시보기", thumbnailUrl: null, viewCount: 12_345, duration: 3723, publishedAt: 2, videoType: "REPLAY", channelName: "CHZZK 채널", channelImageUrl: null, ...overrides });
+const vod = (overrides: Partial<Vod> = {}): Vod => ({ videoNo: 1, channelId: "a".repeat(32), title: "다시보기", thumbnailUrl: null, viewCount: 12_345, duration: 3723, publishedAt: 2, videoType: "REPLAY", videoCategory: "Grand_Theft_Auto_V", videoCategoryValue: "Grand Theft Auto V", channelName: "CHZZK 채널", channelImageUrl: null, ...overrides });
 
 describe("VOD display data", () => {
   it("sorts newest first and matches a participant by channelId", () => {

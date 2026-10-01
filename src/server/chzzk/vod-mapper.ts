@@ -26,6 +26,8 @@ export function mapChzzkVod(value: unknown): Vod | null {
   const duration = finiteNumber(value.duration);
   const publishedAt = finiteNumber(value.publishDateAt);
   const videoType = stringOrNull(value.videoType);
+  const videoCategory = stringOrNull(value.videoCategory);
+  const videoCategoryValue = stringOrNull(value.videoCategoryValue);
   const channelId = stringOrNull(value.channel.channelId);
   const channelName = stringOrNull(value.channel.channelName);
 
@@ -36,6 +38,8 @@ export function mapChzzkVod(value: unknown): Vod | null {
     duration === null ||
     publishedAt === null ||
     videoType === null ||
+    videoCategory === null ||
+    videoCategoryValue === null ||
     channelId === null ||
     channelName === null
   ) {
@@ -51,6 +55,8 @@ export function mapChzzkVod(value: unknown): Vod | null {
     duration,
     publishedAt,
     videoType,
+    videoCategory,
+    videoCategoryValue,
     channelName,
     channelImageUrl: stringOrNull(value.channel.channelImageUrl),
   };

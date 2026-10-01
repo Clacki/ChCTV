@@ -39,6 +39,8 @@ describe("participant VOD collection", () => {
           duration: 1,
           publishedAt: 1,
           videoType: "REPLAY",
+          videoCategory: "Grand_Theft_Auto_V",
+          videoCategoryValue: "Grand Theft Auto V",
           channelName: "참가자",
           channelImageUrl: null,
         },
@@ -103,6 +105,8 @@ describe("participant VOD collection", () => {
       duration: 1,
       publishedAt: 1,
       videoType: "REPLAY",
+      videoCategory: "Grand_Theft_Auto_V",
+      videoCategoryValue: "Grand Theft Auto V",
       channelName: "이전 채널",
       channelImageUrl: null,
     };
@@ -110,8 +114,7 @@ describe("participant VOD collection", () => {
     const result = await getParticipantVods(
       { startAt: 1, existingVods: [existing] },
       [participant],
-      async (_id, _startAt, knownVideoNos) => {
-        expect(knownVideoNos).toEqual(new Set([10]));
+      async () => {
         return [
           { ...existing, videoNo: 11, title: "신규" },
           { ...existing, title: "갱신 제목", viewCount: 99, channelName: "갱신 채널" },
@@ -144,6 +147,8 @@ describe("participant VOD collection", () => {
       duration: 1,
       publishedAt: 1,
       videoType: "REPLAY",
+      videoCategory: "Grand_Theft_Auto_V",
+      videoCategoryValue: "Grand Theft Auto V",
       channelName: "기존 채널",
       channelImageUrl: null,
     };
@@ -159,5 +164,40 @@ describe("participant VOD collection", () => {
 
     expect(result.vods.map((vod) => vod.videoNo).sort()).toEqual([10, 11]);
     expect(result.failures).toEqual([{ channelId: failedChannelId, kind: "unknown" }]);
+  });
+
+  it("removes cached VODs that no longer satisfy the final category and registration-period filters", async () => {
+    const channelId = "e".repeat(32);
+    const participant: Participant = {
+      streamerName: "참가자",
+      rpName: null,
+      channelId,
+      affiliations: [],
+      groups: [],
+      tags: [],
+      aliases: [],
+    };
+    const target: Vod = {
+      videoNo: 1,
+      channelId,
+      title: "대상",
+      thumbnailUrl: null,
+      viewCount: 1,
+      duration: 1,
+      publishedAt: 10,
+      videoType: "REPLAY",
+      videoCategory: "Grand_Theft_Auto_V",
+      videoCategoryValue: "Grand Theft Auto V",
+      channelName: "채널",
+      channelImageUrl: null,
+    };
+
+    const result = await getParticipantVods(
+      { startAt: 1, endAt: 20, existingVods: [target, { ...target, videoNo: 2, videoCategoryValue: "Project Zomboid" }, { ...target, videoNo: 3, publishedAt: 20 }] },
+      [participant],
+      async () => [],
+    );
+
+    expect(result.vods).toEqual([target]);
   });
 });

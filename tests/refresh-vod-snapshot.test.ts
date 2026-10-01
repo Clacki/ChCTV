@@ -31,6 +31,8 @@ const vod = (videoNo: number, channelId: string): Vod => ({
   duration: 1,
   publishedAt: 1,
   videoType: "REPLAY",
+  videoCategory: "Grand_Theft_Auto_V",
+  videoCategoryValue: "Grand Theft Auto V",
   channelName: channelId,
   channelImageUrl: null,
 });

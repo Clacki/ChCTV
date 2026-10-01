@@ -1,6 +1,11 @@
 import "server-only";
 
-import { BONGNUDO_VOD_START_AT } from "@/lib/bongnudo-vod";
+import {
+  BONGNUDO_VOD_CATEGORY_VALUE,
+  BONGNUDO_VOD_COLLECTION_END_AT,
+  BONGNUDO_VOD_START_AT,
+  isBongnudoVodPublishedAt,
+} from "@/lib/bongnudo-vod";
 import { getParticipants } from "@/lib/participants";
 import type { Participant } from "@/types/participant";
 import type { Vod } from "@/types/vod";
@@ -21,18 +26,19 @@ export type ParticipantVodCollection = {
 
 export type ParticipantVodOptions = {
   startAt?: number;
+  endAt?: number;
   channelIds?: readonly string[];
   existingVods?: readonly Vod[];
 };
 
 const channelConcurrency = 5;
 
-type ChannelVodLoader = (channelId: string, startAt: number, knownVideoNos: ReadonlySet<number>) => Promise<Vod[]>;
+type ChannelVodLoader = (channelId: string, startAt: number, endAt: number) => Promise<Vod[]>;
 
 async function collectChannelVods(
   channelIds: readonly string[],
   startAt: number,
-  existingVods: readonly Vod[],
+  endAt: number,
   loadChannelVods: ChannelVodLoader,
 ): Promise<Array<PromiseSettledResult<Vod[]>>> {
   const results: Array<PromiseSettledResult<Vod[]>> = Array.from({ length: channelIds.length });
@@ -42,10 +48,8 @@ async function collectChannelVods(
     while (nextIndex < channelIds.length) {
       const index = nextIndex++;
       const channelId = channelIds[index];
-      const knownVideoNos = new Set(existingVods.filter((vod) => vod.channelId === channelId).map((vod) => vod.videoNo));
-
       try {
-        results[index] = { status: "fulfilled", value: await loadChannelVods(channelId, startAt, knownVideoNos) };
+        results[index] = { status: "fulfilled", value: await loadChannelVods(channelId, startAt, endAt) };
       } catch (reason) {
         results[index] = { status: "rejected", reason };
       }
@@ -57,7 +61,7 @@ async function collectChannelVods(
 }
 
 export async function getParticipantVods(
-  { startAt = BONGNUDO_VOD_START_AT, channelIds, existingVods = [] }: ParticipantVodOptions,
+  { startAt = BONGNUDO_VOD_START_AT, endAt = BONGNUDO_VOD_COLLECTION_END_AT, channelIds, existingVods = [] }: ParticipantVodOptions,
   participants: readonly Participant[] = getParticipants(),
   loadChannelVods: ChannelVodLoader = getChzzkChannelVods,
 ): Promise<ParticipantVodCollection> {
@@ -69,8 +73,14 @@ export async function getParticipantVods(
         .filter((channelId) => requestedChannelIds === null || requestedChannelIds.has(channelId)),
     ),
   ];
-  const results = await collectChannelVods(participantChannelIds, startAt, existingVods, loadChannelVods);
-  const vodsByVideoNo = new Map(existingVods.map((vod) => [vod.videoNo, vod]));
+  const results = await collectChannelVods(participantChannelIds, startAt, endAt, loadChannelVods);
+  const vodsByVideoNo = new Map(existingVods
+    .filter((vod) =>
+      vod.videoType === "REPLAY"
+      && vod.videoCategoryValue === BONGNUDO_VOD_CATEGORY_VALUE
+      && isBongnudoVodPublishedAt(vod.publishedAt, startAt, endAt),
+    )
+    .map((vod) => [vod.videoNo, vod]));
   const failures: ParticipantVodFailure[] = [];
 
   results.forEach((result, index) => {

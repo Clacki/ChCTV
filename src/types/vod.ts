@@ -11,6 +11,8 @@ export type Vod = {
   duration: number;
   publishedAt: number;
   videoType: string;
+  videoCategory: string;
+  videoCategoryValue: string;
   channelName: string;
   channelImageUrl: string | null;
 };
