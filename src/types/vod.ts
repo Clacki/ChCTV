@@ -13,6 +13,9 @@ export type Vod = {
   videoType: string;
   videoCategory: string;
   videoCategoryValue: string;
+  /** Reference metadata only. It must not be used for collection filtering or ordering. */
+  liveOpenDate: string | null;
+  url: string;
   channelName: string;
   channelImageUrl: string | null;
 };

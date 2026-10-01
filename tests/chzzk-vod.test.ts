@@ -18,6 +18,7 @@ function rawVod(overrides: Record<string, unknown> = {}) {
     videoType: "REPLAY",
     videoCategory: "Grand_Theft_Auto_V",
     videoCategoryValue: "Grand Theft Auto V",
+    liveOpenDate: "2026-01-01 18:00:00",
     watchTimeline: { lastPosition: 10 },
     channel: {
       channelId,
@@ -47,6 +48,8 @@ describe("CHZZK VOD mapper", () => {
       videoType: "REPLAY",
       videoCategory: "Grand_Theft_Auto_V",
       videoCategoryValue: "Grand Theft Auto V",
+      liveOpenDate: "2026-01-01 18:00:00",
+      url: "https://chzzk.naver.com/video/1",
       channelName: "참가자",
       channelImageUrl: "https://cdn.example.com/channel.jpg",
     });
@@ -74,6 +77,7 @@ describe("CHZZK VOD pagination", () => {
     ]);
     expect(fetch).toHaveBeenCalledTimes(3);
     expect(fetch.mock.calls.map(([url]) => new URL(url).searchParams.get("page"))).toEqual(["1", "2", "3"]);
+    expect(fetch.mock.calls.every(([, options]) => options?.headers?.["User-Agent"] === "ChCTV VOD Collector/1.0")).toBe(true);
   });
 
   it("keeps only in-range GTA V REPLAY VODs", async () => {

@@ -1,10 +1,8 @@
 import "server-only";
 
 import {
-  BONGNUDO_VOD_CATEGORY_VALUE,
   BONGNUDO_VOD_COLLECTION_END_AT,
   BONGNUDO_VOD_START_AT,
-  isBongnudoVodPublishedAt,
 } from "@/lib/bongnudo-vod";
 import { getParticipants } from "@/lib/participants";
 import type { Participant } from "@/types/participant";
@@ -21,6 +19,7 @@ export type ParticipantVodFailure = {
 export type ParticipantVodCollection = {
   vods: Vod[];
   failures: ParticipantVodFailure[];
+  successfulChannelIds: string[];
   attemptedChannelCount: number;
 };
 
@@ -28,7 +27,6 @@ export type ParticipantVodOptions = {
   startAt?: number;
   endAt?: number;
   channelIds?: readonly string[];
-  existingVods?: readonly Vod[];
 };
 
 const channelConcurrency = 5;
@@ -61,7 +59,7 @@ async function collectChannelVods(
 }
 
 export async function getParticipantVods(
-  { startAt = BONGNUDO_VOD_START_AT, endAt = BONGNUDO_VOD_COLLECTION_END_AT, channelIds, existingVods = [] }: ParticipantVodOptions,
+  { startAt = BONGNUDO_VOD_START_AT, endAt = BONGNUDO_VOD_COLLECTION_END_AT, channelIds }: ParticipantVodOptions,
   participants: readonly Participant[] = getParticipants(),
   loadChannelVods: ChannelVodLoader = getChzzkChannelVods,
 ): Promise<ParticipantVodCollection> {
@@ -74,19 +72,15 @@ export async function getParticipantVods(
     ),
   ];
   const results = await collectChannelVods(participantChannelIds, startAt, endAt, loadChannelVods);
-  const vodsByVideoNo = new Map(existingVods
-    .filter((vod) =>
-      vod.videoType === "REPLAY"
-      && vod.videoCategoryValue === BONGNUDO_VOD_CATEGORY_VALUE
-      && isBongnudoVodPublishedAt(vod.publishedAt, startAt, endAt),
-    )
-    .map((vod) => [vod.videoNo, vod]));
+  const vodsByVideoNo = new Map<number, Vod>();
   const failures: ParticipantVodFailure[] = [];
+  const successfulChannelIds: string[] = [];
 
   results.forEach((result, index) => {
     const channelId = participantChannelIds[index];
 
     if (result.status === "fulfilled") {
+      successfulChannelIds.push(channelId);
       result.value.forEach((vod) => vodsByVideoNo.set(vod.videoNo, vod));
       return;
     }
@@ -99,5 +93,5 @@ export async function getParticipantVods(
     );
   });
 
-  return { vods: [...vodsByVideoNo.values()], failures, attemptedChannelCount: participantChannelIds.length };
+  return { vods: [...vodsByVideoNo.values()], failures, successfulChannelIds, attemptedChannelCount: participantChannelIds.length };
 }

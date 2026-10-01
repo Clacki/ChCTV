@@ -9,7 +9,8 @@ export function createVodDisplayItems(vods: readonly Vod[], participants: readon
   return [...vods].sort((left, right) => right.publishedAt - left.publishedAt).map((vod) => ({ vod, participant: byChannelId.get(vod.channelId) ?? null }));
 }
 
-export function formatVodDuration(seconds: number): string {
+export function formatVodDuration(seconds: number | null): string {
+  if (seconds === null) return "--:--";
   const total = Math.max(0, Math.floor(seconds));
   const hours = Math.floor(total / 3600);
   const minutes = Math.floor((total % 3600) / 60);

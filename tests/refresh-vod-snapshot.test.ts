@@ -33,6 +33,8 @@ const vod = (videoNo: number, channelId: string): Vod => ({
   videoType: "REPLAY",
   videoCategory: "Grand_Theft_Auto_V",
   videoCategoryValue: "Grand Theft Auto V",
+  liveOpenDate: null,
+  url: `https://chzzk.naver.com/video/${videoNo}`,
   channelName: channelId,
   channelImageUrl: null,
 });
@@ -44,12 +46,12 @@ describe("VOD snapshot refresh", () => {
     const participants = [participant("a"), participant("b")];
     const previous = { version: 1 as const, refreshedAt: 1, vods: [vod(10, "a"), vod(20, "b")], failures: [{ channelId: "b", kind: "network" as const }], startedAt: 1, completedAt: 1 };
     readVodSnapshot.mockResolvedValue(previous);
-    getParticipantVods.mockResolvedValue({ vods: [vod(11, "a"), vod(20, "b")], failures: [], attemptedChannelCount: 1 });
+    getParticipantVods.mockResolvedValue({ vods: [vod(11, "a"), { ...vod(20, "b"), title: "갱신 제목" }], failures: [], successfulChannelIds: ["a", "b"], attemptedChannelCount: 2 });
 
     const snapshot = await refreshVodSnapshot(0, participants);
 
-    expect(getParticipantVods).toHaveBeenCalledWith({ channelIds: ["a", "b"], existingVods: previous.vods }, participants);
-    expect(writeVodSnapshot).toHaveBeenCalledWith(expect.objectContaining({ version: 1, vods: [vod(11, "a"), vod(20, "b")], failures: [] }));
+    expect(getParticipantVods).toHaveBeenCalledWith({ channelIds: ["a", "b"] }, participants);
+    expect(writeVodSnapshot).toHaveBeenCalledWith(expect.objectContaining({ version: 1, vods: [vod(10, "a"), { ...vod(20, "b"), title: "갱신 제목" }, vod(11, "a")], failures: [] }));
     expect(snapshot.refreshedAt).toBeGreaterThan(0);
   });
 
@@ -62,12 +64,25 @@ describe("VOD snapshot refresh", () => {
     expect(writeVodSnapshot).not.toHaveBeenCalled();
   });
 
+  it("keeps a batch channel's existing VODs after a confirmed empty collection", async () => {
+    const participants = [participant("a")];
+    const previous = { version: 1 as const, refreshedAt: 1, vods: [vod(10, "a")], failures: [], startedAt: 1, completedAt: 1 };
+    readVodSnapshot.mockResolvedValue(previous);
+    getParticipantVods.mockResolvedValue({ vods: [], failures: [], successfulChannelIds: ["a"], attemptedChannelCount: 1 });
+
+    const snapshot = await refreshVodSnapshot(0, participants);
+
+    expect(snapshot.vods).toEqual(previous.vods);
+    expect(snapshot.failures).toEqual([]);
+  });
+
   it("keeps the previous snapshot when every channel fails", async () => {
     const participants = [participant("a"), participant("b")];
     readVodSnapshot.mockResolvedValue({ version: 1 as const, refreshedAt: 1, vods: [vod(10, "a")], failures: [], startedAt: 1, completedAt: 1 });
     getParticipantVods.mockResolvedValue({
       vods: [vod(10, "a")],
       failures: [{ channelId: "a", kind: "network" }, { channelId: "b", kind: "network" }],
+      successfulChannelIds: [],
       attemptedChannelCount: 2,
     });
 
@@ -86,12 +101,12 @@ describe("VOD snapshot refresh", () => {
       completedAt: 1,
     };
     readVodSnapshot.mockResolvedValue(previous);
-    getParticipantVods.mockResolvedValue({ vods: [vod(1, "a"), vod(2, "k")], failures: [], attemptedChannelCount: 1 });
+    getParticipantVods.mockResolvedValue({ vods: [{ ...vod(2, "k"), title: "갱신 제목" }], failures: [], successfulChannelIds: ["k"], attemptedChannelCount: 1 });
 
     const snapshot = await refreshVodSnapshot(1, participants);
 
-    expect(getParticipantVods).toHaveBeenCalledWith({ channelIds: ["k"], existingVods: [vod(1, "a"), vod(2, "k")] }, participants);
-    expect(snapshot.vods).toEqual([vod(1, "a"), vod(2, "k")]);
+    expect(getParticipantVods).toHaveBeenCalledWith({ channelIds: ["k"] }, participants);
+    expect(snapshot.vods).toEqual([vod(1, "a"), { ...vod(2, "k"), title: "갱신 제목" }]);
     expect(snapshot.failures).toEqual([]);
   });
 
@@ -107,14 +122,15 @@ describe("VOD snapshot refresh", () => {
     };
     readVodSnapshot.mockResolvedValue(previous);
     getParticipantVods.mockResolvedValue({
-      vods: [vod(3, "a"), vod(2, "b")],
+      vods: [{ ...vod(1, "a"), title: "갱신 제목" }],
       failures: [{ channelId: "b", kind: "network" }],
+      successfulChannelIds: ["a"],
       attemptedChannelCount: 10,
     });
 
     const snapshot = await refreshVodSnapshot(0, participants);
 
-    expect(snapshot.vods).toEqual([vod(3, "a"), vod(2, "b")]);
+    expect(snapshot.vods).toEqual([{ ...vod(1, "a"), title: "갱신 제목" }, vod(2, "b")]);
     expect(snapshot.failures).toEqual([{ channelId: "b", kind: "network" }]);
   });
 });

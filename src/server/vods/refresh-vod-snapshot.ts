@@ -9,6 +9,22 @@ import { readVodSnapshot, writeVodSnapshot } from "./vod-snapshot-store";
 
 const refreshingByBatch = new Map<number, Promise<VodSnapshot>>();
 
+export function mergeVodSnapshotVods(
+  previousVods: ReadonlyArray<VodSnapshot["vods"][number]>,
+  activeChannelIds: ReadonlySet<string>,
+  collectedVods: ReadonlyArray<VodSnapshot["vods"][number]>,
+): VodSnapshot["vods"] {
+  const byVideoNo = new Map(previousVods
+    .filter((vod) => activeChannelIds.has(vod.channelId))
+    .map((vod) => [vod.videoNo, vod]));
+
+  for (const vod of collectedVods) {
+    byVideoNo.set(vod.videoNo, vod);
+  }
+
+  return [...byVideoNo.values()];
+}
+
 async function refresh(batchIndex: number, participants?: readonly Participant[]): Promise<VodSnapshot> {
   const startedAt = Date.now();
   const plan = createVodRefreshPlan(participants);
@@ -25,9 +41,8 @@ async function refresh(batchIndex: number, participants?: readonly Participant[]
     throw error;
   }
 
-  const existingVods = previous?.vods.filter((vod) => activeChannelIds.has(vod.channelId)) ?? [];
   console.info("[VOD refresh] participant VOD collection started", { batchIndex, attemptedChannelCount: batchChannelIds.length });
-  const result = await getParticipantVods({ channelIds: batchChannelIds, existingVods }, participants);
+  const result = await getParticipantVods({ channelIds: batchChannelIds }, participants);
   console.info("[VOD refresh] participant VOD collection completed", {
     batchIndex,
     attemptedChannelCount: result.attemptedChannelCount,
@@ -49,7 +64,7 @@ async function refresh(batchIndex: number, participants?: readonly Participant[]
   const snapshot: VodSnapshot = {
     version: 1,
     refreshedAt: completedAt,
-    vods: result.vods,
+    vods: mergeVodSnapshotVods(previous?.vods ?? [], activeChannelIds, result.vods),
     failures: [...retainedFailures, ...result.failures],
     startedAt,
     completedAt,
