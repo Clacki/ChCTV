@@ -57,6 +57,8 @@ export function mapChzzkVod(value: unknown): Vod | null {
     videoType,
     videoCategory,
     videoCategoryValue,
+    liveOpenDate: stringOrNull(value.liveOpenDate),
+    url: `https://chzzk.naver.com/video/${videoNo}`,
     channelName,
     channelImageUrl: stringOrNull(value.channel.channelImageUrl),
   };

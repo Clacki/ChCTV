@@ -41,6 +41,8 @@ describe("participant VOD collection", () => {
           videoType: "REPLAY",
           videoCategory: "Grand_Theft_Auto_V",
           videoCategoryValue: "Grand Theft Auto V",
+          liveOpenDate: null,
+          url: "https://chzzk.naver.com/video/10",
           channelName: "참가자",
           channelImageUrl: null,
         },
@@ -85,7 +87,7 @@ describe("participant VOD collection", () => {
     expect(result.failures).toHaveLength(1);
   });
 
-  it("merges new VODs and refreshes metadata for VODs seen again", async () => {
+  it("deduplicates VODs returned by successful channels", async () => {
     const channelId = "b".repeat(32);
     const participant: Participant = {
       streamerName: "참가자",
@@ -107,12 +109,14 @@ describe("participant VOD collection", () => {
       videoType: "REPLAY",
       videoCategory: "Grand_Theft_Auto_V",
       videoCategoryValue: "Grand Theft Auto V",
+      liveOpenDate: null,
+      url: "https://chzzk.naver.com/video/10",
       channelName: "이전 채널",
       channelImageUrl: null,
     };
 
     const result = await getParticipantVods(
-      { startAt: 1, existingVods: [existing] },
+      { startAt: 1 },
       [participant],
       async () => {
         return [
@@ -126,7 +130,7 @@ describe("participant VOD collection", () => {
     expect(result.vods.find((vod) => vod.videoNo === 10)).toMatchObject({ title: "갱신 제목", viewCount: 99 });
   });
 
-  it("keeps a failed channel's previous VODs while updating successful channels", async () => {
+  it("reports a failed channel without treating it as an empty result", async () => {
     const firstChannelId = "c".repeat(32);
     const failedChannelId = "d".repeat(32);
     const participants: Participant[] = [firstChannelId, failedChannelId].map((channelId) => ({
@@ -149,12 +153,14 @@ describe("participant VOD collection", () => {
       videoType: "REPLAY",
       videoCategory: "Grand_Theft_Auto_V",
       videoCategoryValue: "Grand Theft Auto V",
+      liveOpenDate: null,
+      url: "https://chzzk.naver.com/video/10",
       channelName: "기존 채널",
       channelImageUrl: null,
     };
 
     const result = await getParticipantVods(
-      { startAt: 1, existingVods: [existing] },
+      { startAt: 1 },
       participants,
       async (channelId) => {
         if (channelId === failedChannelId) throw new Error("network");
@@ -162,11 +168,11 @@ describe("participant VOD collection", () => {
       },
     );
 
-    expect(result.vods.map((vod) => vod.videoNo).sort()).toEqual([10, 11]);
+    expect(result.vods.map((vod) => vod.videoNo).sort()).toEqual([11]);
     expect(result.failures).toEqual([{ channelId: failedChannelId, kind: "unknown" }]);
   });
 
-  it("removes cached VODs that no longer satisfy the final category and registration-period filters", async () => {
+  it("returns a successful empty result without borrowing Snapshot state", async () => {
     const channelId = "e".repeat(32);
     const participant: Participant = {
       streamerName: "참가자",
@@ -177,27 +183,13 @@ describe("participant VOD collection", () => {
       tags: [],
       aliases: [],
     };
-    const target: Vod = {
-      videoNo: 1,
-      channelId,
-      title: "대상",
-      thumbnailUrl: null,
-      viewCount: 1,
-      duration: 1,
-      publishedAt: 10,
-      videoType: "REPLAY",
-      videoCategory: "Grand_Theft_Auto_V",
-      videoCategoryValue: "Grand Theft Auto V",
-      channelName: "채널",
-      channelImageUrl: null,
-    };
-
     const result = await getParticipantVods(
-      { startAt: 1, endAt: 20, existingVods: [target, { ...target, videoNo: 2, videoCategoryValue: "Project Zomboid" }, { ...target, videoNo: 3, publishedAt: 20 }] },
+      { startAt: 1, endAt: 20 },
       [participant],
       async () => [],
     );
 
-    expect(result.vods).toEqual([target]);
+    expect(result.vods).toEqual([]);
+    expect(result.successfulChannelIds).toEqual([channelId]);
   });
 });

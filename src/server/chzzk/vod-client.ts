@@ -6,6 +6,7 @@ import type { Vod } from "@/types/vod";
 import { mapChzzkVod } from "./vod-mapper";
 
 const CHZZK_CHANNEL_VIDEOS_API_URL = "https://api.chzzk.naver.com/service/v1/channels";
+const CHZZK_VOD_USER_AGENT = "ChCTV VOD Collector/1.0";
 
 type ChzzkVodListResponse = {
   content?: {
@@ -45,7 +46,7 @@ export async function getChzzkChannelVodPage(channelId: string, page = 1): Promi
     url.searchParams.set("sortType", "LATEST");
     url.searchParams.set("videoType", "REPLAY");
     url.searchParams.set("page", String(page));
-    response = await fetch(url, { cache: "no-store" });
+    response = await fetch(url, { cache: "no-store", headers: { "User-Agent": CHZZK_VOD_USER_AGENT } });
   } catch {
     throw new ChzzkVodApiError("network", channelId);
   }

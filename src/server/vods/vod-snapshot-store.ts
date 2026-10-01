@@ -3,6 +3,7 @@ import "server-only";
 import { Redis } from "@upstash/redis";
 
 import type { VodSnapshot } from "@/types/vod-snapshot";
+import type { Vod } from "@/types/vod";
 
 export const VOD_SNAPSHOT_KEY = "chctv:vod:bongnudo:snapshot";
 type VodSnapshotRedis = Pick<Redis, "get" | "set">;
@@ -32,6 +33,14 @@ function isSnapshot(value: unknown): value is VodSnapshot {
     && Number.isFinite(snapshot.completedAt);
 }
 
+function hydrateVod(vod: Vod): Vod {
+  return {
+    ...vod,
+    liveOpenDate: typeof vod.liveOpenDate === "string" ? vod.liveOpenDate : null,
+    url: typeof vod.url === "string" && vod.url.length > 0 ? vod.url : `https://chzzk.naver.com/video/${vod.videoNo}`,
+  };
+}
+
 export async function readVodSnapshot(): Promise<VodSnapshot | null> {
   const redis = getRedis();
   if (!redis) throw new VodSnapshotStoreConfigurationError();
@@ -48,7 +57,7 @@ export async function readVodSnapshotWithRedis(redis: VodSnapshotRedis): Promise
   const snapshot: unknown = await redis.get(VOD_SNAPSHOT_KEY);
   if (snapshot == null) return null;
   if (!isSnapshot(snapshot)) throw new Error("VOD snapshot is invalid");
-  return snapshot;
+  return { ...snapshot, vods: snapshot.vods.map(hydrateVod) };
 }
 
 export async function writeVodSnapshotWithRedis(redis: VodSnapshotRedis, snapshot: VodSnapshot): Promise<void> {

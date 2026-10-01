@@ -15,6 +15,7 @@ describe("VOD display data", () => {
   });
   it("formats duration and view metadata for cards", () => {
     expect(formatVodDuration(3723)).toBe("1:02:03");
+    expect(formatVodDuration(null)).toBe("--:--");
     expect(formatVodViewCount(12_345)).toBe("1.2만");
   });
 });

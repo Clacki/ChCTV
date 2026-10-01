@@ -251,6 +251,7 @@ test("shows the ChCTV discovery workspace", async ({ page }) => {
   await mockParticipantBroadcasts(page);
   await page.goto("/");
   await expect(page.getByRole("img", { name: "ChCTV" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "봉누도 다시보기" })).toHaveCount(0);
   await expect(page.locator('[aria-live="polite"] [aria-label^="봉누도"]')).toBeVisible();
   await expect(page.getByText("8개 채널 방송 중", { exact: true })).toHaveCount(0);
   const wikiLink = page.getByRole("link", { name: "공식 위키" });
